@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17962642.svg)](https://doi.org/10.5281/zenodo.17962642)
 # The topology of software risk in scientific models
 
 [Arnald Puy](https://www.arnaldpuy.com/), Federico Díaz, Ulrike Proske, Olivia Richards,
