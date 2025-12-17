@@ -11,17 +11,17 @@ to fourteen global land use and hydrological models, listed in the Models sectio
 
 ## Abstract
 
-*Scientific models are becoming complex software systems whose structural fragility 
-remains largely hidden. To address this issue we present a domain-agnostic framework 
-that integrates software metrics with network analysis, representing each model’s 
-source code as a directed call graph where nodes and edges correspond to functions 
-and their calls. By combining cyclomatic complexity, call centrality and connectivity 
-metrics we compute node- and path-level risk scores that quantify how software faults 
-may propagate through the code architecture. This approach exposes "risk highways", 
-chains of interdependent functions where local faults are most likely to cascade. 
-We illustrate our approach on fourteen large-scale hydrological and land-surface models. 
-Our framework reveals the hidden topology of software risk and provides a quantitative 
-basis for assessing, comparing and improving the reliability of scientific models.*
+*Scientific research increasingly relies on complex mathematical models whose software 
+implementations are rarely verified. Although failures often emerge from interactions 
+along specific chains of function calls, we lack methods to identify which paths dominate 
+system vulnerability. Here we present a framework that combines software-quality 
+metrics with the network structure of scientific models to identify chains of function 
+calls along which faults are most likely to cascade at the system level. By revealing 
+how risk accumulates across execution paths, the method enables targeted testing and 
+refactoring where they are most effective. We illustrate our approach on fourteen 
+large-scale hydrological and land-surface models. Our framework reveals the hidden 
+topology of software risk and provides a quantitative basis for assessing, comparing 
+and improving the reliability of scientific models.*
 
 ## Models
 
