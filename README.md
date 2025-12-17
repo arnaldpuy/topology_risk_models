@@ -1,8 +1,5 @@
+# The topology of software risk in scientific models
 
-# code_topology_risk_models
+[Arnald Puy](https://www.arnaldpuy.com/) et al.
 
-<!-- badges: start -->
-<!-- badges: end -->
-
-The goal of code_topology_risk_models is to ...
 
