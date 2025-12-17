@@ -1,11 +1,16 @@
+## ----setup, include=FALSE------------------------------------------------------------------------
+knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
-# PRELIMINARY FUNCTIONS ########################################################
+
+## ----warning=FALSE, message=FALSE, results = "hide"----------------------------------------------
+
+# PRELIMINARY FUNCTIONS #######################################################
 ################################################################################
 
 sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales", 
                           "cowplot", "readxl", "ggrepel", "tidytext", "here", 
                           "tidygraph", "igraph", "foreach", "parallel", "ggraph", 
-                          "tools", "purrr", "sensobol"))
+                          "tools", "purrr", "sensobol", "benchmarkme"))
 
 # Create custom theme ----------------------------------------------------------
 
@@ -38,6 +43,20 @@ r_functions <- list.files(path = here("functions"),
                           pattern = "\\.R$", full.names = TRUE)
 
 lapply(r_functions, source)
+
+# Set seed ---------------------------------------------------------------------
+
+seed <- 123
+
+# Define labels for better plotting --------------------------------------------
+
+lab_expr <- c(b1 = expression(C %in% "(" * 0 * ", 10" * "]"),
+              b2 = expression(C %in% "(" * 10 * ", 20" * "]"),
+              b3 = expression(C %in% "(" * 20 * ", 50" * "]"),
+              b4 = expression(C %in% "(" * 50 * ", " * infinity * ")"))
+
+
+## ----synthetic_example---------------------------------------------------------------------------
 
 # SYNTHETIC EXAMPLE ############################################################
 ################################################################################
@@ -349,6 +368,17 @@ delta_tbl <- delta_tbl %>%
   mutate(node = factor(node, levels = rev(top_nodes$name)),  
          path_id = factor(path_id, levels = top_paths$path_id))
 
+
+
+## ----save_datasets, dependson="synthetic_example"------------------------------------------------
+
+# SAVE NODES AND PATHS DATASET FOR THE UNCERTAINTY ANALYSIS IN NEXT FILE #######
+
+saveRDS(list(nodes_df = node_df, paths_tbl = paths_tbl), "graph_objects.rds")
+
+
+## ----plot_cc, dependson="synthetic_example", fig.height=2, fig.width=2---------------------------
+
 ################################################################################
 ################################################################################
 
@@ -361,13 +391,6 @@ delta_tbl <- delta_tbl %>%
 
 size_points <- 1
 
-# Define labels for better plotting --------------------------------------------
-
-lab_expr <- c(b1 = expression(C %in% "(" * 0 * ", 10" * "]"),
-              b2 = expression(C %in% "(" * 10 * ", 20" * "]"),
-              b3 = expression(C %in% "(" * 20 * ", 50" * "]"),
-              b4 = expression(C %in% "(" * 50 * ", " * infinity * ")"))
-
 #Plot the distribution of cyclomatic complexity in this toy model --------------
 
 distribution_cc <- node_df %>%
@@ -378,7 +401,10 @@ distribution_cc <- node_df %>%
 
 distribution_cc
 
-# Plot the graph ---------------------------------------------------------------
+
+## ----plot_call_graph, dependson="synthetic_example", fig.height=2, fig.width=3-------------------
+
+# Plot the call graph ----------------------------------------------------------
 
 set.seed(seed)
 
@@ -402,6 +428,9 @@ legend <- get_legend(toy_graph + theme(legend.position = "top"))
 
 toy_graph
 
+
+## ----plot_theoretical, dependson="synthetic_example", fig.height=2, fig.width=2------------------
+
 # Plot the trend between theoretical and empirical failure ---------------------
 
 fig_Pk <- ggplot(paths_eval, aes(x = p_path_fail, y = emp_fail_rate)) +
@@ -412,6 +441,9 @@ fig_Pk <- ggplot(paths_eval, aes(x = p_path_fail, y = emp_fail_rate)) +
   theme_AP()
 
 fig_Pk
+
+
+## ----plot_gini, dependson="synthetic_example", fig.height=2, fig.width=2-------------------------
 
 # Plot the gini figure ---------------------------------------------------------
 
@@ -424,6 +456,9 @@ fig_gini <- ggplot(gini_effect_tbl, aes(x = gini_node_risk)) +
   theme(legend.position = c(0.4, 0.78))
 
 fig_gini
+
+
+## ----plot_tile, dependson="synthetic_example", fig.height=2, fig.width=3-------------------------
 
 # Plote the tile figure --------------------------------------------------------
 
@@ -445,18 +480,21 @@ fig_heat <- ggplot(delta_tbl, aes(x = path_id, y = node, fill = deltaP)) +
 
 fig_heat
 
+
+## ----plot_slope, dependson="synthetic_example", fig.height=2, fig.width=2------------------------
+
 # Plot the slope figure --------------------------------------------------------
 
 fig_slope <- ggplot(slope_eval, aes(x = risk_slope, y = mean_fail_pos)) +
   geom_point(alpha = 0.6, size = size_points) +
-  labs(x = expression(beta[k]),
+  labs(x = expression(theta[1*k]),
        y = "Avg. pos.1st failing node") +
   theme_AP()
 
 fig_slope
 
 
-## ----merged_simulations, dependson="simulation", fig.height=3.5, fig.width=6--------------
+## ----merged_figures_synthetic, dependson=c("plot_slope", "plot_tile", "plot_gini", "plot_theoretical", "plot_call_graph", "plot_cc"), fig.height=3.5, fig.width=6----
 
 # MERGE ALL FIGURES ############################################################
 
@@ -468,5 +506,22 @@ bottom <- plot_grid(fig_gini, fig_heat, fig_slope, ncol = 3, labels = c("d", "e"
 final_plot <- plot_grid(top_final, bottom, ncol = 1)
 final_plot
 
-# END SIMULATIONS ##############################################################
-################################################################################
+
+## ----session_information-------------------------------------------------------------------------
+
+# SESSION INFORMATION ##########################################################
+
+sessionInfo()
+
+## Return the machine CPU ------------------------------------------------------
+
+cat("Machine:     "); print(get_cpu()$model_name)
+
+## Return number of true cores -------------------------------------------------
+
+cat("Num cores:   "); print(detectCores(logical = FALSE))
+
+## Return number of threads ---------------------------------------------------
+
+cat("Num threads: "); print(detectCores(logical = FALSE))
+

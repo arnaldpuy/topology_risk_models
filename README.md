@@ -43,7 +43,7 @@ The models used in this study are the following:
 
 ## Replication
 
-We provide all the functions needed to replicate our workflow in the "functions" folder.
+We provide all the functions needed to replicate our workflow in the "functions" folder. 
 
 #### Generated data
 
@@ -70,11 +70,14 @@ user of the code does not need to source them separately.
 
 We offer the code in `.R`, `.pdf` and `.Rmd`. There are three main analyses:
 
-* `code_synthetic_example`:
+* `code_synthetic_example`: workflow to create the synthetic call graph used to illustrate our
+method and check its internal consistency.
 
-* `code_uncertainty_analysis`:
+* `code_uncertainty_analysis`: workflow to show the potential of implementing uncertainty
+and sensitivity analysis to the method.
 
-* `code_hydrological_models`:
+* `code_hydrological_models`: application of the method to the fourteen global land use
+and hydrological models listed above.
 
 Our entire workflow can be run and the results replicated from either of these files. 
 The user must run the code from the same folder where the files in the generated data 

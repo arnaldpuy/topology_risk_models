@@ -1,8 +1,8 @@
-## ----setup, include=FALSE------------------------------------------------------------------------------
+## ----setup, include=FALSE------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
 
-## ----warning=FALSE, message=FALSE, results = "hide"----------------------------------------------------
+## ----warning=FALSE, message=FALSE, results = "hide"----------------------------------------------
 
 # PRELIMINARY FUNCTIONS #######################################################
 ################################################################################
@@ -53,7 +53,7 @@ lapply(r_functions, source)
 seed <- 123
 
 
-## ----run_analysis, cache.lazy=FALSE--------------------------------------------------------------------
+## ----run_analysis, cache.lazy=FALSE--------------------------------------------------------------
 
 # CREATE DATASET ###############################################################
 
@@ -233,7 +233,7 @@ full_ua_df <- unnested_df %>%
 fwrite(full_ua_df, "full_ua_df.csv")
 
 
-## ----some_stats, dependson="run_analysis"--------------------------------------------------------------
+## ----some_stats, dependson="run_analysis"--------------------------------------------------------
 
 # CALCULATE SOME DESCRIPTIVE METRICS ###########################################
 
@@ -446,7 +446,7 @@ plot_bar_category <- metrics_combined[grep("^func_", names(metrics_combined))] %
 plot_bar_category
 
 
-## ----merge_descriptive_flow, dependson="some_stats", fig.height=3.9, fig.width=6-----------------------
+## ----merge_descriptive_flow, dependson="some_stats", fig.height=3.9, fig.width=6-----------------
 
 # MERGE FIGURES ################################################################
 
@@ -460,7 +460,7 @@ plot_grid(top_plot, bottom, ncol = 1, rel_heights = c(0.52, 0.48), align = "h",
   axis = "tb")
 
 
-## ----plot_all_callgraphs, dependson="run_analysis", fig.height=2.5, fig.width=3------------------------
+## ----plot_all_callgraphs, dependson="run_analysis", fig.height=2.5, fig.width=3------------------
 
 # PLOT FIGURES #################################################################
 
@@ -475,7 +475,7 @@ all_graphs <- all_graphs[, plot_obj:= mapply(plot_top_paths_fun, call_g = graph,
                                              language = language, SIMPLIFY = FALSE)]
 
 
-## ----plot, dependson="plot_all_callgraphs", fig.height=6, fig.width=6----------------------------------
+## ----plot, dependson="plot_all_callgraphs", fig.height=6, fig.width=6----------------------------
 
 # PLOT OTHER FIGURES ###########################################################
 
@@ -524,7 +524,7 @@ c <- full_sa_df %>%
   .[sensitivity == "Si", .(median = median(original, na.rm = TRUE)), .(model, parameters)] %>%
   ggplot(., aes(x = parameters, y = model, fill = median)) +
   geom_tile() +
-  scale_fill_viridis_c(name = expression("Med(" * S[i] * ")"), 
+  scale_fill_viridis_c(name = expression("Med(" * S[p] * ")"), 
                        limits = c(0, 1), 
                        breaks = c(0, 0.5, 1)) +
   scale_x_discrete(labels = c(a_raw = expression(alpha),
@@ -552,7 +552,7 @@ d <- do.call(rbind, tmp2) %>%
   scale_x_discrete(labels = c(a_raw = expression(alpha),
                               b_raw = expression(beta),
                               c_raw = expression(gamma))) +
-  scale_fill_viridis_c(name   = expression("Med(" * T[i] - S[i] * ")"), 
+  scale_fill_viridis_c(name   = expression("Med(" * T[p] - S[p] * ")"), 
                        limits = c(0, 0.06), 
                        breaks = c(0, 0.03, 0.06), 
                        option = "magma") +
@@ -577,7 +577,7 @@ plot_grid(plot_top_paths, right_plot, ncol = 2, rel_widths = c(0.7, 0.3))
 
 
 
-## ----nodes_proportion, dependson="run_analysis", fig.height=3, fig.width=3.5---------------------------
+## ----nodes_proportion, dependson="run_analysis", fig.height=3, fig.width=3.5---------------------
 
 # PATH-LEVEL RISK ACCOUNTED FOR THE TOP 5% NODES ###############################
 
@@ -649,7 +649,7 @@ merge(all_descriptive_df, tmp, by = c("model", "language")) %>%
   theme(legend.position = c(0.2, 0.8))
 
 
-## ----plot_paths, dependson="run_analysis"--------------------------------------------------------------
+## ----plot_paths, dependson="run_analysis"--------------------------------------------------------
 
 # PLOT THE TOP 50 PATHS PER MODEL ##############################################
 
@@ -686,7 +686,24 @@ for ( i in 1:length(tmp2)) {
 out
 
 
-## ----session_information-------------------------------------------------------------------------------
+## ----print_top_paths, dependson="run_analysis", eval=FALSE, results="hide"-----------------------
+# 
+# # FUNCTIONS TO SELECT THE TOP TEN RISKY PATHS PER MODEL AND
+# # PRINT THEM OUT FOR LATEX #####################################################
+# 
+# tmp <- full_paths_df[order(-p_path_fail), .SD[1:10], .(model, language)] %>%
+#   .[, .(model, language, path_str)]
+# 
+# tmp2 <- split(tmp, list(tmp$model, tmp$language))
+# 
+# tmp3 <- tmp2[sapply(tmp2, nrow) > 0] %>%
+#   lapply(., function(x) na.omit(x) %>%
+#            .[, .(path_str)])
+# 
+# to_tex_list_fun(tmp3)
+
+
+## ----session_information-------------------------------------------------------------------------
 
 # SESSION INFORMATION ##########################################################
 
@@ -703,12 +720,4 @@ cat("Num cores:   "); print(detectCores(logical = FALSE))
 ## Return number of threads ---------------------------------------------------
 
 cat("Num threads: "); print(detectCores(logical = FALSE))
-
-
-
-
-
-
-full_paths_df[order(-p_path_fail), .SD[1:10], .(model, language)] %>%
-  .[, .(model, language, path_str)]
 

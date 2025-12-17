@@ -1,11 +1,16 @@
+## ----setup, include=FALSE------------------------------------------------------------------------
+knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
-# PRELIMINARY FUNCTIONS ########################################################
+
+## ----warning=FALSE, message=FALSE, results = "hide"----------------------------------------------
+
+# PRELIMINARY FUNCTIONS #######################################################
 ################################################################################
 
 sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales", 
                           "cowplot", "readxl", "ggrepel", "tidytext", "here", 
                           "tidygraph", "igraph", "foreach", "parallel", "ggraph", 
-                          "tools", "purrr", "sensobol"))
+                          "tools", "purrr", "sensobol", "benchmarkme"))
 
 # Create custom theme ----------------------------------------------------------
 
@@ -39,16 +44,28 @@ r_functions <- list.files(path = here("functions"),
 
 lapply(r_functions, source)
 
+# Set seed ---------------------------------------------------------------------
+
+seed <- 123
+
+# Define labels for better plotting --------------------------------------------
+
+lab_expr <- c(b1 = expression(C %in% "(" * 0 * ", 10" * "]"),
+              b2 = expression(C %in% "(" * 10 * ", 20" * "]"),
+              b3 = expression(C %in% "(" * 20 * ", 50" * "]"),
+              b4 = expression(C %in% "(" * 50 * ", " * infinity * ")"))
+
+
+## ----uncertainty_analysis------------------------------------------------------------------------
+
 # UNCERTAINTY AND SENSITIVITY ANALYSIS #########################################
 ################################################################################
 
-# Load the node dataset from the synthetic example -----------------------------
+# Load the nodes_df and the paths_tbl from the synthetic example ---------------
 
-node_df <- as_tibble(fread("synthetic_example_nodes.csv"))
-
-# Load the paths dataset from the synthetic example ----------------------------
-
-paths_tbl <- as_tibble(fread("synthetic_example_paths.csv"))
+objs <- readRDS("graph_objects.rds")
+nodes_df  <- objs$nodes_df
+paths_tbl <- objs$paths_tbl
 
 # Define settings --------------------------------------------------------------
 
@@ -57,12 +74,12 @@ order <- "second"
 
 # Run an UA/SA -----------------------------------------------------------------
 
-output_ua.sa <- full_ua_sa_risk_fun(node_df = synthetic_example_nodes, 
-                                    paths_tbl = synthetic_example_paths, 
+output_ua.sa <- full_ua_sa_risk_fun(node_df = nodes_df, 
+                                    paths_tbl = paths_tbl, 
                                     N = N, order = order)
 
-# PLOT RESULTS #################################################################
-################################################################################
+
+## ----plot_errorbars, dependson="uncertainty_analysis", fig.height=7, fig.width=2-----------------
 
 # PLOT ERRORBARS ###############################################################
 
@@ -73,12 +90,11 @@ a <- output_ua.sa$paths %>%
   geom_point(size = 1) +
   geom_errorbar(aes(xmin = P_k_min, xmax = P_k_max), height = 0.2) +
   scale_color_gradient2(low = "blue", mid = "grey80", high = "red", midpoint = 0,             
-                        name = expression(beta[k])
-  ) +
+                        name = expression(bar(theta)[1*k])) +
   labs(y = "Path ID", x = expression(P[k])) +
   theme_AP() +
   scale_x_continuous(breaks = breaks_pretty(n = 3)) +
-  theme(axis.text.y = element_text(size = 5), 
+  theme(axis.text.y = element_text(size = 4), 
         legend.position = c(0.4, 0.87))
 
 a
@@ -89,7 +105,7 @@ b <- output_ua.sa$paths %>%
   ggplot(., aes(P_k_mean, reorder(path_id, P_k_mean), color = gini_node_risk))  +
   geom_point(size = 1) +
   geom_errorbarh(aes(xmin = P_k_min, xmax = P_k_max), height = 0.2) +
-  scale_color_gradient(low = "blue",high = "red", name = expression(G[k])) +
+  scale_color_gradient(low = "blue",high = "red", name = expression(bar(G)[k])) +
   labs(y = "", x = expression(P[k])) +
   theme_AP() +
   scale_x_continuous(breaks = breaks_pretty(n = 3)) +
@@ -99,7 +115,8 @@ b <- output_ua.sa$paths %>%
 
 b
 
-plot_grid(a, b, ncol = 2)
+
+## ----plot_supertile, dependson="uncertainty_analysis", fig.height=7, fig.width=2-----------------
 
 # SUPER TILE PLOT ##############################################################
 
@@ -128,6 +145,9 @@ plot_supertile <- ggplot(paths_long, aes(sample_id, factor(path_id), fill = rank
         legend.position = "none")
 
 plot_supertile
+
+
+## ----plot_alpha_beta_gamma, dependson="uncertainty_analysis", fig.height=4.5, fig.width=1.7------
 
 # PLOT FIRST ORDER OF ALPHA AND BETA + GAMMA ###################################
 
@@ -174,7 +194,7 @@ tile_dt[, name:= factor(name, levels = unique(name[order(-Si)]))]
 
 plot.sa <- ggplot(tile_dt, aes(x = factor, y = name, fill = Si)) +
   geom_tile() +
-  scale_fill_viridis_c(name = expression(S[i]), limits = c(0, 1), 
+  scale_fill_viridis_c(name = expression(S[p]), limits = c(0, 1), 
                        breaks = c(0, 0.5, 1)) +
   scale_x_discrete(labels = c("alpha" = expression(alpha),
                               "beta_gamma" = expression(beta + gamma))) +
@@ -184,6 +204,9 @@ plot.sa <- ggplot(tile_dt, aes(x = factor, y = name, fill = Si)) +
         legend.position = "top")
 
 plot.sa
+
+
+## ----plot_violin, dependson="uncertainty_analysis", fig.height=2, fig.width=2--------------------
 
 # Violin plot ------------------------------------------------------------------
 
@@ -198,19 +221,21 @@ plot_violin <- si_dt %>%
   scale_x_discrete(labels = c("alpha" = expression(alpha),
                               "beta" = expression(beta), 
                               "gamma" = expression(gamma))) +
-  labs(x = "", y = expression(S[i])) +
+  labs(x = "", y = expression(S[p])) +
   theme_AP()
 
+plot_violin
+
+
+## ----merge_ua_sa, dependson=c("plot_violin", "plot_alpha_beta_gamma", "plot_supertile", "plot_errorbars"), fig.height=7.5, fig.width=5.5----
 
 # MERGE AND PLOT ###############################################################
 
 left.plot <- plot_grid(a, b, plot_supertile, ncol = 3, labels = c("a", "", "b"))
-right.plot <- plot_grid(plot.sa, plot_violin, ncol = 1, rel_heights = c(0.7, 0.3), 
+right.plot <- plot_grid(plot.sa, plot_violin, ncol = 1, rel_heights = c(0.75, 0.25), 
                         labels = c("c", "d"))
 all_plots <- plot_grid(left.plot, right.plot, rel_widths = c(0.7, 0.2))
 
 legend <- get_legend_fun(plot_supertile + theme(legend.position = "top"))
 plot_grid(legend, all_plots, ncol = 1, rel_heights = c(0.05, 0.95))
 
-# END SIMULATIONS ##############################################################
-################################################################################
