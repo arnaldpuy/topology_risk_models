@@ -525,6 +525,7 @@ fig_heat
 
 fig_slope <- ggplot(slope_eval, aes(x = risk_slope, y = mean_fail_pos)) +
   geom_point(alpha = 0.6, size = size_points) +
+  geom_vline(xintercept = 0, lty = 2, color = "red") +
   labs(x = expression(theta[1*k]),
        y = "Avg. pos.1st failing node") +
   theme_AP()

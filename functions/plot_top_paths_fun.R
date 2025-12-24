@@ -37,6 +37,7 @@ plot_top_paths_fun <- function(call_g, paths_tbl, model.name = "", language = ""
   })
   
   ig2 <- as.igraph(call_g)
+  
   edge_df_names <- igraph::as_data_frame(ig2, what = "edges") %>%
     mutate(.edge_idx = dplyr::row_number())
   
@@ -80,7 +81,9 @@ plot_top_paths_fun <- function(call_g, paths_tbl, model.name = "", language = ""
   
   # Compute legend sizes: min, middle, max among *risky* nodes -----------------
   
-  node_df <- call_g_sugi %>% activate(nodes) %>% as_tibble()
+  node_df <- call_g_sugi %>% 
+    activate(nodes) %>% 
+    as_tibble()
   
   risky_indeg <- node_df$indeg[node_df$on_top_node & is.finite(node_df$indeg)]
   risky_indeg <- sort(unique(risky_indeg))
@@ -98,7 +101,9 @@ plot_top_paths_fun <- function(call_g, paths_tbl, model.name = "", language = ""
     max_indeg <- max(risky_indeg)
     mid_indeg <- risky_indeg[ceiling(length(risky_indeg) / 2)]  # a real value from the data
     legend_breaks <- c(min_indeg, mid_indeg, max_indeg)
+    
   } else {
+    
     # If fewer than 3 unique values, just use what we have
     legend_breaks <- risky_indeg
   }

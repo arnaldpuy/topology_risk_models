@@ -1,10 +1,10 @@
-## ----setup, include=FALSE------------------------------------------------------------------------
+## ----setup, include=FALSE----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
 
-## ----warning=FALSE, message=FALSE, results = "hide"----------------------------------------------
+## ----warning=FALSE, message=FALSE, results = "hide"--------------------------
 
-# PRELIMINARY FUNCTIONS #######################################################
+# PRELIMINARY FUNCTIONS ########################################################
 ################################################################################
 
 sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales", 
@@ -53,9 +53,9 @@ lapply(r_functions, source)
 seed <- 123
 
 
-## ----run_analysis, cache.lazy=FALSE--------------------------------------------------------------
+## ----run_analysis, cache.lazy=FALSE------------------------------------------
 
-# CREATE DATASET ###############################################################
+# CREATE DATASET ##############################################################
 
 # Path to folder ---------------------------------------------------------------
 
@@ -89,7 +89,7 @@ names(fortran_list) <- model_names_fortran
 make_callgraph <- function(lst, lang) {
   rbindlist(lst, idcol = "model") %>%
     .[, language := lang] %>%
-    .[, .(model, language, `function`, call)] %>%
+    .[, .(file, model, language, `function`, call)] %>%
     setnames(., c("function", "call"), c("from", "to"))
 }
 
@@ -98,9 +98,80 @@ fortran_callgraphs <- make_callgraph(fortran_list, "fortran")
 
 all_callgraphs <- rbind(python_callgraphs, fortran_callgraphs)
 
-# Remove main and module calls -------------------------------------------------
+# SOURCE CODE CLASSIFICATION BY FUNCTIONAL ROLE ################################
 
-all_callgraphs <- all_callgraphs[!(from %in% c("<module>", "main"))]
+# Strip leading "./models/" ----------------------------------------------------
+
+all_callgraphs[, file_clean := sub("^\\./models/", "", file)]
+
+# model_id = first part before "/" ---------------------------------------------
+
+all_callgraphs[, model_id := tstrsplit(file_clean, "/", fixed = TRUE, keep = 1L)]
+
+# rest = everything after "model_id/" ------------------------------------------
+
+all_callgraphs[, rest := sub("^[^/]+/", "", file_clean)]
+
+# 2) top_level directory inside each model -------------------------------------
+
+all_callgraphs[, top_level := tstrsplit(rest, "/", fixed = TRUE, keep = 1L)]
+
+## 4) component classification (order matters)
+
+all_callgraphs[nchar(file) == 0L | is.na(file), component:= NA_character_]
+
+all_callgraphs[!is.na(file) & nchar(file) > 0L, component:= fcase(
+  
+  # 1) CI and vendored libraries ------------------------------------
+  
+  top_level == ".github", "ci_cd",
+  top_level == ".lib" | grepl("/\\.lib/", rest),"vendored_lib",
+  
+  # 2) CIME / CESM / CDEPS infrastructure (framework) ---------------
+  
+  grepl("^cime/CIME/", rest), "framework",
+  grepl("^cime_config/", rest), "framework",
+  grepl("^cime/doc/", rest), "framework",
+  grepl("^components/cdeps/cime_config/", rest), "framework",   
+  
+  # 3) Tests (incl. SystemTests, case-insensitive) ------------------
+  
+  grepl("SystemTests/", rest, ignore.case = TRUE), "tests",
+  grepl("/tests?/|^tests?/", rest, ignore.case = TRUE), "tests",
+  
+  # 4) Couplers: NUOPC / LILAC / CESM / cpl -------------------------
+  
+  grepl("cpl_|/cesm/|/cpl/|/cpl_",rest), "coupler",
+  
+  # 5) Drivers: Fortran code clearly in drivers directories ---------
+  
+  grepl("(^|/)drivers(/|$)", rest) & language == "fortran", "driver",
+  
+  # 6) CLI / tools: scripts, setup, CTSM python utilities -----------
+  
+  grepl("tools/|scripts/|cli\\.py$|setup\\.py$", rest), "cli_or_tool",
+  grepl("^python/ctsm/", rest), "cli_or_tool", 
+  
+  # 7) Everything else: model core ----------------------------------
+  
+  default = "model_core"
+)]
+
+# Create column to include in risk calculations or not -------------------------
+
+all_callgraphs[, include_in_risk:= (language %chin% c("fortran", "python") &
+                          component %chin% c("model_core", "coupler"))]
+
+# SUmmarize --------------------------------------------------------------------
+
+all_callgraphs[, .N, component]
+all_callgraphs[, .N, include_in_risk]
+
+
+# Remove module calls -------------------------------------------------
+
+all_callgraphs <- all_callgraphs[!(from %in% "<module>")] %>%
+  .[include_in_risk == TRUE]
 
 # LOAD CYCLOMATIC COMPLEXITY VALUES FOR FUNCTIONS AND SUBROUTINES ##############
 
@@ -200,9 +271,11 @@ write.xlsx(full_paths_df, "full_paths_df.xlsx")
 N <- 2^11
 order <- "first"
 
-# Run the function -------------------------------------------------------------
+# Run the function (we remove the vic and python model implementation because 
+# there are not paths) ---------------------------------------------------------
 
-all_graphs[, uncertainty_sensitivity:= Map(full_ua_sa_risk_fun, node_df, paths_tbl, N, order)]
+all_graphs[!c(model == "VIC" & language == "python"), 
+           uncertainty_sensitivity:= Map(full_ua_sa_risk_fun, node_df, paths_tbl, N, order)]
 
 
 # UNNEST APPROPRIATELY #########################################################
@@ -233,7 +306,7 @@ full_ua_df <- unnested_df %>%
 fwrite(full_ua_df, "full_ua_df.csv")
 
 
-## ----some_stats, dependson="run_analysis"--------------------------------------------------------
+## ----some_stats, dependson="run_analysis"------------------------------------
 
 # CALCULATE SOME DESCRIPTIVE METRICS ###########################################
 
@@ -446,7 +519,7 @@ plot_bar_category <- metrics_combined[grep("^func_", names(metrics_combined))] %
 plot_bar_category
 
 
-## ----merge_descriptive_flow, dependson="some_stats", fig.height=3.9, fig.width=6-----------------
+## ----merge_descriptive_flow, dependson="some_stats", fig.height=3.9, fig.width=6----
 
 # MERGE FIGURES ################################################################
 
@@ -460,7 +533,7 @@ plot_grid(top_plot, bottom, ncol = 1, rel_heights = c(0.52, 0.48), align = "h",
   axis = "tb")
 
 
-## ----plot_all_callgraphs, dependson="run_analysis", fig.height=2.5, fig.width=3------------------
+## ----plot_all_callgraphs, dependson="run_analysis", fig.height=2.5, fig.width=3----
 
 # PLOT FIGURES #################################################################
 
@@ -475,7 +548,7 @@ all_graphs <- all_graphs[, plot_obj:= mapply(plot_top_paths_fun, call_g = graph,
                                              language = language, SIMPLIFY = FALSE)]
 
 
-## ----plot, dependson="plot_all_callgraphs", fig.height=6, fig.width=6----------------------------
+## ----plot, dependson="plot_all_callgraphs", fig.height=6, fig.width=6--------
 
 # PLOT OTHER FIGURES ###########################################################
 
@@ -577,7 +650,7 @@ plot_grid(plot_top_paths, right_plot, ncol = 2, rel_widths = c(0.7, 0.3))
 
 
 
-## ----nodes_proportion, dependson="run_analysis", fig.height=3, fig.width=3.5---------------------
+## ----nodes_proportion, dependson="run_analysis", fig.height=3, fig.width=3.5----
 
 # PATH-LEVEL RISK ACCOUNTED FOR THE TOP 5% NODES ###############################
 
@@ -649,7 +722,7 @@ merge(all_descriptive_df, tmp, by = c("model", "language")) %>%
   theme(legend.position = c(0.2, 0.8))
 
 
-## ----plot_paths, dependson="run_analysis"--------------------------------------------------------
+## ----plot_paths, dependson="run_analysis"------------------------------------
 
 # PLOT THE TOP 50 PATHS PER MODEL ##############################################
 
@@ -686,7 +759,66 @@ for ( i in 1:length(tmp2)) {
 out
 
 
-## ----print_top_paths, dependson="run_analysis", eval=FALSE, results="hide"-----------------------
+## ----check_overlap, fig.height=2.8, fig.width=2.5----------------------------
+
+# READ RANKING OF THE UA / SA DATASET ##########################################
+
+top_ten_overlap <- readRDS("top_ten_overlap.rds")
+
+
+# ORDER AND FILTER OUT MODELS WITH LESS THAN 10 PATHS ##########################
+
+model_names_ordered <- top_ten_overlap %>%
+  .[n_paths > 10] %>%
+  .[order(overlap_fraction)] %>%
+  .[, model] %>%
+  unique()
+
+# PLOT #########################################################################
+
+top_ten_overlap %>%
+  .[n_paths > 10] %>%
+  .[, model:= factor(model, levels = model_names_ordered)] %>%
+  ggplot(., aes(model, overlap_fraction, fill = language)) +
+  geom_bar(stat = "identity", position = position_dodge(0.6)) +
+  scale_fill_manual(values = color_languages, name = "") +
+  coord_flip() + 
+  scale_y_continuous(breaks = breaks_pretty(n = 3)) +
+  labs(x = "", y = "Fraction overlap") +
+  theme_AP() +
+  theme(legend.position = "top")
+
+
+## ----plot_logs, fig.height=3, fig.width=4------------------------------------
+
+# METRICS AT THE FILE AND FUNCTION LEVEL #######################################
+
+folder <- "./datasets/git_logs"
+
+# Get names of files -----------------------------------------------------------
+
+csv_files <- list.files(path = folder, pattern = "\\.csv$", full.names = TRUE)
+
+# Plot -------------------------------------------------------------------------
+
+plot_logs <- lapply(csv_files, fread) %>%
+  lapply(., function(x) x[, .(model, language, cyclomatic_complexity, number_changes, 
+                              change_per_days, age_days)]) %>%
+  rbindlist() %>%
+  ggplot(., aes(cyclomatic_complexity, number_changes, color = language)) +
+  geom_point(alpha = 0.3) +
+  scale_color_manual(values = color_languages, name = "") +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(x = expression(C), y = "number_changes") +
+  facet_wrap(model~language, scales = "free") +
+  theme_AP() +
+  theme(legend.position = "none")
+
+plot_logs
+
+
+## ----print_top_paths, dependson="run_analysis", eval=FALSE, results="hide"----
 # 
 # # FUNCTIONS TO SELECT THE TOP TEN RISKY PATHS PER MODEL AND
 # # PRINT THEM OUT FOR LATEX #####################################################
@@ -703,7 +835,7 @@ out
 # to_tex_list_fun(tmp3)
 
 
-## ----session_information-------------------------------------------------------------------------
+## ----session_information-----------------------------------------------------
 
 # SESSION INFORMATION ##########################################################
 
