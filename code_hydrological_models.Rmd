@@ -39,7 +39,7 @@ knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
 ```{r, warning=FALSE, message=FALSE, results = "hide"}
 
-# PRELIMINARY FUNCTIONS ########################################################
+# PRELIMINARY FUNCTIONS #######################################################
 ################################################################################
 
 sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales", 
@@ -86,6 +86,7 @@ lapply(r_functions, source)
 # Set seed ---------------------------------------------------------------------
 
 seed <- 123
+
 ```
 
 \newpage
@@ -139,73 +140,124 @@ all_callgraphs <- rbind(python_callgraphs, fortran_callgraphs)
 
 # SOURCE CODE CLASSIFICATION BY FUNCTIONAL ROLE ################################
 
-# Strip leading "./models/" ----------------------------------------------------
+# Strip leading "./models/"-----------------------------------------------------
+all_callgraphs[, file_clean:= sub("^\\./models/", "", file)]
 
-all_callgraphs[, file_clean := sub("^\\./models/", "", file)]
+# Provenance: file must be inside ./models to be eligible at all----------------
+all_callgraphs[, in_model_tree:= !is.na(file) & nchar(file) > 0L & 
+                 grepl("^\\./models/", file)]
 
-# model_id = first part before "/" ---------------------------------------------
+# Rest = everything after first segment-----------------------------------------
+all_callgraphs[, rest:= sub("^[^/]+/", "", file_clean)]
 
-all_callgraphs[, model_id := tstrsplit(file_clean, "/", fixed = TRUE, keep = 1L)]
+# If rest starts with model_id/ then drop it (this is the duplicate)------------
+all_callgraphs[, rest:= fifelse(startsWith(rest, paste0(tolower(model), "/")),
+                                sub("^[^/]+/", "", rest), rest)]
 
-# rest = everything after "model_id/" ------------------------------------------
+# In case of triple nesting like vic/vic/vic/...--------------------------------
+all_callgraphs[, rest:= fifelse(startsWith(rest, paste0(tolower(model), "/")),
+                                 sub("^[^/]+/", "", rest), rest)]
 
-all_callgraphs[, rest := sub("^[^/]+/", "", file_clean)]
+# Top_level---------------------------------------------------------------------
+all_callgraphs[, top_level:= tstrsplit(rest, "/", fixed = TRUE, keep = 1L)]
 
-# 2) top_level directory inside each model -------------------------------------
+# Useful generic external patterns (works across models)------------------------
+all_callgraphs[, is_generic_external:= in_model_tree & (
+  grepl("(^|/)(extern|external|externals|third[_-]?party|vendor|vendored)(/|$)", 
+        rest, ignore.case = TRUE) |
+    grepl("(^|/)\\.lib(/|$)", rest, ignore.case = TRUE))]
 
-all_callgraphs[, top_level := tstrsplit(rest, "/", fixed = TRUE, keep = 1L)]
+# CTSM-specific external (framework + FoX parser under cdeps + CESM shared infra)
+all_callgraphs[, is_ctsm_external:= (model == "CTSM") & in_model_tree & (
+  grepl("^cime(/|$)", rest) |
+    grepl("^cime_config(/|$)", rest) |
+    grepl("^components/cdeps(/|$)", rest) |      # FoX XML/SAX parser
+    grepl("(^|/)share_esmf(/|$)", rest) |        # shared ESMF infrastructure
+    grepl("^src/unit_test_shr(/|$)", rest)       # unit tests 
+)]
 
-## 4) component classification (order matters)
+# Extra CTSM allowlist (tightens "model core" to land-model code)---------------
+CTSM_STRICT <- TRUE
 
+all_callgraphs[, is_ctsm_allowed:= TRUE]
+
+if (CTSM_STRICT) {
+  all_callgraphs[model == "CTSM" & in_model_tree, is_ctsm_allowed :=
+                   grepl("^src(/|$)", rest) |
+                   grepl("^lilac(/|$)", rest) |            
+                   grepl("^components/cism(/|$)", rest)]
+}
+
+## Component classification (order matters)-------------------------------------
 all_callgraphs[nchar(file) == 0L | is.na(file), component:= NA_character_]
 
 all_callgraphs[!is.na(file) & nchar(file) > 0L, component:= fcase(
   
-  # 1) CI and vendored libraries ------------------------------------
+  # Anything not in ./models is external immediately
+  !in_model_tree, "external_lib",
   
+  # Generic external dirs (vendored/third_party/etc.)
+  is_generic_external, "external_lib",
+  
+  # CI and vendored libraries 
   top_level == ".github", "ci_cd",
-  top_level == ".lib" | grepl("/\\.lib/", rest),"vendored_lib",
+  top_level == ".lib" | grepl("/\\.lib/", rest), "vendored_lib",
   
-  # 2) CIME / CESM / CDEPS infrastructure (framework) ---------------
-  
+  # CIME / CESM / CDEPS infrastructure (framework) 
   grepl("^cime/CIME/", rest), "framework",
   grepl("^cime_config/", rest), "framework",
   grepl("^cime/doc/", rest), "framework",
-  grepl("^components/cdeps/cime_config/", rest), "framework",   
+  grepl("^components/cdeps/cime_config/", rest), "framework",
   
-  # 3) Tests (incl. SystemTests, case-insensitive) ------------------
+  # CTSM-specific: treat cime + cdeps (incl FoX) as external/framework
+  is_ctsm_external, "framework",
   
+  # CTSM shared "shr_*" routines (framework by symbol)
+  (model == "CTSM") & (grepl("^shr_", from) | grepl("^shr_", to)), "framework",
+  
+  # Tests (incl. SystemTests, case-insensitive) 
   grepl("SystemTests/", rest, ignore.case = TRUE), "tests",
   grepl("/tests?/|^tests?/", rest, ignore.case = TRUE), "tests",
+  grepl("(^|/)unit_test", rest, ignore.case = TRUE), "tests",
   
-  # 4) Couplers: NUOPC / LILAC / CESM / cpl -------------------------
-  
-  grepl("cpl_|/cesm/|/cpl/|/cpl_",rest), "coupler",
-  
-  # 5) Drivers: Fortran code clearly in drivers directories ---------
-  
+  # Drivers: Fortran code clearly in drivers directories 
   grepl("(^|/)drivers(/|$)", rest) & language == "fortran", "driver",
   
-  # 6) CLI / tools: scripts, setup, CTSM python utilities -----------
+  # Couplers: NUOPC / LILAC / CESM / cpl 
+  grepl("cpl_|/cesm/|/cpl/|/cpl_", rest), "coupler",
   
+  # CLI / tools: scripts, setup, CTSM python utilities 
   grepl("tools/|scripts/|cli\\.py$|setup\\.py$", rest), "cli_or_tool",
-  grepl("^python/ctsm/", rest), "cli_or_tool", 
+  grepl("^python/ctsm/", rest), "cli_or_tool",
   
-  # 7) Everything else: model core ----------------------------------
-  
+  # Everything else: model core 
   default = "model_core"
 )]
 
-# Create column to include in risk calculations or not -------------------------
+# include flag for risk calculations ----------------------------------------
+# Key changes:
+# - require in_model_tree
+# - exclude external_lib/framework/tests/etc (already via component filter)
+# - CTSM strict allowlist (optional)
+all_callgraphs[, include_in_risk := (
+  in_model_tree &
+    language %chin% c("fortran", "python") &
+    component %chin% c("model_core", "coupler") &
+    (model != "CTSM" | !CTSM_STRICT | is_ctsm_allowed)
+)]
 
-all_callgraphs[, include_in_risk:= (language %chin% c("fortran", "python") &
-                          component %chin% c("model_core", "coupler"))]
+# --- Sanity check: should now be FALSE for the SAX/FoX functions in CTSM
+all_callgraphs[
+  model == "CTSM" & include_in_risk &
+    (grepl("sax|parseDTD|parsefile|parsestring|runParser", from, ignore.case = TRUE) |
+       grepl("sax|parseDTD|parsefile|parsestring|runParser", to,   ignore.case = TRUE)),
+  .(from, to, file, rest, component)
+]
 
 # SUmmarize --------------------------------------------------------------------
 
 all_callgraphs[, .N, component]
 all_callgraphs[, .N, include_in_risk]
-
 
 # Remove module calls -------------------------------------------------
 
@@ -219,7 +271,7 @@ cc_unique <- fread("./datasets/cyclomatic_complexity_functions.csv")
 # CREATE NETWORK FROM CALL GRAPHS ##############################################
 
 all_graphs <- all_callgraphs[, .(graph = list(as_tbl_graph(.SD, directed = TRUE))), 
-                             .(model, language)]
+                             model]
 
 # ADD NODE METRICS #############################################################
 
@@ -231,9 +283,9 @@ gamma <- 0.1  # Weight to betweenness (critical bridge)
 
 # Add node metrics -------------------------------------------------------------
 
-all_graphs[, graph:= Map(function(g, m, lang) {
+all_graphs[, graph:= Map(function(g, m) {
   
-  comp_sub <- cc_unique[model == m & language == lang]
+  comp_sub <- cc_unique[model == m]
   
   # mean cyclomatic complexity for this model & language -----------------------
   
@@ -248,17 +300,17 @@ all_graphs[, graph:= Map(function(g, m, lang) {
     
     # replace NA cyclomatic_complexity with model–language mean ----------------
   
-    mutate(cyclomatic_complexity = if (!is.na(mean_cyclo)) {
-      
-        ifelse(is.na(cyclomatic_complexity), mean_cyclo, cyclomatic_complexity)
-      
-      } else {
-        
-        # if even the mean is NA (all NA in comp_sub), leave as-is
-        
-        cyclomatic_complexity
-      }
-    ) %>%
+  mutate(cyclomatic_complexity = if (!is.na(mean_cyclo)) {
+    
+    ifelse(is.na(cyclomatic_complexity), mean_cyclo, cyclomatic_complexity)
+    
+  } else {
+    
+    # if even the mean is NA (all NA in comp_sub), leave as-is
+    
+    cyclomatic_complexity
+  }
+  ) %>%
     
     # Remove Python MODULE_AGG / CLASS_AGG nodes from this graph 
     # because they are not callable --------------------------------------------
@@ -267,15 +319,16 @@ all_graphs[, graph:= Map(function(g, m, lang) {
     
     # Calculation of key network metrics ---------------------------------------
   
-  mutate(indeg = centrality_degree(mode = "in"),
+  mutate(type = type, 
+         indeg = centrality_degree(mode = "in"),
          outdeg = centrality_degree(mode = "out"),
          btw = centrality_betweenness(directed = TRUE, weights = NULL),
          cyclo_sc = rescale(cyclomatic_complexity),
          indeg_sc = rescale(indeg),
          btw_sc = rescale(btw), 
          risk_score = alpha * cyclo_sc + beta * indeg_sc + gamma * btw_sc)
-         }, 
-  graph, model, language)]
+}, 
+graph, model)]
 
 # EXTRACT NODE DF ##############################################################
 
@@ -313,8 +366,7 @@ order <- "first"
 # Run the function (we remove the vic and python model implementation because 
 # there are not paths) ---------------------------------------------------------
 
-all_graphs[!c(model == "VIC" & language == "python"), 
-           uncertainty_sensitivity:= Map(full_ua_sa_risk_fun, node_df, paths_tbl, N, order)]
+all_graphs[!model == "VIC", uncertainty_sensitivity:= Map(full_ua_sa_risk_fun, node_df, paths_tbl, N, order)]
 
 
 # UNNEST APPROPRIATELY #########################################################
@@ -328,7 +380,7 @@ unnested_df <- all_graphs %>%
 full_sa_df <- unnested_df %>%
   select(us_nodes) %>% 
   unnest(cols = c(us_nodes)) %>%
-  select(name, model, language, sensitivity_indices) %>%
+  select(name, model, sensitivity_indices) %>%
   unnest(cols = c(sensitivity_indices))
 
 # Export
@@ -337,7 +389,7 @@ fwrite(full_sa_df, "full_sa_df.csv")
 # Create UA data frame ---------------------------------------------------------
 
 full_ua_df <- unnested_df %>%
-  select(model, language, us_paths) %>%
+  select(model, us_paths) %>%
   unnest(cols = c(us_paths)) %>%
   data.table()
 
@@ -349,10 +401,10 @@ fwrite(full_ua_df, "full_ua_df.csv")
 
 # CALCULATE SOME DESCRIPTIVE METRICS ###########################################
 
-tmp <- data.table(full_paths_df)[, .(n_paths = .N), .(model, language)] %>%
+tmp <- data.table(full_paths_df)[, .(n_paths = .N), model] %>%
   .[order(-n_paths)]
 
-tmp2 <- data.table(full_node_df)[, .(n_nodes = .N), .(model, language)] %>%
+tmp2 <- data.table(full_node_df)[, .(n_nodes = .N), model] %>%
   .[order(-n_nodes)]
 
 # Path to node ratio: how interconnected the model is.
@@ -370,19 +422,26 @@ models_metrics
 
 # Read descriptive_stats_file --------------------------------------------------
 
-descriptive_stats <- data.table(read_xlsx("./datasets/descriptive_statistics/descriptive_statistics.xlsx"))
+num_cols <- c("files","functions","modules","lines","lines_code","lines_comments")
+
+descriptive_stats <- data.table(read_xlsx("./datasets/descriptive_statistics/descriptive_statistics.xlsx")) 
+  
+descriptive_stats <- dcast(melt(descriptive_stats, id.vars="model", measure.vars=num_cols),
+        model ~ variable, value.var ="value", fun.aggregate = function(z) sum(z, na.rm = TRUE)) %>%
+  .[, lines_function := lines_code / functions]
+
 all_descriptive_df <- merge(models_metrics, descriptive_stats)
 
 # Sort by model ----------------------------------------------------------------
-  model_ordered <- all_descriptive_df[, sum(lines), model] %>%
+model_ordered <- all_descriptive_df[, sum(lines), model] %>%
   .[order(V1)]
 
 # Plot descriptive measures per model ------------------------------------------
 
 plot_descriptive <- melt(all_descriptive_df, measure.vars = c("lines_code", "n_nodes", "n_paths", 
-                                          "path_to_node_ratio", "model_cc")) %>% 
+                                                              "path_to_node_ratio", "model_cc")) %>% 
   .[, model:= factor(model, levels = model_ordered[, model])] %>%
-  ggplot(., aes(model, value, fill = language)) +
+  ggplot(., aes(model, value)) +
   geom_col() +
   coord_flip() +
   scale_y_continuous(breaks = breaks_pretty(n = 2)) +
@@ -480,6 +539,7 @@ plot_c_model <- metrics_combined[grep("^func_", names(metrics_combined))] %>%
   rbindlist() %>%
   .[!type %in% excluded_classes_vec] %>%
   .[, model:= factor(model, levels = model_ordered[, model])] %>%
+  na.omit() %>%
   ggplot(., aes(model, cyclomatic_complexity, fill = language, color = language)) +
   geom_boxplot(outlier.size = 0.7) +
   coord_flip() +
@@ -571,7 +631,7 @@ bottom <- plot_grid(plot_c_vs_loc, plot_bar_cyclomatic, plot_c_model,
                     plot_bar_category, ncol = 4, rel_widths = c(0.2, 0.24, 0.34, 0.22), 
                     labels = c("b", "c", "d"))
 plot_grid(top_plot, bottom, ncol = 1, rel_heights = c(0.52, 0.48), align = "h",
-  axis = "tb")
+          axis = "tb")
 ```
 
 
@@ -583,12 +643,25 @@ plot_grid(top_plot, bottom, ncol = 1, rel_heights = c(0.52, 0.48), align = "h",
 
 # PLOT FIGURES #################################################################
 
+# Define language of models ----------------------------------------------------
+
+python_models <- c("CWatM", "GR4J", "HBV", "PCR-GLOBWB")
+fortran_models <- c("ORCHIDEE", "H08", "HYPE", "DBH", "SACRAMENTO")
+python_and_fortran <- c("CTSM", "SWAT", "MHM", "HydroPy", "VIC")
+
+all_graphs[, language := fcase(model %chin% python_models, "python",
+                               model %chin% fortran_models, "fortran",
+                               model %chin% python_and_fortran, "python+fortran",
+                               default = NA_character_)]
+
 # Plot graphs ------------------------------------------------------------------
 
 set.seed(seed)
 
+
 # Thickness of edge:frequency across top-10 riski paths
 # Color of edge: mean risk of paths using that edge
+
 all_graphs <- all_graphs[, plot_obj:= mapply(plot_top_paths_fun, call_g = graph, 
                                              paths_tbl = paths_tbl, model.name = model,
                                              language = language, SIMPLIFY = FALSE)]
@@ -599,21 +672,18 @@ all_graphs <- all_graphs[, plot_obj:= mapply(plot_top_paths_fun, call_g = graph,
 # PLOT OTHER FIGURES ###########################################################
 
 selected_models <- data.table(model = c("CTSM", "PCR-GLOBWB", "DBH", "HYPE", 
-                                        "ORCHIDEE", "SWAT", "CWatM", "MHM"),
-                              language = c("fortran", "python", "fortran", 
-                                           "fortran", "fortran", "fortran", 
-                                           "python", "python"))
+                                        "ORCHIDEE", "SWAT", "CWatM", "MHM"))
 
 # Plot call graphs -------------------------------------------------------------
 
-tmp <- all_graphs[selected_models, on = .(model, language)] 
+tmp <- all_graphs[selected_models, on = .(model)] 
 plot_all_risky_paths <- plot_grid(plotlist = tmp$plot_obj, ncol = 2, align = "hv")
-
+                         
 # Plot risk_slope --------------------------------------------------------------
 
 a <- full_paths_df %>%
   data.table() %>%
-  .[selected_models, on = .(model, language)] %>%
+  .[selected_models, on = .(model)] %>%
   .[order(-p_path_fail), .SD[1:10], model] %>%
   ggplot(., aes(reorder(model, risk_slope), risk_slope)) +
   geom_boxplot() +
@@ -627,7 +697,7 @@ a <- full_paths_df %>%
 
 b <- full_paths_df %>%
   data.table() %>%
-  .[selected_models, on = .(model, language)] %>%
+  .[selected_models, on = .(model)] %>%
   .[order(-p_path_fail), .SD[1:10], model] %>%
   ggplot(., aes(reorder(model, gini_node_risk), gini_node_risk)) +
   geom_boxplot() +
@@ -639,7 +709,7 @@ b <- full_paths_df %>%
 
 c <- full_sa_df %>%
   data.table() %>%
-  .[selected_models, on = .(model, language)] %>%
+  .[selected_models, on = .(model)] %>%
   .[sensitivity == "Si", .(median = median(original, na.rm = TRUE)), .(model, parameters)] %>%
   ggplot(., aes(x = parameters, y = model, fill = median)) +
   geom_tile() +
@@ -655,16 +725,14 @@ c <- full_sa_df %>%
 
 # Plot interaction strength ----------------------------------------------------
 
+tmp <- full_sa_df %>%
+  data.table() %>%
+  dcast(., name + model  + parameters ~ sensitivity, value.var = "original", 
+        fun.aggregate= mean) %>%
+  .[, interaction:= Ti - Si]
 
-tmp <- split(full_sa_df, full_sa_df$language)
-tmp2 <- lapply(tmp, data.table) %>%
-  lapply(., function(x) {
-    dcast(x, name + model + language + parameters ~ sensitivity,
-          value.var = "original") %>%
-      .[, interaction:= Ti - Si]})
-
-d <- do.call(rbind, tmp2) %>%
-  .[selected_models, on = .(model, language)] %>%
+d <- tmp %>%
+  .[selected_models, on = .(model)] %>%
   .[, .(median = median(interaction, na.rm = TRUE)), .(parameters, model)] %>%
   ggplot(., aes(x = parameters, y = model, fill = median)) +
   geom_tile() +
@@ -678,7 +746,7 @@ d <- do.call(rbind, tmp2) %>%
   labs(x = NULL, y = NULL) +
   theme_AP() +
   theme(legend.position = "none")
-       
+
 
 # MERGE #######################################################################
 
@@ -710,7 +778,7 @@ paths_long <- full_paths_df[, .(node = unlist(path_nodes),
                                 risk_slope = risk_slope,
                                 risk_mean = risk_mean,
                                 risk_sum  = risk_sum), 
-                            .(model, language, path_id)]
+                            .(model, path_id)]
 
 
 # Aggregate at function level --------------------------------------------------
@@ -722,12 +790,12 @@ node_from_paths <- paths_long[, .(n_paths = .N,
                                   mean_gini = mean(gini_node_risk, na.rm = TRUE),
                                   mean_slope = mean(risk_slope, na.rm = TRUE),
                                   mean_risksum = mean(risk_sum, na.rm = TRUE)),
-                              .(model, language, node)]
+                              .(model, node)]
 
 # Join with nodes --------------------------------------------------------------
 
-node_summary <- merge(node_from_paths, full_node_df, by.x = c("model", "language", "node"),
-                      by.y = c("model", "language", "name"), all.x = TRUE)
+node_summary <- merge(node_from_paths, full_node_df, by.x = c("model", "node"),
+                      by.y = c("model", "name"), all.x = TRUE)
 
 # Calculate risk mass ----------------------------------------------------------
 
@@ -744,7 +812,7 @@ top_share <- function(X = 0.05) {
     .(X = X, n_nodes = .N, n_top = n_top, 
       share_risk_mass_topX = sum(dt$risk_mass[1:n_top]) / sum(dt$risk_mass))
   },
-  .(model, language)
+  model
   ]
 }
 
@@ -757,10 +825,17 @@ tmp
 
 # Plot--------------------------------------------------------------------------
 
-merge(all_descriptive_df, tmp, by = c("model", "language")) %>%
+color_languages_2 <- c("fortran" = "steelblue", "python" = "lightgreen", 
+                       "python+fortran" = "black")
+
+merge(all_descriptive_df, tmp, by = "model") %>%
+  .[, language := fcase(model %chin% python_models, "python",
+                       model %chin% fortran_models, "fortran",
+                       model %chin% python_and_fortran, "python+fortran",
+                       default = NA_character_)] %>%
   ggplot(., aes(share_risk_mass_topX, path_to_node_ratio, color = language)) +
   geom_point() +
-  scale_color_manual(values = color_languages, name = "") +
+  scale_color_manual(values = color_languages_2, name = "") +
   geom_text_repel(aes(label = model), size = 2, max.overlaps = Inf, show.legend = FALSE) +
   scale_y_log10() +
   labs(x = "Proportion path-level risk top 5% nodes", y = "path_to_node_ratio") +
@@ -774,21 +849,17 @@ merge(all_descriptive_df, tmp, by = c("model", "language")) %>%
 # PLOT THE TOP 50 PATHS PER MODEL ##############################################
 
 tmp <- full_ua_df %>%
-  .[order(-P_k_mean), .SD[1:50], .(model, language)] %>%
-  split(., list(.$model, .$language)) %>%
-  lapply(., na.omit)
+  .[order(-P_k_mean), .SD[1:50], model] %>%
+  na.omit() %>%
+  split(., .$model)
 
-# Remove empty slots ----------------------------------------------------------
-
-tmp2 <- tmp[sapply(tmp, function(x) nrow(x) > 0)]
-  
 # Plot in a for loop ----------------------------------------------------------
 
 out <- list()
 
-for ( i in 1:length(tmp2)) {
+for ( i in 1:length(tmp)) {
   
-  out[[i]] <- ggplot(tmp2[[i]], aes(P_k_mean, reorder(path_str, P_k_mean), color = risk_slope))  +
+  out[[i]] <- ggplot(tmp[[i]], aes(P_k_mean, reorder(path_str, P_k_mean), color = risk_slope))  +
     geom_point(size = 1) +
     geom_errorbar(aes(xmin = P_k_q025, xmax = P_k_q975), height = 0.2) +
     scale_color_gradient2(low = "blue", mid = "grey80", high = "red", midpoint = 0,             
@@ -846,23 +917,270 @@ folder <- "./datasets/git_logs"
 
 csv_files <- list.files(path = folder, pattern = "\\.csv$", full.names = TRUE)
 
-# Plot -------------------------------------------------------------------------
+# Merge and flatten ------------------------------------------------------------
 
-plot_logs <- lapply(csv_files, fread) %>%
-  lapply(., function(x) x[, .(model, language, cyclomatic_complexity, number_changes, 
+logs_dt <- lapply(csv_files, fread) %>%
+  lapply(., function(x) x[, .(model, language, `function`, cyclomatic_complexity, number_changes, 
                               change_per_days, age_days)]) %>%
   rbindlist() %>%
-  ggplot(., aes(cyclomatic_complexity, number_changes, color = language)) +
+  na.omit() %>%
+  setnames(., "function", "node")
+
+# Create and run function ------------------------------------------------------
+
+spearman_fun <- function(dt) {
+  
+  cor.test(dt[, cyclomatic_complexity],
+           dt[, number_changes], method = "spearman")$estimate[[1]]
+}
+
+rho_values <- logs_dt[, .(rho = spearman_fun(.SD)), model]
+
+# Create dt to position labels ------------------------------------------------
+
+pos_df <- logs_dt %>%
+  filter(is.finite(cyclomatic_complexity), is.finite(number_changes)) %>%
+  group_by(model) %>%
+  summarise(x = min(cyclomatic_complexity, na.rm = TRUE),
+            y = max(number_changes, na.rm = TRUE), .groups = "drop")
+
+# join rho and make label text -------------------------------------------------
+
+lab_df <- rho_values %>%
+  left_join(pos_df, by = "model") %>%
+  mutate(label = ifelse(is.na(rho), "rho==NA", paste0("rho==", round(rho, 2))))
+
+# Plot -------------------------------------------------------------------------
+
+plot_logs <-  logs_dt %>%
+  ggplot(aes(cyclomatic_complexity, number_changes, color = language)) +
   geom_point(alpha = 0.3) +
   scale_color_manual(values = color_languages, name = "") +
   scale_x_log10() +
   scale_y_log10() +
   labs(x = expression(C), y = "number_changes") +
-  facet_wrap(model~language, scales = "free") +
+  facet_wrap(~model, scales = "free_y") +
+  geom_text(data = lab_df %>% na.omit(),
+            aes(x = x, y = y, label = label), inherit.aes = FALSE,
+            hjust = -0.05, vjust = 1.2, size = 2, parse = TRUE) +
+  coord_cartesian(clip = "off") +
   theme_AP() +
-  theme(legend.position = "none")
+  theme(legend.position = "top")
 
 plot_logs
+
+# ARE REFACTORING ACTIONS MORE COMMON IN RISKY PATHS? ##########################
+
+models_to_check <- unique(logs_dt$model)
+
+# Extract name of functions in top ten risky paths per model -------------------
+
+list_nodes <- full_paths_df %>%
+  data.table() %>%
+  .[order(-p_path_fail), .SD[1:10], model] %>%
+  .[model %in% models_to_check] %>%
+  na.omit() %>%
+  .[, .(node = unlist(path_nodes)), model]
+
+# keep only unique risk nodes
+risk_nodes <- unique(list_nodes[, .(model, node)])
+risk_nodes[, high_risk_path := TRUE]
+
+# Filter out and keep only models that have log data ---------------------------
+
+logs_dt <- logs_dt[model %in% models_to_check]
+
+# left join into logs_dt -------------------------------------------------------
+
+logs_dt[risk_nodes, high_risk_path:= i.high_risk_path,
+        on = .(model, node)]
+
+# Turn NAs into FALSE ----------------------------------------------------------
+
+logs_dt[is.na(high_risk_path), high_risk_path := FALSE]
+
+# We now quantify effect size using the common-language statistic A,
+# defined as the probability that a randomly selected high-risk function 
+# has higher churn than a randomly selected non-risk function. -----------------
+
+wilcox_dt <- logs_dt[is.finite(number_changes),
+                     {
+                       x <- number_changes[high_risk_path]
+                       y <- number_changes[!high_risk_path]
+                       
+                       n_x <- length(x)
+                       n_y <- length(y)
+                       
+                       if (n_x >= 3L && n_y >= 3L) {
+                         
+                         wt <- wilcox.test(x, y, alternative = "greater", exact = FALSE)
+                         
+                         # Wilcoxon rank-sum statistic (sum of ranks for x)------------------------
+                         W <- as.numeric(wt$statistic)
+                         
+                         # Convert to Mann–Whitney U ----------------------------------------------
+                         U <- W - n_x * (n_x + 1) / 2
+                         
+                         # Common-language effect size (A statistic) ------------------------------
+                         A <- U / (n_x * n_y)
+                         
+                         .(
+                           p_value = wt$p.value,
+                           A_common_language = A,
+                           n_risk = n_x,
+                           n_nonrisk = n_y,
+                           median_risk = median(x),
+                           median_nonrisk = median(y)
+                         )
+                         
+                       } else {
+                         
+                         .(
+                           p_value = NA_real_,
+                           A_common_language = NA_real_,
+                           n_risk = n_x,
+                           n_nonrisk = n_y,
+                           median_risk = if (n_x) median(x) else NA_real_,
+                           median_nonrisk = if (n_y) median(y) else NA_real_
+                         )
+                       }
+                     },
+                     model
+]
+
+
+wilcox_dt
+```
+
+```{r plot_tile_top_n, dependson="run_analysis", fig.height=3, fig.width=4}
+
+# WHICH PATHS IMPROVE IF A NODE'S RISK IS FIXED TO 0? ##########################
+
+# how many nodes and paths to show in the heatmap ------------------------------
+
+number_of_interest <- 30
+N_nodes <- number_of_interest   
+K_paths <- number_of_interest  
+
+list_plots <- list_nodes <- list()
+
+for (i in 1:nrow(all_graphs)) {
+  
+  if (i == 7) next
+  
+  model.name <- all_graphs$node_df[[i]]$model
+  
+  node_df <- all_graphs$node_df[[i]]
+  paths_tbl <- all_graphs$paths_tbl[[i]]
+  
+  # top-N nodes by failure probability -------------------------------------------
+  
+  top_nodes <- node_df %>%
+    arrange(desc(risk_score)) %>%
+    slice_head(n = N_nodes)
+  
+  # Return list of nodes ---------------------------------------------------------
+  
+  list_nodes[[i]] <- top_nodes %>%
+    transmute(model = model,
+              name = name,
+              risk_score = risk_score,
+              cyclomatic_complexity = cyclomatic_complexity,
+              indegree = indeg,
+              outdegree = outdeg,
+              betweenness = btw) %>%
+    data.table::as.data.table()
+  
+  # top-K paths by path failure probability --------------------------------------  
+  
+  top_paths <- paths_tbl %>%
+    arrange(desc(p_path_fail)) %>%
+    slice_head(n = K_paths)
+  
+  # COMPUTE ######################################################################  
+  
+  # make a named vector for fast lookup of risk_score by node name -------------------
+  
+  p_map <- setNames(node_df$risk_score, node_df$name)
+  
+  # Compute ----------------------------------------------------------------------
+  
+  delta_tbl <- map_dfr(seq_len(nrow(top_nodes)), function(i) {
+    node_name <- top_nodes$name[i]
+    
+    map_dfr(seq_len(nrow(top_paths)), function(j) {
+      pid <- top_paths$path_id[j]
+      nodes_vec <- top_paths$path_nodes[[j]]
+      P_orig <- top_paths$p_path_fail[j]
+      
+      # if node not in this path, improvement is zero ----------------------------
+      
+      if (!node_name %in% nodes_vec) {
+        tibble(node = node_name, 
+               path_id = pid,
+               deltaP = 0)
+      } else {
+        
+        # failure probs along the path -------------------------------------------
+        
+        p_vec <- p_map[nodes_vec]
+        
+        # if node appears multiple times, fixing ANY of its appearances is enough:
+        
+        idxs <- which(nodes_vec == node_name)
+        
+        # we fix all occurrences (set all to zero) ------------
+        
+        p_vec_fix <- p_vec
+        p_vec_fix[idxs] <- 0
+        
+        P_fix <- if (length(p_vec_fix) == 0) 0 else 1 - prod(1 - p_vec_fix)
+        tibble(node = node_name,
+               path_id = pid,
+               deltaP = P_orig - P_fix)
+      }
+    })
+  })
+  
+  # order factors so tha highest risk nodes are at the top and the highest
+  # risk paths are on the left ---------------------------------------------------
+  
+  # Bright cells: nodes that are chokepoints for a given path.
+  # Rows with many bright cells: nodes whose refactoring will improve many
+  # risk paths (global chokepoints)
+  # Columns with few very bright cells: paths dominated by a single risky node
+  # Rows/columns with dark colors: diffuse risk.
+  
+  delta_tbl <- delta_tbl %>%
+    mutate(node = factor(node, levels = rev(top_nodes$name)),  
+           path_id = factor(path_id, levels = top_paths$path_id))
+  
+  
+  # Plote the tile figure --------------------------------------------------------
+  
+  minP <- min(delta_tbl$deltaP, na.rm = TRUE)
+  medP <- median(delta_tbl$deltaP, na.rm = TRUE)
+  maxP <- max(delta_tbl$deltaP, na.rm = TRUE)
+  
+  list_plots[[i]] <- ggplot(delta_tbl, aes(x = path_id, y = node, fill = deltaP)) +
+    geom_tile() +
+    scale_fill_viridis_c(option = "C", 
+                         name = expression(Delta * P[k]),
+                         trans  = "sqrt") +
+    theme_AP() +
+    theme(axis.text.x  = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 5),
+          axis.text.y = element_text(size = 5),
+          axis.title.x = element_text(margin = margin(t = 5)),
+          axis.title.y = element_text(margin = margin(r = 5))) +
+    labs(x = "Path ID", y = "Node ID") +
+    ggtitle(model.name)
+  
+}
+
+for (i in 1:length(list_plots)) {
+  print(list_plots[[i]])
+  print(list_nodes[[i]])
+}
 ```
 
 ```{r print_top_paths, dependson="run_analysis", eval=FALSE, results="hide"}
@@ -870,17 +1188,15 @@ plot_logs
 # FUNCTIONS TO SELECT THE TOP TEN RISKY PATHS PER MODEL AND
 # PRINT THEM OUT FOR LATEX #####################################################
 
-tmp <- full_paths_df[order(-p_path_fail), .SD[1:10], .(model, language)] %>%
-  .[, .(model, language, path_str)]
+tmp <- full_paths_df[order(-p_path_fail), .SD[1:10], model] %>%
+  .[, .(model, path_str)] %>%
+  na.omit() %>%
+  split(., .$model)
 
-tmp2 <- split(tmp, list(tmp$model, tmp$language))
 
-tmp3 <- tmp2[sapply(tmp2, nrow) > 0] %>%
-  lapply(., function(x) na.omit(x) %>%
-           .[, .(path_str)])
-
-to_tex_list_fun(tmp3)
+to_tex_list_fun(tmp)
 ```
+
 \newpage
 
 # Session information
