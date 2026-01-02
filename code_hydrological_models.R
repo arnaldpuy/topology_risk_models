@@ -1,10 +1,10 @@
-## ----setup, include=FALSE--------------------------------------
+## ----setup, include=FALSE--------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
 
-## ----warning=FALSE, message=FALSE, results = "hide"------------
+## ----warning=FALSE, message=FALSE, results = "hide"------------------
 
-# PRELIMINARY FUNCTIONS ########################################################
+# PRELIMINARY FUNCTIONS #######################################################
 ################################################################################
 
 sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales", 
@@ -54,7 +54,7 @@ seed <- 123
 
 
 
-## ----run_analysis, cache.lazy=FALSE----------------------------
+## ----run_analysis, cache.lazy=FALSE----------------------------------
 
 # CREATE DATASET ##############################################################
 
@@ -101,64 +101,58 @@ all_callgraphs <- rbind(python_callgraphs, fortran_callgraphs)
 
 # SOURCE CODE CLASSIFICATION BY FUNCTIONAL ROLE ################################
 
-# Strip leading "./models/"
-all_callgraphs[, file_clean := sub("^\\./models/", "", file)]
+# Strip leading "./models/"-----------------------------------------------------
+all_callgraphs[, file_clean:= sub("^\\./models/", "", file)]
 
-# Provenance: file must be inside ./models to be eligible at all
-all_callgraphs[, in_model_tree := !is.na(file) & nchar(file) > 0L & 
+# Provenance: file must be inside ./models to be eligible at all----------------
+all_callgraphs[, in_model_tree:= !is.na(file) & nchar(file) > 0L & 
                  grepl("^\\./models/", file)]
 
-# Rest = everything after first segment
-all_callgraphs[, rest := sub("^[^/]+/", "", file_clean)]
+# Rest = everything after first segment-----------------------------------------
+all_callgraphs[, rest:= sub("^[^/]+/", "", file_clean)]
 
-# If rest starts with model_id/ then drop it (this is the duplicate)
-all_callgraphs[, rest := fifelse(
-  startsWith(rest, paste0(tolower(model), "/")),
-  sub("^[^/]+/", "", rest),
-  rest
-)]
+# If rest starts with model_id/ then drop it (this is the duplicate)------------
+all_callgraphs[, rest:= fifelse(startsWith(rest, paste0(tolower(model), "/")),
+                                sub("^[^/]+/", "", rest), rest)]
 
-# Optional: run once more in case of triple nesting like vic/vic/vic/...
-all_callgraphs[, rest := fifelse(
-  startsWith(rest, paste0(tolower(model), "/")),
-  sub("^[^/]+/", "", rest),
-  rest
-)]
+# In case of triple nesting like vic/vic/vic/...--------------------------------
+all_callgraphs[, rest:= fifelse(startsWith(rest, paste0(tolower(model), "/")),
+                                 sub("^[^/]+/", "", rest), rest)]
 
-# Top_level
-all_callgraphs[, top_level := tstrsplit(rest, "/", fixed = TRUE, keep = 1L)]
+# Top_level---------------------------------------------------------------------
+all_callgraphs[, top_level:= tstrsplit(rest, "/", fixed = TRUE, keep = 1L)]
 
-# seful generic external patterns (works across models)
-all_callgraphs[, is_generic_external := in_model_tree & (
+# Useful generic external patterns (works across models)------------------------
+all_callgraphs[, is_generic_external:= in_model_tree & (
   grepl("(^|/)(extern|external|externals|third[_-]?party|vendor|vendored)(/|$)", 
         rest, ignore.case = TRUE) |
-    grepl("(^|/)\\.lib(/|$)", rest, ignore.case = TRUE)
-)]
+    grepl("(^|/)\\.lib(/|$)", rest, ignore.case = TRUE))]
 
 # CTSM-specific external (framework + FoX parser under cdeps + CESM shared infra)
-all_callgraphs[, is_ctsm_external := (model == "CTSM") & in_model_tree & (
+all_callgraphs[, is_ctsm_external:= (model == "CTSM") & in_model_tree & (
   grepl("^cime(/|$)", rest) |
     grepl("^cime_config(/|$)", rest) |
     grepl("^components/cdeps(/|$)", rest) |      # FoX XML/SAX parser
     grepl("(^|/)share_esmf(/|$)", rest) |        # shared ESMF infrastructure
-    grepl("^src/unit_test_shr(/|$)", rest)       # unit tests (should be excluded)
+    grepl("^src/unit_test_shr(/|$)", rest)       # unit tests 
 )]
 
-# Optional CTSM allowlist (tightens "model core" to actual land-model code)
+# Extra CTSM allowlist (tightens "model core" to land-model code)---------------
 CTSM_STRICT <- TRUE
-all_callgraphs[, is_ctsm_allowed := TRUE]
+
+all_callgraphs[, is_ctsm_allowed:= TRUE]
+
 if (CTSM_STRICT) {
   all_callgraphs[model == "CTSM" & in_model_tree, is_ctsm_allowed :=
                    grepl("^src(/|$)", rest) |
                    grepl("^lilac(/|$)", rest) |            
-                   grepl("^components/cism(/|$)", rest)    
-  ]
+                   grepl("^components/cism(/|$)", rest)]
 }
 
-## Component classification 
-all_callgraphs[nchar(file) == 0L | is.na(file), component := NA_character_]
+## Component classification (order matters)-------------------------------------
+all_callgraphs[nchar(file) == 0L | is.na(file), component:= NA_character_]
 
-all_callgraphs[!is.na(file) & nchar(file) > 0L, component := fcase(
+all_callgraphs[!is.na(file) & nchar(file) > 0L, component:= fcase(
   
   # Anything not in ./models is external immediately
   !in_model_tree, "external_lib",
@@ -166,11 +160,11 @@ all_callgraphs[!is.na(file) & nchar(file) > 0L, component := fcase(
   # Generic external dirs (vendored/third_party/etc.)
   is_generic_external, "external_lib",
   
-  # CI and vendored libraries ------------------------------------
+  # CI and vendored libraries 
   top_level == ".github", "ci_cd",
   top_level == ".lib" | grepl("/\\.lib/", rest), "vendored_lib",
   
-  # CIME / CESM / CDEPS infrastructure (framework) ---------------
+  # CIME / CESM / CDEPS infrastructure (framework) 
   grepl("^cime/CIME/", rest), "framework",
   grepl("^cime_config/", rest), "framework",
   grepl("^cime/doc/", rest), "framework",
@@ -182,22 +176,22 @@ all_callgraphs[!is.na(file) & nchar(file) > 0L, component := fcase(
   # CTSM shared "shr_*" routines (framework by symbol)
   (model == "CTSM") & (grepl("^shr_", from) | grepl("^shr_", to)), "framework",
   
-  # Tests (incl. SystemTests, case-insensitive) ------------------
+  # Tests (incl. SystemTests, case-insensitive) 
   grepl("SystemTests/", rest, ignore.case = TRUE), "tests",
   grepl("/tests?/|^tests?/", rest, ignore.case = TRUE), "tests",
   grepl("(^|/)unit_test", rest, ignore.case = TRUE), "tests",
   
-  # Drivers: Fortran code clearly in drivers directories ---------
+  # Drivers: Fortran code clearly in drivers directories 
   grepl("(^|/)drivers(/|$)", rest) & language == "fortran", "driver",
   
-  # Couplers: NUOPC / LILAC / CESM / cpl -------------------------
+  # Couplers: NUOPC / LILAC / CESM / cpl 
   grepl("cpl_|/cesm/|/cpl/|/cpl_", rest), "coupler",
   
-  # CLI / tools: scripts, setup, CTSM python utilities -----------
+  # CLI / tools: scripts, setup, CTSM python utilities 
   grepl("tools/|scripts/|cli\\.py$|setup\\.py$", rest), "cli_or_tool",
   grepl("^python/ctsm/", rest), "cli_or_tool",
   
-  # Everything else: model core ----------------------------------
+  # Everything else: model core 
   default = "model_core"
 )]
 
@@ -216,10 +210,8 @@ all_callgraphs[, include_in_risk := (
 # --- Sanity check: should now be FALSE for the SAX/FoX functions in CTSM
 all_callgraphs[
   model == "CTSM" & include_in_risk &
-    (grepl("sax|parseDTD|parsefile|parsestring|runParser", from, 
-           ignore.case = TRUE) |
-       grepl("sax|parseDTD|parsefile|parsestring|runParser", to,
-             ignore.case = TRUE)),
+    (grepl("sax|parseDTD|parsefile|parsestring|runParser", from, ignore.case = TRUE) |
+       grepl("sax|parseDTD|parsefile|parsestring|runParser", to,   ignore.case = TRUE)),
   .(from, to, file, rest, component)
 ]
 
@@ -366,7 +358,7 @@ full_ua_df <- unnested_df %>%
 fwrite(full_ua_df, "full_ua_df.csv")
 
 
-## ----some_stats, dependson="run_analysis"----------------------
+## ----some_stats, dependson="run_analysis"----------------------------
 
 # CALCULATE SOME DESCRIPTIVE METRICS ###########################################
 
@@ -805,7 +797,7 @@ merge(all_descriptive_df, tmp, by = "model") %>%
   theme(legend.position = c(0.2, 0.8))
 
 
-## ----plot_paths, dependson="run_analysis"----------------------
+## ----plot_paths, dependson="run_analysis"----------------------------
 
 # PLOT THE TOP 50 PATHS PER MODEL ##############################################
 
@@ -838,7 +830,7 @@ for ( i in 1:length(tmp)) {
 out
 
 
-## ----check_overlap, fig.height=2.8, fig.width=2.5--------------
+## ----check_overlap, fig.height=2.8, fig.width=2.5--------------------
 
 # READ RANKING OF THE UA / SA DATASET ##########################################
 
@@ -868,7 +860,7 @@ top_ten_overlap %>%
   theme(legend.position = "top")
 
 
-## ----plot_logs, fig.height=3, fig.width=4----------------------
+## ----plot_logs, fig.height=3, fig.width=4----------------------------
 
 # METRICS AT THE FILE AND FUNCTION LEVEL #######################################
 
@@ -1158,7 +1150,7 @@ for (i in 1:length(list_plots)) {
 # to_tex_list_fun(tmp)
 
 
-## ----session_information---------------------------------------
+## ----session_information---------------------------------------------
 
 # SESSION INFORMATION ##########################################################
 
