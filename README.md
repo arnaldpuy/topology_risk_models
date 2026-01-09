@@ -69,7 +69,7 @@ user of the code does not need to source them separately.
 
 ### Code
 
-We offer the code in `.R`, `.pdf` and `.Rmd`. There are three main analyses:
+We offer the code in `.R`, `.pdf` and `.Rmd`. There are four main analyses:
 
 * `code_synthetic_example`: workflow to create the synthetic call graph used to illustrate our
 method and check its internal consistency.
@@ -79,6 +79,9 @@ and sensitivity analysis to the method.
 
 * `code_hydrological_models`: application of the method to the fourteen global land use
 and hydrological models listed above.
+
+* `scalability_test`: stress-test of the scalability of our method across call graphs
+with different degrees of complexity.
 
 Our entire workflow can be run and the results replicated from either of these files. 
 The user must run the code from the same folder where the files in the generated data 

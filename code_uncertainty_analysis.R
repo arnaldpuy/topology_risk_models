@@ -176,6 +176,13 @@ group_dt[is.na(S_bc), S_bc:= 0]
 
 group_dt[, S_group_bc := S_b + S_c + S_bc]
 
+group_dt <- merge(group_dt, data.table(nodes_df)[, .(name, cyclo, indeg, btw)], 
+      by = "name")
+
+group_dt %>%
+  ggplot(., aes(S_a, btw)) +
+  geom_point()
+
 # Long format for tile plot ----------------------------------------------------
 
 tile_dt <- melt(group_dt, id.vars = "name", measure.vars = c("S_a", "S_group_bc"),
@@ -190,7 +197,15 @@ tile_dt[factor == "S_group_bc", factor:= "beta_gamma"]
 
 tile_dt[, name:= factor(name, levels = unique(name[order(-Si)]))]
 
+
+
+
+tmp <- data.table(nodes_df)[, .(name, cyclo, indeg, btw, complexity_category)] %>%
+  .[, name:= factor(name, levels = levels(tile_dt$name))] %>%
+  .[, factor:= "C"]
+
 # Tile plot --------------------------------------------------------------------
+
 
 plot.sa <- ggplot(tile_dt, aes(x = factor, y = name, fill = Si)) +
   geom_tile() +
@@ -201,9 +216,44 @@ plot.sa <- ggplot(tile_dt, aes(x = factor, y = name, fill = Si)) +
   labs(x = "", y = "Node ID") +
   theme_AP() +
   theme(axis.text.y = element_text(size = 5), 
-        legend.position = "top")
+        legend.position = "none", 
+        plot.margin = margin(1, 0.1, 1, 1)) 
 
 plot.sa
+
+cyclo_plot <- ggplot(tmp[, factor_c:= "C"], aes(x = factor_c, y = name, fill = complexity_category)) +
+  geom_tile() +
+  labs(x = "", y = "") +
+  scale_fill_manual(values = c("yellowgreen", "orange", "red", "purple"),
+                   labels = lab_expr,
+                   name = "") +
+  theme_AP() +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        legend.position = "none", 
+        plot.margin = margin(1, 0.1, 1, 0.1)) 
+
+indeg_plot <- ggplot(tmp[, factor_d:= "d"], aes(x = factor_d, y = name, fill = indeg)) +
+  geom_tile() +
+  labs(x = "", y = "") +
+  theme_AP() +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        legend.position = "none", 
+        plot.margin = margin(1, 0.1, 1, 0.1)) 
+
+btw_plot <- ggplot(tmp[, factor_b:= "b"], aes(x = factor_b, y = name, fill = btw)) +
+  geom_tile() +
+  labs(x = "", y = "") +
+  scale_fill_viridis(option = "A") +
+  theme_AP() +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        legend.position = "none", 
+        plot.margin = margin(1, 0.1, 1, 0.1)) 
+
+plot_grid(plot.sa, cyclo_plot, indeg_plot, btw_plot, ncol = 4, 
+          rel_widths = c(0.5, 0.13, 0.13, 0.13))
 
 
 ## ----plot_violin, dependson="uncertainty_analysis", fig.height=2, fig.width=2--------------------
