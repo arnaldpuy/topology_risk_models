@@ -11,17 +11,7 @@ to fourteen global land use and hydrological models, listed in the Models sectio
 
 ## Abstract
 
-*Scientific research increasingly relies on complex mathematical models whose software 
-implementations are rarely verified. Although failures often emerge from interactions 
-along specific chains of function calls, we lack methods to identify which paths dominate 
-system vulnerability. Here we present a framework that combines software-quality 
-metrics with the network structure of scientific models to identify chains of function 
-calls along which faults are most likely to cascade at the system level. By revealing 
-how risk accumulates across execution paths, the method enables targeted testing and 
-refactoring where they are most effective. We illustrate our approach on fourteen 
-large-scale hydrological and land-surface models. Our framework reveals the hidden 
-topology of software risk and provides a quantitative basis for assessing, comparing 
-and improving the reliability of scientific models.*
+*Software risk is studied in engineering and computer science but remains largely unexamined in scientific computing. Existing approaches typically assess risk at the level of individual functions or modules and are tied to a particular conception of risk, despite evidence of failures arising along execution paths and risk admitting multiple conceptualizations. Here we present a network-based framework that combines software-quality metrics with call graphs to identify execution paths concentrating systemic risk. The method treats the definition of risk as uncertain by comparing path rankings across a continuum space of risk definitions, thus accommodating the diverse priorities that shape risk assessment in scientific modelling. By illustrating its potential on fourteen models spanning ecology, environmental sciences, hydrology and climate change, we reveal that risk concentrates in a small subset of paths. Our approach provides a transparent basis for guiding testing, refactoring and verification in scientific software.*
 
 ## Models
 
@@ -77,8 +67,8 @@ method and check its internal consistency.
 * `code_uncertainty_analysis`: workflow to show the potential of implementing uncertainty
 and sensitivity analysis to the method.
 
-* `code_hydrological_models`: application of the method to the fourteen global land use
-and hydrological models listed above.
+* `code_hydrological_models`: application of the method to the fourteen global land use, 
+hydrological, ecological and climate models listed above.
 
 * `scalability_test`: stress-test of the scalability of our method across call graphs
 with different degrees of complexity.
@@ -87,4 +77,33 @@ Our entire workflow can be run and the results replicated from either of these f
 The user must run the code from the same folder where the files in the generated data 
 section are stored for a successful compilation.
 
+## Citation
 
+If you use this workflow, please cite:
+
+Puy, A. et al. (2026). Code and Datasets of The Topology of Software Risk in 
+Scientific Models. Zenodo. doi:10.5281/zenodo.17962642.
+
+## License
+
+MIT License
+
+Copyright (c) 2026 Arnald Puy
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

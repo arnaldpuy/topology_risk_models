@@ -1,8 +1,8 @@
-## ----setup, include=FALSE------------------------------------------------------------------------
+## ----setup, include=FALSE--------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
 
-## ----warning=FALSE, message=FALSE, results = "hide"----------------------------------------------
+## ----warning=FALSE, message=FALSE, results = "hide"------------------------------------------
 
 # PRELIMINARY FUNCTIONS #######################################################
 ################################################################################
@@ -10,39 +10,7 @@ knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales", 
                           "cowplot", "readxl", "ggrepel", "tidytext", "here", 
                           "tidygraph", "igraph", "foreach", "parallel", "ggraph", 
-                          "tools", "purrr", "sensobol", "benchmarkme"))
-
-# Create custom theme ----------------------------------------------------------
-
-theme_AP <- function() {
-  theme_bw() +
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          legend.background = element_rect(fill = "transparent", color = NA),
-          legend.key = element_rect(fill = "transparent", color = NA), 
-          strip.background = element_rect(fill = "white"), 
-          legend.text = element_text(size = 7.3), 
-          axis.title = element_text(size = 10),
-          legend.key.width = unit(0.4, "cm"), 
-          legend.key.height = unit(0.4, "cm"), 
-          legend.key.spacing.y = unit(0, "lines"),
-          legend.box.spacing = unit(0, "pt"),
-          legend.title = element_text(size = 7.3), 
-          axis.text.x = element_text(size = 7), 
-          axis.text.y = element_text(size = 7), 
-          axis.title.x = element_text(size = 7.3), 
-          axis.title.y = element_text(size = 7.3),
-          plot.title = element_text(size = 8),
-          strip.text.x = element_text(size = 7.4), 
-          strip.text.y = element_text(size = 7.4)) 
-}
-
-# Source all .R files in the "functions" folder --------------------------------
-
-r_functions <- list.files(path = here("functions"), 
-                          pattern = "\\.R$", full.names = TRUE)
-
-lapply(r_functions, source)
+                          "tools", "purrr", "sensobol", "benchmarkme", "softwareRisk"))
 
 # Set seed ---------------------------------------------------------------------
 
@@ -56,108 +24,17 @@ lab_expr <- c(b1 = expression(C %in% "(" * 0 * ", 10" * "]"),
               b4 = expression(C %in% "(" * 50 * ", " * infinity * ")"))
 
 
-## ----synthetic_example---------------------------------------------------------------------------
+
+## ----synthetic_example-----------------------------------------------------------------------
 
 # SYNTHETIC EXAMPLE ############################################################
 ################################################################################
 
 # EXAMPLE: BUILD ACYCLIC GRAPH #################################################
 
-# Set seed ---------------------------------------------------------------------
+# Read in synthetic graph from softwareRisk -----------------------------------
 
-seed <- 123
-
-## Build a layered DAG: entries -> mid -> sinks --------------------------------
-
-n_entry <- 5
-n_mid   <- 35
-n_sink  <- 15
-
-entry_ids <- paste0("E", 1:n_entry)
-mid_ids   <- paste0("M", 1:n_mid)
-sink_ids  <- paste0("S", 1:n_sink)
-
-nodes <- c(entry_ids, mid_ids, sink_ids)
-
-edges <- list()
-
-## ---- E -> M. Each entry calls 2-5 mid-level functions -----------------------
-# Top level drivers typically fan out to multiple subroutines. This example is
-# meant to reproduce the fact that each entry is not just a one-to-one call. ---
-
-set.seed(seed)
-
-for (e in entry_ids) {
-  
-  k <- sample(2:5, 1)  # desired fan-out
-  targets <- sample_safe_fun(mid_ids, k)
-  
-  if (length(targets) > 0) {
-    edges[[length(edges) + 1]] <- cbind(e, targets)
-  }
-}
-
-## ---- M -> M (forward only by index to avoid cycles). Our example is an
-# acyclic graph and so there are no loops or recursions.- ----------------------
-
-set.seed(seed)
-
-for (i in seq_along(mid_ids)) {
-  
-  from <- mid_ids[i]
-  
-  if (i < length(mid_ids)) {
-    
-    candidates <- mid_ids[(i+1):length(mid_ids)]
-    candidates <- candidates[!is.na(candidates)]
-    
-  } else {
-    
-    candidates <- character(0)
-  }
-  
-  if (length(candidates) > 0) {
-    
-    k <- sample(0:3, 1)     # some may have 0 mid->mid edges
-    targets <- sample_safe_fun(candidates, k)
-    
-    if (length(targets) > 0) {
-      edges[[length(edges) + 1]] <- cbind(from, targets)
-    }
-  }
-}
-
-## ---- M -> S. Each mid function calls 1-3 sinks ------------------------------
-
-set.seed(seed)
-
-for (m in mid_ids) {
-  
-  k <- sample(1:3, 1)
-  
-  targets <- sample(sink_ids, k, replace = TRUE)
-  edges[[length(edges) + 1]] <- cbind(m, targets)
-}
-
-edge_mat <- do.call(rbind, edges)
-colnames(edge_mat) <- c("from", "to")
-
-# Create graph -----------------------------------------------------------------
-
-g <- as_tbl_graph(edge_mat, directed = TRUE)
-
-# DEFINE NODE METRICS ##########################################################
-################################################################################
-
-# Fake cyclomatic complexity (1 - 80; log-normal distribution) 
-# for toy simulation -----------------------------------------------------------
-
-n <- length(V(g))
-
-set.seed(seed)
-
-raw_cyclo <- rlnorm(n, meanlog = 1.2, sdlog = 0.4)  # heavier tail
-raw_cyclo <- raw_cyclo ^ 1.7 # Pareto-like amplification
+data("synthetic_graph")
 
 # Define weights and compute node metrics---------------------------------------
 
@@ -165,12 +42,12 @@ alpha_weight <- 0.6
 beta_weight <- 0.3
 gamma_weight <- 0.1
 
-g <- g %>%
+synthetic_graph <- synthetic_graph %>%
   activate(nodes) %>%
-  mutate(cyclo = round(scales::rescale(raw_cyclo, to = c(1, 60))), 
-         indeg = degree(g, mode = "in"), 
-         outdeg = degree(g, mode = "out"),
-         btw = betweenness(g, directed = TRUE, weights = NULL, 
+  mutate(cyclo = round(scales::rescale(cyclo, to = c(1, 60))), 
+         indeg = degree(synthetic_graph, mode = "in"), 
+         outdeg = degree(synthetic_graph, mode = "out"),
+         btw = betweenness(synthetic_graph, directed = TRUE, weights = NULL, 
                            normalized = FALSE), 
          cyclo_sc = rescale(cyclo), 
          indeg_sc = rescale(indeg),
@@ -186,17 +63,19 @@ g <- g %>%
                                    breaks = c(-Inf, 10, 20, 50, Inf),
                                    labels = c("b1","b2","b3","b4")))
 
-# Create data frame of nodes ---------------------------------------------------
+# Compute all paths ------------------------------------------------------------
 
-node_df <- g %>%
-  activate(nodes) %>%
-  as_tibble()
+all_dt <- softwareRisk::all_paths_fun(graph = synthetic_graph, risk_form = "additive", 
+                                      complexity_col = "cyclo")
 
-# DEFINE PATH METRICS ##########################################################
-################################################################################
+# Extract paths ----------------------------------------------------------------
 
-paths_tbl <- all_paths_fun(node_df = node_df, graph = g)
-  
+paths_tbl <- all_dt$paths
+
+# Extract nodes ----------------------------------------------------------------
+
+node_df <- all_dt$nodes
+
 # MONTE CARLO CHECK ############################################################
 ################################################################################
 
@@ -239,7 +118,7 @@ paths_eval <- paths_tbl %>%
   left_join(empirical_tbl, by = "path_id")
 
 cat("Correlation(P_k, empirical failure):", 
-    cor(paths_eval$p_path_fail, paths_eval$emp_fail_rate, use = "complete.obs"), "\n")
+    cor(paths_eval$path_risk_score, paths_eval$emp_fail_rate, use = "complete.obs"), "\n")
 
 # ILLUSTRATION OF THE GINI INDEX: FIXING TOP-RISK NODES VS RANDOM NODES ########
 
@@ -262,15 +141,14 @@ recompute_Pk <- function(p_vec, kill_index) {
 set.seed(42)
 
 gini_effect_tbl <- top_node_tbl %>%
-  mutate(# Original path failure probability ----------------------------------------
-    P_orig = map_dbl(p_vec, ~ if (length(.x) == 0) 0 else 1 - prod(1 - .x)),
-    
-    # Path failure if we set the risk of the top-risk node at 0 ----------------
-    P_fix_top = map2_dbl(p_vec, idx_top, recompute_Pk),
-    rand_idx = map_int(p_vec, ~ sample(seq_along(.x), 1)),
-    
-    # Path failure if we randomly fix any node ---------------------------------
-    P_fix_rand = map2_dbl(p_vec, rand_idx, recompute_Pk)) %>%
+  mutate(P_orig = map_dbl(p_vec, ~ if (length(.x) == 0) 0 else 1 - prod(1 - .x)),
+         
+         # Path failure if we set the risk of the top-risk node at 0 ----------------
+         P_fix_top = map2_dbl(p_vec, idx_top, recompute_Pk),
+         rand_idx = map_int(p_vec, ~ sample(seq_along(.x), 1)),
+         
+         # Path failure if we randomly fix any node ---------------------------------
+         P_fix_rand = map2_dbl(p_vec, rand_idx, recompute_Pk)) %>%
   mutate(drop_top  = P_orig - P_fix_top,
          drop_rand = P_orig - P_fix_rand)
 
@@ -288,7 +166,7 @@ gini_effect_tbl %>%
 
 slope_eval <- paths_eval %>%
   filter(fails > 0) %>%
-  select(path_id, risk_slope, mean_fail_pos, p_path_fail)
+  select(path_id, risk_slope, mean_fail_pos, path_risk_score)
 
 # WHICH PATHS IMPROVE IF A NODE'S RISK IS FIXED TO 0? ##########################
 
@@ -307,7 +185,7 @@ top_nodes <- node_df %>%
 # top-K paths by path failure probability --------------------------------------  
 
 top_paths <- paths_tbl %>%
-  arrange(desc(p_path_fail)) %>%
+  arrange(desc(path_risk_score)) %>%
   slice_head(n = K_paths)
 
 # COMPUTE ######################################################################  
@@ -324,7 +202,7 @@ delta_tbl <- map_dfr(seq_len(nrow(top_nodes)), function(i) {
   map_dfr(seq_len(nrow(top_paths)), function(j) {
     pid <- top_paths$path_id[j]
     nodes_vec <- top_paths$path_nodes[[j]]
-    P_orig <- top_paths$p_path_fail[j]
+    P_orig <- top_paths$path_risk_score[j]
     
     # if node not in this path, improvement is zero ----------------------------
     
@@ -370,14 +248,7 @@ delta_tbl <- delta_tbl %>%
 
 
 
-## ----save_datasets, dependson="synthetic_example"------------------------------------------------
-
-# SAVE NODES AND PATHS DATASET FOR THE UNCERTAINTY ANALYSIS IN NEXT FILE #######
-
-saveRDS(list(nodes_df = node_df, paths_tbl = paths_tbl), "graph_objects.rds")
-
-
-## ----plot_cc, dependson="synthetic_example", fig.height=2, fig.width=2---------------------------
+## ----plot_cc, dependson="synthetic_example", fig.height=2, fig.width=2-----------------------
 
 ################################################################################
 ################################################################################
@@ -394,7 +265,7 @@ size_points <- 1
 #Plot the distribution of cyclomatic complexity in this toy model --------------
 
 distribution_cc <- node_df %>%
-  ggplot(., aes(cyclo)) +
+  ggplot(., aes(cyclomatic_complexity)) +
   geom_histogram() + 
   labs(x = "C", y = "Nº nodes") +
   theme_AP()
@@ -402,13 +273,13 @@ distribution_cc <- node_df %>%
 distribution_cc
 
 
-## ----plot_call_graph, dependson="synthetic_example", fig.height=2, fig.width=3-------------------
+## ----plot_call_graph, dependson="synthetic_example", fig.height=2, fig.width=3---------------
 
 # Plot the call graph ----------------------------------------------------------
 
 set.seed(seed)
 
-toy_graph <- ggraph(g, layout = "sugiyama") +
+toy_graph <- ggraph(synthetic_graph, layout = "sugiyama") +
   geom_edge_link(alpha = 0.3, arrow = arrow(length = unit(2, "mm"))) +
   geom_node_point(aes(size = indeg, fill = complexity_category),
                   shape = 21, colour = "black", show.legend = TRUE) +
@@ -429,11 +300,11 @@ legend <- get_legend(toy_graph + theme(legend.position = "top"))
 toy_graph
 
 
-## ----plot_theoretical, dependson="synthetic_example", fig.height=2, fig.width=2------------------
+## ----plot_theoretical, dependson="synthetic_example", fig.height=2, fig.width=2--------------
 
 # Plot the trend between theoretical and empirical failure ---------------------
 
-fig_Pk <- ggplot(paths_eval, aes(x = p_path_fail, y = emp_fail_rate)) +
+fig_Pk <- ggplot(paths_eval, aes(x = path_risk_score, y = emp_fail_rate)) +
   geom_point(alpha = 0.5, size = size_points) +
   geom_abline(slope = 1, intercept = 0, colour = "red", linetype = 2) +
   labs(x = expression("Theoretical " * P[k]),
@@ -443,7 +314,7 @@ fig_Pk <- ggplot(paths_eval, aes(x = p_path_fail, y = emp_fail_rate)) +
 fig_Pk
 
 
-## ----plot_gini, dependson="synthetic_example", fig.height=2, fig.width=2-------------------------
+## ----plot_gini, dependson="synthetic_example", fig.height=2, fig.width=2---------------------
 
 # Plot the gini figure ---------------------------------------------------------
 
@@ -458,7 +329,7 @@ fig_gini <- ggplot(gini_effect_tbl, aes(x = gini_node_risk)) +
 fig_gini
 
 
-## ----plot_tile, dependson="synthetic_example", fig.height=2, fig.width=3-------------------------
+## ----plot_tile, dependson="synthetic_example", fig.height=2, fig.width=3---------------------
 
 # Plote the tile figure --------------------------------------------------------
 
@@ -481,12 +352,13 @@ fig_heat <- ggplot(delta_tbl, aes(x = path_id, y = node, fill = deltaP)) +
 fig_heat
 
 
-## ----plot_slope, dependson="synthetic_example", fig.height=2, fig.width=2------------------------
+## ----plot_slope, dependson="synthetic_example", fig.height=2, fig.width=2--------------------
 
 # Plot the slope figure --------------------------------------------------------
 
 fig_slope <- ggplot(slope_eval, aes(x = risk_slope, y = mean_fail_pos)) +
   geom_point(alpha = 0.6, size = size_points) +
+  geom_vline(xintercept = 0, lty = 2, color = "red") +
   labs(x = expression(theta[1*k]),
        y = "Avg. pos.1st failing node") +
   theme_AP()
@@ -507,7 +379,7 @@ final_plot <- plot_grid(top_final, bottom, ncol = 1)
 final_plot
 
 
-## ----session_information-------------------------------------------------------------------------
+## ----session_information---------------------------------------------------------------------
 
 # SESSION INFORMATION ##########################################################
 

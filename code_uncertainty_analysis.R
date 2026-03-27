@@ -1,8 +1,8 @@
-## ----setup, include=FALSE------------------------------------------------------------------------
+## ----setup, include=FALSE----------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
 
-## ----warning=FALSE, message=FALSE, results = "hide"----------------------------------------------
+## ----warning=FALSE, message=FALSE, results = "hide", cache = FALSE-----------------------
 
 # PRELIMINARY FUNCTIONS #######################################################
 ################################################################################
@@ -10,282 +10,241 @@ knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales", 
                           "cowplot", "readxl", "ggrepel", "tidytext", "here", 
                           "tidygraph", "igraph", "foreach", "parallel", "ggraph", 
-                          "tools", "purrr", "sensobol", "benchmarkme"))
-
-# Create custom theme ----------------------------------------------------------
-
-theme_AP <- function() {
-  theme_bw() +
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          legend.background = element_rect(fill = "transparent", color = NA),
-          legend.key = element_rect(fill = "transparent", color = NA), 
-          strip.background = element_rect(fill = "white"), 
-          legend.text = element_text(size = 7.3), 
-          axis.title = element_text(size = 10),
-          legend.key.width = unit(0.4, "cm"), 
-          legend.key.height = unit(0.4, "cm"), 
-          legend.key.spacing.y = unit(0, "lines"),
-          legend.box.spacing = unit(0, "pt"),
-          legend.title = element_text(size = 7.3), 
-          axis.text.x = element_text(size = 7), 
-          axis.text.y = element_text(size = 7), 
-          axis.title.x = element_text(size = 7.3), 
-          axis.title.y = element_text(size = 7.3),
-          plot.title = element_text(size = 8),
-          strip.text.x = element_text(size = 7.4), 
-          strip.text.y = element_text(size = 7.4)) 
-}
-
-# Source all .R files in the "functions" folder --------------------------------
-
-r_functions <- list.files(path = here("functions"), 
-                          pattern = "\\.R$", full.names = TRUE)
-
-lapply(r_functions, source)
+                          "tools", "purrr", "sensobol", "benchmarkme", "softwareRisk", 
+                          "ggridges"))
 
 # Set seed ---------------------------------------------------------------------
 
 seed <- 123
 
-# Define labels for better plotting --------------------------------------------
 
-lab_expr <- c(b1 = expression(C %in% "(" * 0 * ", 10" * "]"),
-              b2 = expression(C %in% "(" * 10 * ", 20" * "]"),
-              b3 = expression(C %in% "(" * 20 * ", 50" * "]"),
-              b4 = expression(C %in% "(" * 50 * ", " * infinity * ")"))
-
-
-## ----uncertainty_analysis------------------------------------------------------------------------
+## ----uncertainty_analysis----------------------------------------------------------------
 
 # UNCERTAINTY AND SENSITIVITY ANALYSIS #########################################
 ################################################################################
 
-# Load the nodes_df and the paths_tbl from the synthetic example ---------------
+# Load the synthetic graph -----------------------------------------------------
 
-objs <- readRDS("graph_objects.rds")
-nodes_df  <- objs$nodes_df
-paths_tbl <- objs$paths_tbl
+data("synthetic_graph")
 
-# Define settings --------------------------------------------------------------
+# Compute all paths ------------------------------------------------------------
 
-N <- 10^4
-order <- "second"
+out <- all_paths_fun(graph = synthetic_graph, risk_form = "additive")
+paths_dt <- data.table(out$paths)
 
-# Run an UA/SA -----------------------------------------------------------------
+# Define UA / SA settings ------------------------------------------------------
 
-output_ua.sa <- full_ua_sa_risk_fun(node_df = nodes_df, 
-                                    paths_tbl = paths_tbl, 
-                                    N = N, order = order)
+N <- 2^10
+order <- "first"
+
+# Run the UA / SA --------------------------------------------------------------
+
+output_ua <- softwareRisk::uncertainty_fun(all_paths_out = out, N = N, 
+                                           order = order, risk_form = "power_mean")
 
 
-## ----plot_errorbars, dependson="uncertainty_analysis", fig.height=7, fig.width=2-----------------
+
+## ----create_dataset, dependson="uncertainty_analysis"------------------------------------
+
+# CREATE THE DATASETS ###########################################################
+
+# Create datasetS --------------------------------------------------------------
+
+paths_ua_dt <- output_ua[["paths"]][
+  , .(path_id, uncertainty_analysis, gini_index, risk_trend)]
+
+for (nm in c("uncertainty_analysis", "risk_trend", "gini_index")) {
+  
+  prefix <- switch(nm, uncertainty_analysis = "P", risk_trend = "risk",
+                   gini_index = "gini")
+  
+  paths_ua_dt[, c(paste0(prefix, "_median"),
+                  paste0(prefix, "_q5"),
+                  paste0(prefix, "_q95")
+  ) := .(
+    vapply(get(nm), median, numeric(1)),
+    vapply(get(nm), quantile, numeric(1), probs = 0.05),
+    vapply(get(nm), quantile, numeric(1), probs = 0.95)
+  )]
+}
+
+# Create order to plot ---------------------------------------------------------
+
+path_order <- paths_ua_dt %>%
+  .[order(-P_median)] %>%
+  .[, path_id]
+
+# Calculate mean risk per node -------------------------------------------------
+
+nodes_dt <- output_ua[["nodes"]] %>%
+  .[, mean_risk:= vapply(uncertainty_analysis, mean, numeric(1))]
+
+# Extract sensitivity analysis -------------------------------------------------
+
+nodes_dt_unnested <- nodes_dt[, {
+    sa <- as.data.table(as.data.frame(sensitivity_analysis[[1]]$results))
+    cbind(.SD[, !"sensitivity_analysis"], sa)
+    },
+  by = name
+]
+
+
+
+## ----plot_errorbars, dependson=c("uncertainty_analysis", "create_dataset"), fig.height=7, fig.width=2----
 
 # PLOT ERRORBARS ###############################################################
 
 # Plot risk slope --------------------------------------------------------------
 
-a <- output_ua.sa$paths %>%
-  ggplot(., aes(P_k_mean, reorder(path_id, P_k_mean), color = risk_slope))  +
-  geom_point(size = 1) +
-  geom_errorbar(aes(xmin = P_k_min, xmax = P_k_max), height = 0.2) +
-  scale_color_gradient2(low = "blue", mid = "grey80", high = "red", midpoint = 0,             
-                        name = expression(bar(theta)[1*k])) +
+paths_ua_dt[, path_id:= factor(path_id, levels = rev(path_order))]
+
+a <- paths_ua_dt %>%
+  ggplot(., aes(P_median, path_id))  +
+  geom_point(size = 0.7) +
+  geom_errorbar(aes(xmin = P_q5, xmax = P_q95), height = 0.2, alpha = 0.3) +
   labs(y = "Path ID", x = expression(P[k])) +
   theme_AP() +
   scale_x_continuous(breaks = breaks_pretty(n = 3)) +
   theme(axis.text.y = element_text(size = 4), 
-        legend.position = c(0.4, 0.87))
+        legend.position = c(0.4, 0.87), 
+        plot.margin = margin(1, 0.1, 1, 1))
 
 a
 
-# Plot Gini index --------------------------------------------------------------
+# Plot risk slope --------------------------------------------------------------
 
-b <- output_ua.sa$paths %>% 
-  ggplot(., aes(P_k_mean, reorder(path_id, P_k_mean), color = gini_node_risk))  +
-  geom_point(size = 1) +
-  geom_errorbarh(aes(xmin = P_k_min, xmax = P_k_max), height = 0.2) +
-  scale_color_gradient(low = "blue",high = "red", name = expression(bar(G)[k])) +
-  labs(y = "", x = expression(P[k])) +
+b <- paths_ua_dt %>%
+  ggplot(., aes(risk_median, path_id)) +
+  geom_point(size = 0.7) +
+  geom_vline(xintercept = 0, lty = 2) +
+  labs(x = expression(theta[1*k]), y = "") +
+  geom_errorbar(aes(xmin = risk_q5, xmax = risk_q95), height = 0.2, alpha = 0.3) +
   theme_AP() +
   scale_x_continuous(breaks = breaks_pretty(n = 3)) +
-  theme(axis.text.y = element_blank(), 
-        axis.ticks.y = element_blank(),
-        legend.position = c(0.3, 0.87))
+  theme(legend.position = "none", 
+        axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        plot.margin = margin(1, 0.1, 1, 0.1))
 
 b
 
+# Plot Gini index --------------------------------------------------------------
 
-## ----plot_supertile, dependson="uncertainty_analysis", fig.height=7, fig.width=2-----------------
-
-# SUPER TILE PLOT ##############################################################
-
-paths_long <- output_ua.sa$paths[, .(sample_id = seq_along(P_k_vec[[1]]),
-                                     P_k = unlist(P_k_vec)), path_id]
-
-# Rank paths within each monte carlo run (1 = highest risk) -----------------
-
-paths_long[, rank:= frank(-P_k, ties.method = "average"), sample_id]
-
-# Sort based on previous plots -------------------------------------------------
-
-paths_long <- paths_long[, path_id:= factor(path_id, levels = output_ua.sa$paths$path_id)] %>%
-  .[sample_id %in% 1:50] # Use only the first 50 samples rather than the 2N
-
-# Plot: ranking instability of paths under weight uncertainty ------------------
-
-plot_supertile <- ggplot(paths_long, aes(sample_id, factor(path_id), fill = rank)) +
-  geom_tile() +
-  scale_fill_viridis_c(option = "magma", direction = -1, name = "Rank") +
-  labs(x = "Nº simulation", y = "") +
+c <- paths_ua_dt %>%
+  ggplot(., aes(gini_median, path_id)) +
+  geom_point(size = 0.7) +
+  labs(x = expression(G[k]), y = "") +
+  geom_errorbar(aes(xmin = gini_q5, xmax = gini_q95), height = 0.2, alpha = 0.3) +
   theme_AP() +
-  scale_x_continuous(breaks = breaks_pretty(n = 3)) +
-  theme(axis.text.y = element_blank(), 
+  scale_x_continuous(breaks = breaks_pretty(n = 2)) +
+  theme(legend.position = "none", 
+        axis.text.y = element_blank(), 
         axis.ticks.y = element_blank(), 
-        legend.position = "none")
+        plot.margin = margin(1, 0.1, 1, 0.1))
 
-plot_supertile
-
-
-## ----plot_alpha_beta_gamma, dependson="uncertainty_analysis", fig.height=4.5, fig.width=1.7------
-
-# PLOT FIRST ORDER OF ALPHA AND BETA + GAMMA ###################################
-
-# Unnest results ---------------------------------------------------------------
-
-sa_dt <- output_ua.sa$nodes %>%
-  unnest(sensitivity_indices) %>%
-  data.table() %>%
-  .[, .(name, original, parameters, sensitivity)] 
-
-# First-order Si ---------------------------------------------------------------
-
-si_dt <- sa_dt[sensitivity == "Si"]
-si_wide <- dcast(si_dt,name ~ parameters, value.var = "original")
-setnames(si_wide, c("a_raw", "b_raw", "c_raw"), c("S_a",  "S_b",  "S_c"))
-
-# Get S_bc (interaction between b_raw and c_raw) -------------------------------
-
-sbc_dt <- sa_dt[sensitivity == "Sij" & parameters == "b_raw.c_raw", 
-                .(S_bc = original), name]
-
-group_dt <- merge(si_wide, sbc_dt, by = "name", all.x = TRUE)
-group_dt[is.na(S_bc), S_bc:= 0]
-
-# Group effect of (b,c) --------------------------------------------------------
-
-group_dt[, S_group_bc := S_b + S_c + S_bc]
-
-group_dt <- merge(group_dt, data.table(nodes_df)[, .(name, cyclo, indeg, btw)], 
-      by = "name")
-
-group_dt %>%
-  ggplot(., aes(S_a, btw)) +
-  geom_point()
-
-# Long format for tile plot ----------------------------------------------------
-
-tile_dt <- melt(group_dt, id.vars = "name", measure.vars = c("S_a", "S_group_bc"),
-                variable.name = "factor", value.name   = "Si")
-
-# Change the labels ------------------------------------------------------------
-
-tile_dt[factor == "S_a", factor:= "alpha"]
-tile_dt[factor == "S_group_bc", factor:= "beta_gamma"]
-
-# Structure the heatmap --------------------------------------------------------
-
-tile_dt[, name:= factor(name, levels = unique(name[order(-Si)]))]
+c
 
 
+## ----plot_sa, dependson=c("uncertainty_analysis", "create_dataset"), fig.height=4.5, fig.width=2.5----
 
+# PLOT SENSITIVITY ANALYSIS ####################################################
 
-tmp <- data.table(nodes_df)[, .(name, cyclo, indeg, btw, complexity_category)] %>%
-  .[, name:= factor(name, levels = levels(tile_dt$name))] %>%
-  .[, factor:= "C"]
+dt_plot <- nodes_dt_unnested %>%
+  .[, .(name, original, sensitivity, parameters)] %>%
+  .[sensitivity != "Ti"] %>%
+  .[, name:= factor(name, levels = unique(name[order(-original)]))]
 
-# Tile plot --------------------------------------------------------------------
-
-
-plot.sa <- ggplot(tile_dt, aes(x = factor, y = name, fill = Si)) +
+plot_sa <- ggplot(dt_plot, aes(x = parameters, y = name, fill = original)) +
   geom_tile() +
-  scale_fill_viridis_c(name = expression(S[p]), limits = c(0, 1), 
-                       breaks = c(0, 0.5, 1)) +
-  scale_x_discrete(labels = c("alpha" = expression(alpha),
-                              "beta_gamma" = expression(beta + gamma))) +
+  scale_fill_viridis_c(name = expression(S[p]), breaks = c(0, 0.3, 0.6)) +
+  theme_AP() +
+  scale_x_discrete(labels = c("a_raw" = expression(alpha),
+                              "b_raw" = expression(beta), 
+                              "c_raw" = expression(gamma), 
+                              "p" = expression(p))) +
   labs(x = "", y = "Node ID") +
-  theme_AP() +
   theme(axis.text.y = element_text(size = 5), 
-        legend.position = "none", 
-        plot.margin = margin(1, 0.1, 1, 1)) 
+        legend.position = "top", 
+        plot.margin = margin(1, 0.1, 1, 1))
 
-plot.sa
+plot_sa
 
-cyclo_plot <- ggplot(tmp[, factor_c:= "C"], aes(x = factor_c, y = name, fill = complexity_category)) +
-  geom_tile() +
-  labs(x = "", y = "") +
-  scale_fill_manual(values = c("yellowgreen", "orange", "red", "purple"),
-                   labels = lab_expr,
-                   name = "") +
+
+## ----bump_chart_plot, dependson="create_dataset", fig.height=3, fig.width=3--------------
+
+# BUMP CHART PLOT ##############################################################
+
+out_compensatory <- all_paths_fun(graph = synthetic_graph, 
+                                  risk_form = "power_mean", p = 0.5) 
+
+out_bottleneck <- all_paths_fun(graph = synthetic_graph, 
+                                risk_form = "power_mean", p = 2)
+
+paths_dt <- rbind(out_compensatory$paths %>%
+                               data.table() %>%
+                               .[, aggregation:= "compensatory"], 
+                             out_bottleneck$paths %>%
+                               data.table() %>%
+                               .[, aggregation:= "bottleneck"])
+
+# Prepare dataset and calculate mean ranks -------------------------------------
+
+paths_dt[, rank:= frank(-path_risk_score, ties.method = "average"), aggregation]
+
+# keep top 20 per functional form ----------------------------------------------
+
+top20 <- paths_dt[rank <= 20]
+
+# Path_id should be character --------------------------------------------------
+top20[, path_id_chr := as.character(path_id)]
+
+bump_chart_plot <- ggplot(top20, aes(aggregation, rank, group = path_id_chr, 
+                                     colour = path_id_chr)) +
+  geom_line(linewidth = 0.8, alpha = 0.8, position = position_dodge(width = 0.05)) +
+  geom_point(size = 1.6, position = position_dodge(width = 0.05)) +
+  geom_text_repel(data = top20[aggregation == "bottleneck"],
+                  aes(label = path_id_chr, colour = path_id_chr),
+                  size = 2, nudge_x = -0.3, direction = "y",
+                  segment.size = 0.2, show.legend = FALSE) +
+  scale_y_reverse(breaks = 1:20) +
+  scale_x_discrete(expand = expansion(mult = c(0.2, 0.12))) +
+  scale_colour_viridis_d(option = "turbo", end = 0.95) +   
   theme_AP() +
-  theme(axis.text.y = element_blank(), 
-        axis.ticks.y = element_blank(),
-        legend.position = "none", 
-        plot.margin = margin(1, 0.1, 1, 0.1)) 
+  theme(legend.position = "none", 
+        plot.margin = margin(12, 12, 12, 12),
+        axis.text.y = element_text(size = 5)) +
+  labs(y = "Risk rank", x = NULL)
 
-indeg_plot <- ggplot(tmp[, factor_d:= "d"], aes(x = factor_d, y = name, fill = indeg)) +
-  geom_tile() +
-  labs(x = "", y = "") +
-  theme_AP() +
-  theme(axis.text.y = element_blank(), 
-        axis.ticks.y = element_blank(),
-        legend.position = "none", 
-        plot.margin = margin(1, 0.1, 1, 0.1)) 
-
-btw_plot <- ggplot(tmp[, factor_b:= "b"], aes(x = factor_b, y = name, fill = btw)) +
-  geom_tile() +
-  labs(x = "", y = "") +
-  scale_fill_viridis(option = "A") +
-  theme_AP() +
-  theme(axis.text.y = element_blank(), 
-        axis.ticks.y = element_blank(),
-        legend.position = "none", 
-        plot.margin = margin(1, 0.1, 1, 0.1)) 
-
-plot_grid(plot.sa, cyclo_plot, indeg_plot, btw_plot, ncol = 4, 
-          rel_widths = c(0.5, 0.13, 0.13, 0.13))
+bump_chart_plot
 
 
-## ----plot_violin, dependson="uncertainty_analysis", fig.height=2, fig.width=2--------------------
+## ----merge_ua_plots, dependson = c("heatmap_rank_plot", "rank_scatter_plot", "bump_chart_plot", "plot_sa", "plot_errorbars"), fig.height=7.5, fig.width=5----
 
-# Violin plot ------------------------------------------------------------------
+# MERGE UA / SA PLOTS #########################################################
 
-plot_violin <- si_dt %>%
-  mutate(param = fct_recode(parameters,
-                            alpha = "a_raw",
-                            beta  = "b_raw",
-                            gamma = "c_raw")) %>%
-  ggplot(., aes(x = param, y = original)) +
-  geom_violin() +
-  geom_jitter(size = 0.5, color = "blue") +
-  scale_x_discrete(labels = c("alpha" = expression(alpha),
-                              "beta" = expression(beta), 
-                              "gamma" = expression(gamma))) +
-  labs(x = "", y = expression(S[p])) +
-  theme_AP()
+left <- plot_grid(a, b, c, ncol = 3, rel_widths = c(0.5, 0.25, 0.25), labels = c("a", "", ""))
 
-plot_violin
+right <- plot_grid(bump_chart_plot, plot_sa, ncol = 1, rel_heights = c(0.3, 0.7), 
+                   labels = c("b", "c"))
+
+plot_grid(left, right, ncol = 2, rel_widths = c(0.6, 0.4))
 
 
-## ----merge_ua_sa, dependson=c("plot_violin", "plot_alpha_beta_gamma", "plot_supertile", "plot_errorbars"), fig.height=7.5, fig.width=5.5----
+## ----session_information-----------------------------------------------------------------
 
-# MERGE AND PLOT ###############################################################
+# SESSION INFORMATION ##########################################################
 
-left.plot <- plot_grid(a, b, plot_supertile, ncol = 3, labels = c("a", "", "b"))
-right.plot <- plot_grid(plot.sa, plot_violin, ncol = 1, rel_heights = c(0.75, 0.25), 
-                        labels = c("c", "d"))
-all_plots <- plot_grid(left.plot, right.plot, rel_widths = c(0.7, 0.2))
+sessionInfo()
 
-legend <- get_legend_fun(plot_supertile + theme(legend.position = "top"))
-plot_grid(legend, all_plots, ncol = 1, rel_heights = c(0.05, 0.95))
+## Return the machine CPU ------------------------------------------------------
+
+cat("Machine:     "); print(get_cpu()$model_name)
+
+## Return number of true cores -------------------------------------------------
+
+cat("Num cores:   "); print(detectCores(logical = FALSE))
+
+## Return number of threads ---------------------------------------------------
+
+cat("Num threads: "); print(detectCores(logical = FALSE))
 
