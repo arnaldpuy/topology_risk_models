@@ -1,0 +1,35 @@
+# Ignore everything -----
+/*
+
+# But not these files...
+!code_synthetic_example.Rmd
+!code_synthetic_example.R
+!code_synthetic_example.pdf
+
+!code_uncertainty_analysis.Rmd
+!code_uncertainty_analysis.R
+!code_uncertainty_analysis.pdf
+
+!code_hydrological_models.Rmd
+!code_hydrological_models.R
+!code_hydrological_models.pdf
+
+!code_scalability_test.Rmd
+!code_scalability_test.R
+!code_scalability_test.pdf
+
+#Upload also the .rds file for the UA/SA
+!graph_objects.rds
+!top_ten_overlap.rds
+
+!README.md
+
+# Include the "dataset" folder and its contents
+#!dataset/
+#!dataset/*.csv
+#!dataset/*.xlsx
+
+# Include the "functions" folder and its contents
+!functions/
+!functions/*.R
+.Rproj.user

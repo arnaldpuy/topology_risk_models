@@ -1,0 +1,438 @@
+---
+title: "The topology of software risk in scientific models"
+subtitle: "4. Scalability benchmark"
+author: "Arnald Puy"
+header-includes:
+  - \usepackage[font=footnotesize]{caption}
+  - \usepackage{dirtytalk}
+  - \usepackage{booktabs}
+  - \usepackage{tabulary}
+  - \usepackage{enumitem}
+  - \usepackage{lmodern}
+  - \usepackage{amsmath}
+  - \usepackage{mathtools}
+  - \usepackage[T1]{fontenc}
+  - \usepackage{tikz}
+output:
+  pdf_document:
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    toc_depth: 2
+    keep_tex: true
+  word_document:
+    toc: no
+    toc_depth: '2'
+  html_document:
+    keep_md: true
+link-citations: yes
+fontsize: 11pt
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
+```
+
+\newpage
+
+# Preliminary
+
+```{r preliminary, warning=FALSE, message=FALSE, results = "hide"}
+
+# SCALABILITY BENCHMARK USING softwareRisk FUNCTIONS ###########################
+###############################################################################
+
+sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales",
+                          "cowplot", "tidygraph", "igraph", "parallel",
+                          "sensobol", "softwareRisk", "benchmarkme"))
+
+# Set seed ---------------------------------------------------------------------
+
+set.seed(123)
+
+# Import theme -----------------------------------------------------------------
+
+theme_AP <- softwareRisk::theme_AP
+```
+
+# Synthetic graph generator
+
+```{r graph_generator}
+
+# SYNTHETIC CALL-GRAPH GENERATOR ###############################################
+
+make_scalability_dag <- function(n_entry, n_mid_layer, n_layers, n_sink,
+                                 p_extra = 0.02, p_skip = 0.01,
+                                 cc_shape = 2, cc_rate = 0.1, seed = 1) {
+  set.seed(seed)
+
+  layers <- vector("list", n_layers + 2L)
+  id <- 0L
+
+  layers[[1L]] <- (id + 1L):(id + n_entry)
+  id <- id + n_entry
+
+  for (l in seq_len(n_layers)) {
+    layers[[l + 1L]] <- (id + 1L):(id + n_mid_layer)
+    id <- id + n_mid_layer
+  }
+
+  layers[[n_layers + 2L]] <- (id + 1L):(id + n_sink)
+  id <- id + n_sink
+
+  edges_list <- list()
+
+  for (l in seq_len(n_layers + 1L)) {
+    from <- layers[[l]]
+    to   <- layers[[l + 1L]]
+
+    spine <- cbind(from, sample(to, length(from), replace = TRUE))
+    edges_list[[length(edges_list) + 1L]] <- spine
+
+    if (p_extra > 0) {
+      pairs <- expand.grid(from = from, to = to)
+      keep <- runif(nrow(pairs)) < p_extra
+      if (any(keep)) {
+        edges_list[[length(edges_list) + 1L]] <- as.matrix(pairs[keep, ])
+      }
+    }
+
+    if (p_skip > 0 && l <= n_layers) {
+      to2 <- layers[[l + 2L]]
+      add_skip <- runif(length(from)) < p_skip
+      if (any(add_skip)) {
+        edges_list[[length(edges_list) + 1L]] <- cbind(
+          from[add_skip], sample(to2, sum(add_skip), replace = TRUE)
+        )
+      }
+    }
+  }
+
+  edge_mat <- do.call(rbind, edges_list)
+
+  node_names <- as.character(seq_len(id))
+  edge_df <- data.frame(
+    from = as.character(edge_mat[, 1]),
+    to   = as.character(edge_mat[, 2]),
+    stringsAsFactors = FALSE
+  )
+  edge_df <- unique(edge_df)
+  edge_df <- edge_df[edge_df$from != edge_df$to, ]
+
+  node_df <- data.frame(
+    name  = node_names,
+    cyclo = pmax(1, round(rgamma(id, shape = cc_shape, rate = cc_rate)))
+  )
+
+  tbl_graph(nodes = node_df, edges = edge_df, directed = TRUE)
+}
+```
+
+# Configurations
+
+```{r configurations, dependson="graph_generator"}
+
+# DEFINE BENCHMARK CONFIGURATIONS ##############################################
+
+configs <- data.table(
+  config_id   = 1:12,
+  n_entry     = c(2,   3,   3,   4,   5,   5,   6,   8,   10,  12,  15,  18),
+  n_mid_layer = c(10,  20,  40,  60,  80,  100, 130, 160, 200, 250, 300, 400),
+  n_layers    = c(3,   3,   3,   3,   4,   4,   4,   4,   5,   5,   6,   6),
+  n_sink      = c(4,   6,   8,   10,  12,  15,  18,  20,  25,  30,  35,  40),
+  p_extra     = c(0.05, 0.02, 0.008, 0.004, 0.002, 0.001, 0.0006, 0.0004,
+                  0.0003, 0.00025, 0.0002, 0.00015),
+  p_skip      = c(0.02, 0.01, 0.005, 0.003, 0.002, 0.001, 0.0005, 0.0003,
+                  0.0002, 0.00015, 0.0001, 0.00008)
+)
+
+configs[, expected_nodes := n_entry + n_mid_layer * n_layers + n_sink]
+print(configs[, .(config_id, expected_nodes, n_layers, p_extra)])
+```
+
+# Benchmark function
+
+```{r benchmark_function, dependson="graph_generator"}
+
+# BENCHMARK FUNCTION ###########################################################
+
+run_benchmark <- function(cfg, N_ua = 2^8) {
+
+  cat("\n=== Config", cfg$config_id,
+      ": ~", cfg$expected_nodes, "expected nodes ===\n")
+
+  # A) Generate graph ----------------------------------------------------------
+
+  t_graph <- system.time({
+    g <- make_scalability_dag(
+      n_entry     = cfg$n_entry,
+      n_mid_layer = cfg$n_mid_layer,
+      n_layers    = cfg$n_layers,
+      n_sink      = cfg$n_sink,
+      p_extra     = cfg$p_extra,
+      p_skip      = cfg$p_skip,
+      seed        = 123 + cfg$config_id
+    )
+  })["elapsed"]
+
+  n_nodes <- igraph::vcount(g)
+  n_edges <- igraph::ecount(g)
+  cat("  Nodes:", n_nodes, " Edges:", n_edges,
+      " (edges/node:", round(n_edges / n_nodes, 2), ")\n")
+
+  # B) all_paths_fun -----------------------------------------------------------
+
+  t_paths <- system.time({
+    out <- tryCatch(
+      softwareRisk::all_paths_fun(
+        graph          = g,
+        alpha          = 0.6,
+        beta           = 0.3,
+        gamma          = 0.1,
+        p              = 1,
+        complexity_col = "cyclo"
+      ),
+      error = function(e) {
+        cat("  all_paths_fun failed:", e$message, "\n")
+        NULL
+      }
+    )
+  })["elapsed"]
+
+  if (is.null(out) || nrow(out$paths) == 0) {
+    return(data.table(
+      config_id = cfg$config_id,
+      n_nodes = n_nodes, n_edges = n_edges,
+      n_paths = NA_integer_, n_layers = cfg$n_layers,
+      p_extra = cfg$p_extra,
+      t_graph = t_graph, t_paths = t_paths,
+      t_ua = NA_real_, t_total = NA_real_,
+      top1_stability = NA_real_, top10_jaccard = NA_real_,
+      mem_mb = NA_real_
+    ))
+  }
+
+  n_paths <- nrow(out$paths)
+  cat("  Paths:", n_paths, "\n")
+
+  # C) uncertainty_fun: full parameter space (alpha, beta, gamma, p) -----------
+
+  t_ua <- system.time({
+    ua_out <- tryCatch(
+      softwareRisk::uncertainty_fun(
+        all_paths_out = out, N = N_ua,
+        order = "first"
+      ),
+      error = function(e) {
+        cat("  uncertainty_fun failed:", e$message, "\n")
+        NULL
+      }
+    )
+  })["elapsed"]
+
+  # D) Rank stability from UA draws --------------------------------------------
+
+  compute_stability <- function(ua) {
+    if (is.null(ua)) return(list(top1 = NA_real_, jaccard = NA_real_))
+
+    paths_ua <- ua$paths
+    n_p <- nrow(paths_ua)
+    n_draws <- length(paths_ua$uncertainty_analysis[[1]])
+
+    Pk_matrix <- do.call(rbind, paths_ua$uncertainty_analysis)
+    rank_matrix <- apply(Pk_matrix, 2, function(col)
+      frank(-col, ties.method = "average"))
+
+    top1_per_draw <- apply(rank_matrix, 2, which.min)
+    top1_stability <- max(table(top1_per_draw)) / n_draws
+
+    k_top <- min(10, n_p)
+    n_pairs <- min(500, choose(n_draws, 2))
+    pi <- sample(n_draws, n_pairs, replace = TRUE)
+    pj <- sample(n_draws, n_pairs, replace = TRUE)
+    valid <- pi != pj
+    pi <- pi[valid]; pj <- pj[valid]
+
+    jac <- vapply(seq_along(pi), function(idx) {
+      a <- order(rank_matrix[, pi[idx]])[1:k_top]
+      b <- order(rank_matrix[, pj[idx]])[1:k_top]
+      length(intersect(a, b)) / length(union(a, b))
+    }, numeric(1))
+
+    list(top1 = top1_stability, jaccard = mean(jac, na.rm = TRUE))
+  }
+
+  stab <- compute_stability(ua_out)
+
+  # E) Memory and timing -------------------------------------------------------
+
+  mem_mb <- as.numeric(object.size(out) + object.size(ua_out)) / 1e6
+  t_total <- t_graph + t_paths + t_ua
+
+  cat("  Time - graph:", round(t_graph, 2),
+      "s | paths:", round(t_paths, 2),
+      "s | UA:", round(t_ua, 2),
+      "s | total:", round(t_total, 2), "s\n")
+  cat("  Top-1:", round(stab$top1, 3),
+      " | Jaccard:", round(stab$jaccard, 3), "\n")
+
+  data.table(
+    config_id      = cfg$config_id,
+    n_nodes        = n_nodes,
+    n_edges        = n_edges,
+    n_paths        = n_paths,
+    n_layers       = cfg$n_layers,
+    p_extra        = cfg$p_extra,
+    t_graph        = t_graph,
+    t_paths        = t_paths,
+    t_ua           = t_ua,
+    t_total        = t_total,
+    top1_stability = stab$top1,
+    top10_jaccard  = stab$jaccard,
+    mem_mb         = mem_mb
+  )
+}
+```
+
+# Run benchmark
+
+```{r run_benchmark, dependson=c("benchmark_function", "configurations"), cache.lazy=FALSE}
+
+# RUN (PARALLEL) ###############################################################
+
+set.seed(123)
+
+n_cores <- max(1L, parallel::detectCores() - 2L)
+cat("Running", nrow(configs), "configs on", n_cores, "cores\n")
+
+results_list <- parallel::mclapply(seq_len(nrow(configs)), function(i) {
+  run_benchmark(configs[i])
+}, mc.cores = n_cores)
+
+results_list <- Filter(Negate(is.null), results_list)
+results <- rbindlist(results_list)
+
+cat("\n\n=== RESULTS ===\n")
+print(results)
+
+write.xlsx(results, "scalability_benchmark.xlsx")
+```
+
+# Plots
+
+```{r plot_time, dependson="run_benchmark", fig.height=2.5, fig.width=5.5}
+
+# A) Time by stage -------------------------------------------------------------
+
+time_long <- melt(
+  results[!is.na(t_total)],
+  id.vars = c("config_id", "n_nodes", "n_paths"),
+  measure.vars = c("t_graph", "t_paths", "t_ua"),
+  variable.name = "stage", value.name = "seconds"
+)
+
+time_long[, stage := fcase(
+  stage == "t_graph", "Graph generation",
+  stage == "t_paths", "Path enumeration",
+  stage == "t_ua",    "UA/SA"
+)]
+
+plot_time <- ggplot(time_long, aes(factor(n_nodes), seconds, fill = stage)) +
+  geom_bar(stat = "identity") +
+  scale_y_log10(breaks = c(0.01, 0.1, 1, 10, 100, 1000)) +
+  labs(x = "Number of nodes", y = "Time (seconds)") +
+  scale_fill_brewer(palette = "Set2", name = "",
+                    guide = guide_legend(nrow = 2)) +
+  theme_AP() +
+  theme(legend.position = "top",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+plot_time
+```
+
+```{r plot_time_paths, dependson="run_benchmark", fig.height=2.5, fig.width=2.5}
+
+# B) Total time vs number of paths (log-log) -----------------------------------
+
+plot_time_paths <- results[!is.na(t_total)] %>%
+  ggplot(., aes(n_paths, t_total)) +
+  geom_point(size = 2) +
+  geom_line(alpha = 0.5) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(x = "Number of paths", y = "Total time (seconds)") +
+  theme_AP()
+
+plot_time_paths
+```
+
+```{r plot_stability, dependson="run_benchmark", fig.height=2.5, fig.width=3}
+
+# C) Stability -----------------------------------------------------------------
+
+stability_long <- melt(
+  results[!is.na(top1_stability)],
+  id.vars = c("config_id", "n_nodes"),
+  measure.vars = c("top1_stability", "top10_jaccard"),
+  variable.name = "metric", value.name = "value"
+)
+
+stability_long[, metric := fcase(
+  metric == "top1_stability", "Top-1 stability",
+  metric == "top10_jaccard",  "Top-10 Jaccard similarity"
+)]
+
+plot_stability <- ggplot(stability_long,
+                         aes(n_nodes, value, color = metric)) +
+  geom_point() +
+  geom_line() +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
+  labs(x = "Number of nodes", y = "Stability", color = "") +
+  guides(color = guide_legend(nrow = 2)) +
+  theme_AP() +
+  theme(legend.position = "top")
+
+plot_stability
+```
+
+```{r plot_memory, dependson="run_benchmark", fig.height=2.5, fig.width=2.5}
+
+# D) Memory --------------------------------------------------------------------
+
+plot_memory <- results[!is.na(mem_mb)] %>%
+  ggplot(., aes(n_nodes, mem_mb)) +
+  geom_point() +
+  geom_line(alpha = 0.5) +
+  labs(x = "Number of nodes", y = "Memory (MB)") +
+  theme_AP()
+
+plot_memory
+```
+
+```{r merged_figure, dependson=c("plot_time", "plot_time_paths", "plot_stability", "plot_memory"), fig.height=4, fig.width=4.2}
+
+# E) Merge ---------------------------------------------------------------------
+
+top_row <- plot_grid(plot_time, plot_time_paths, ncol = 2,
+                     labels = c("a", "b"), align = "h", axis = "tb")
+bottom_row <- plot_grid(plot_stability, plot_memory, ncol = 2,
+                        labels = c("c", "d"), align = "h", axis = "tb")
+plot_grid(top_row, bottom_row, ncol = 1)
+```
+
+# Session information
+
+```{r session_information}
+
+# SESSION INFORMATION ##########################################################
+
+sessionInfo()
+
+## Return the machine CPU ------------------------------------------------------
+
+cat("Machine:     "); print(get_cpu()$model_name)
+
+## Return number of true cores -------------------------------------------------
+
+cat("Num cores:   "); print(parallel::detectCores(logical = FALSE))
+```
