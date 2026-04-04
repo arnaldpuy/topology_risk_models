@@ -18,9 +18,6 @@
 !code_scalability_test.R
 !code_scalability_test.pdf
 
-#Upload also the .rds file for the UA/SA
-!graph_objects.rds
-!top_ten_overlap.rds
 
 !README.md
 
