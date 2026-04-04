@@ -319,10 +319,10 @@ write.xlsx(full_node_df, "full_node_df.xlsx")
 # COMPUTE ALL PATHS AND THEIR RISK SCORES ######################################
 
 # list of risk-form specifications ---------------------------------------------
-# We run an additive and a power-mean version with p = -1
+# We run an additive and a compensatory version with p = -1
 
-risk_specs <- list(additive = list(risk_form = "additive", p = NA),
-                   power_mean = list(risk_form = "power_mean", p = -1))
+risk_specs <- list(additive     = list(p = 1),
+                   compensatory = list(p = -1))
 
 # Run programatically ----------------------------------------------------------
 
@@ -330,11 +330,10 @@ for (nm in names(risk_specs)) {
   spec <- risk_specs[[nm]]
   
   all_graphs[, (paste0("paths_tbl_", nm)):= Map(all_paths_fun, graph = graph,
-                                                risk_form = spec$risk_form,
                                                 alpha = alpha,
                                                 beta  = beta,
                                                 gamma = gamma,
-                                                p  = spec$p,                
+                                                p  = spec$p,
                                                 complexity_col = "cyclomatic_complexity")]}
 
 # Unnest tables ----------------------------------------------------------------
@@ -346,17 +345,17 @@ nodes_additive <- unnest_paths_tbl_fun(all_graphs, "paths_tbl_additive", "nodes"
 paths_additive <- unnest_paths_tbl_fun(all_graphs, "paths_tbl_additive", "paths") %>%
   .[, risk_form := "additive"]
 
-# For power mean form ---------------
+# For compensatory form ---------------
 
-nodes_power_mean <- unnest_paths_tbl_fun(all_graphs, "paths_tbl_power_mean", "nodes") %>%
-  .[, risk_form := "power_mean"]
-paths_power_mean <- unnest_paths_tbl_fun(all_graphs, "paths_tbl_power_mean", "paths") %>%
-  .[, risk_form := "power_mean"]
+nodes_compensatory <- unnest_paths_tbl_fun(all_graphs, "paths_tbl_compensatory", "nodes") %>%
+  .[, risk_form := "compensatory"]
+paths_compensatory <- unnest_paths_tbl_fun(all_graphs, "paths_tbl_compensatory", "paths") %>%
+  .[, risk_form := "compensatory"]
 
 # Rbind ------------------------------------------------------------------------
 
-nodes_all <- rbind(nodes_additive, nodes_power_mean, fill = TRUE)
-paths_all <- rbind(paths_additive, paths_power_mean, fill = TRUE)[, path_str:= NULL]
+nodes_all <- rbind(nodes_additive, nodes_compensatory, fill = TRUE)
+paths_all <- rbind(paths_additive, paths_compensatory, fill = TRUE)[, path_str:= NULL]
 
 # Export -----------------------------------------------------------------------
 
@@ -385,9 +384,9 @@ idx <- all_graphs[model != "VIC", which = TRUE]
 ua_specs <- list(additive = list(paths_col = "paths_tbl_additive",
                                  out_col = "uncertainty_sensitivity_additive",
                                  extra = list()),
-                 power_mean = list(paths_col = "paths_tbl_power_mean",
-                                   out_col = "uncertainty_sensitivity_power_mean",
-                                   extra = list(risk_form = "power_mean")))
+                 compensatory = list(paths_col = "paths_tbl_compensatory",
+                                     out_col = "uncertainty_sensitivity_compensatory",
+                                     extra = list()))
 
 # Define parallel settings -----------------------------------------------------
 
@@ -423,22 +422,22 @@ paths_us_additive <- unnest_us_fun(all_graphs,
                                    slot = "paths") %>%
   .[, risk_form:= "additive"]
 
-# Power-mean --------------------
+# Compensatory --------------------
 
-nodes_us_power_mean <- unnest_us_fun(all_graphs,
-                                     us_col = "uncertainty_sensitivity_power_mean",
-                                     slot   = "nodes") %>%
-  .[, risk_form:= "power_mean"]
+nodes_us_compensatory <- unnest_us_fun(all_graphs,
+                                       us_col = "uncertainty_sensitivity_compensatory",
+                                       slot   = "nodes") %>%
+  .[, risk_form:= "compensatory"]
 
-paths_us_power_mean <- unnest_us_fun(all_graphs,
-                                     us_col = "uncertainty_sensitivity_power_mean",
-                                     slot   = "paths") %>%
-  .[, risk_form:= "power_mean"]
+paths_us_compensatory <- unnest_us_fun(all_graphs,
+                                       us_col = "uncertainty_sensitivity_compensatory",
+                                       slot   = "paths") %>%
+  .[, risk_form:= "compensatory"]
 
 # Rbind ------------------------------------------------------------------------
 
-nodes_us_all <- rbind(nodes_us_additive, nodes_us_power_mean, fill = TRUE)
-paths_us_all <- rbind(paths_us_additive, paths_us_power_mean, fill = TRUE)
+nodes_us_all <- rbind(nodes_us_additive, nodes_us_compensatory, fill = TRUE)
+paths_us_all <- rbind(paths_us_additive, paths_us_compensatory, fill = TRUE)
 
 # Calculate median, q5 and q95 -------------------------------------------------
     
@@ -678,6 +677,350 @@ plot_bar_category <- metrics_combined[grep("^func_", names(metrics_combined))] %
 plot_bar_category
 ```
 
+```{r correlation_metrics, dependson="run_analysis", fig.height=3, fig.width=4}
+
+# CORRELATION ANALYSIS AMONG METRICS ###########################################
+
+# Compute pairwise Spearman correlations per model -----------------------------
+
+cor_by_model <- full_node_df[, {
+  
+  dt <- .SD[, .(cyclomatic_complexity, indeg, btw)]
+  dt <- na.omit(dt)
+  
+  if (nrow(dt) < 5) {
+    
+    NULL
+    
+  } else {
+    
+    pairs <- CJ(v1 = c("cyclomatic_complexity", "indeg", "btw"),
+                v2 = c("cyclomatic_complexity", "indeg", "btw"))
+    pairs <- pairs[v1 < v2]
+    
+    pairs[, .(
+      v1 = v1, v2 = v2,
+      rho = mapply(function(a, b) 
+        cor(dt[[a]], dt[[b]], method = "spearman", use = "complete.obs"), v1, v2),
+      n = nrow(dt)
+    )]
+  }
+}, model]
+
+# Rename metric pairs for readability ------------------------------------------
+
+cor_by_model[, pair := fcase(
+  v1 == "btw" & v2 == "cyclomatic_complexity", "C vs Betweenness",
+  v1 == "btw" & v2 == "indeg", "In-degree vs Betweenness",
+  v1 == "cyclomatic_complexity" & v2 == "indeg", "C vs In-degree"
+)]
+
+# Print summary table ----------------------------------------------------------
+
+dcast(cor_by_model, model ~ pair, value.var = "rho") %>%
+  .[order(-`C vs In-degree`)] %>%
+  print()
+
+# Summary across all models ----------------------------------------------------
+
+cor_by_model[, .(mean_rho = round(mean(rho), 3),
+                 median_rho = round(median(rho), 3),
+                 min_rho = round(min(rho), 3),
+                 max_rho = round(max(rho), 3)), pair]
+
+# PLOT: heatmap of correlations per model and pair -----------------------------
+
+cor_by_model[, model := factor(model, levels = model_ordered[, model])]
+
+plot_metric_correlations <- ggplot(cor_by_model, aes(pair, model, fill = rho)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(rho, 2)), size = 2.5) +
+  scale_fill_gradient2(low = "#3B5B92", mid = "white", high = "#C65D09",
+                       midpoint = 0, limits = c(-1, 1),
+                       name = expression(rho)) +
+  labs(x = "", y = "") +
+  theme_AP() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+plot_metric_correlations
+
+# POOLED CORRELATION (all functions across all models) -------------------------
+
+pooled_cor <- full_node_df[, {
+  dt <- na.omit(.SD[, .(cyclomatic_complexity, indeg, btw)])
+  mat <- cor(dt, method = "spearman")
+  data.table(
+    CC_vs_indeg = mat["cyclomatic_complexity", "indeg"],
+    CC_vs_btw = mat["cyclomatic_complexity", "btw"],
+    indeg_vs_btw = mat["indeg", "btw"],
+    n = nrow(dt)
+  )
+}]
+
+cat("\nPooled Spearman correlations across all", pooled_cor$n, "functions:\n")
+print(pooled_cor)
+```
+
+## Analysis of metric robustness
+
+```{r metric_robustness, dependson=c("some_stats", "run_analysis"), fig.height=4, fig.width=5.5, warning=FALSE}
+
+# ROBUSTNESS: SWAP METRICS AND COMPARE PATH RANKINGS (OPTION 1) ###############
+################################################################################
+
+# Substitutions:
+# A) C -> SLOC (lines of code)
+# B) Betweenness -> Eigenvector centrality
+# C) Both swapped simultaneously
+
+# 1. Get SLOC per function from func_metrics -----------------------------------
+
+loc_dt <- metrics_combined[grep("^func_", names(metrics_combined))] %>%
+  lapply(function(x) x[, .(`function`, model, loc)]) %>%
+  rbindlist() %>%
+  setnames("function", "name") %>%
+  na.omit() %>%
+  .[, .(loc = mean(loc, na.rm = TRUE)), .(model, name)]
+
+# Compute eigenvector centrality per model graph ----------------------------
+
+eigen_dt <- all_graphs[, {
+  g <- graph[[1]]
+  
+  # eigen_centrality can fail on some graph structures, so wrap in tryCatch
+  ev <- tryCatch({
+    igraph::eigen_centrality(g, directed = TRUE, scale = TRUE)$vector
+  }, error = function(e) rep(NA_real_, igraph::vcount(g)))
+  
+  nd <- g %>%
+    activate(nodes) %>%
+    as_tibble(what = "nodes") %>%
+    data.table()
+  
+  nd[, eigen := ev]
+  nd[, .(name, eigen)]
+}, model]
+
+# Assemble node-level table with all metrics --------------------------------
+
+swap_nodes <- copy(full_node_df[, .(model, name, cyclomatic_complexity, indeg, btw)])
+
+swap_nodes <- merge(swap_nodes, loc_dt, by = c("model", "name"), all.x = TRUE)
+swap_nodes <- merge(swap_nodes, eigen_dt, by = c("model", "name"), all.x = TRUE)
+
+# Fill NAs with model-level means
+swap_nodes[, `:=`(
+  loc   = fifelse(is.na(loc),   mean(loc, na.rm = TRUE),   loc),
+  eigen = fifelse(is.na(eigen), mean(eigen, na.rm = TRUE), eigen)
+), model]
+
+# Rescale within model and compute risk variants ----------------------------
+
+swap_nodes[, `:=`(
+  cc_sc    = rescale(cyclomatic_complexity),
+  loc_sc   = rescale(loc),
+  indeg_sc = rescale(indeg),
+  btw_sc   = rescale(btw),
+  eigen_sc = rescale(eigen)
+), model]
+
+swap_nodes[, `:=`(
+  r_baseline  = alpha * cc_sc  + beta * indeg_sc + gamma * btw_sc,
+  r_swap_cc   = alpha * loc_sc + beta * indeg_sc + gamma * btw_sc,
+  r_swap_btw  = alpha * cc_sc  + beta * indeg_sc + gamma * eigen_sc,
+  r_swap_both = alpha * loc_sc + beta * indeg_sc + gamma * eigen_sc
+)]
+
+# 5. Flatten paths to nodes and merge risk values ------------------------------
+
+paths_base <- paths_all[risk_form == "additive"]
+paths_long_swap <- paths_base[, .(node = unlist(path_nodes)), .(model, path_id)]
+
+paths_long_swap <- merge(
+  paths_long_swap,
+  swap_nodes[, .(model, name, r_baseline, r_swap_cc, r_swap_btw, r_swap_both)],
+  by.x = c("model", "node"), by.y = c("model", "name"),
+  all.x = TRUE
+)
+
+# Replace NAs with 0 (unmatched nodes contribute no risk)
+r_cols <- c("r_baseline", "r_swap_cc", "r_swap_btw", "r_swap_both")
+for (rc in r_cols) paths_long_swap[is.na(get(rc)), (rc) := 0]
+
+# Aggregate to path-level Pk = 1 - prod(1 - ri) ----------------------------
+
+path_Pk_swap <- paths_long_swap[, .(
+  Pk_baseline  = 1 - prod(1 - r_baseline),
+  Pk_swap_cc   = 1 - prod(1 - r_swap_cc),
+  Pk_swap_btw  = 1 - prod(1 - r_swap_btw),
+  Pk_swap_both = 1 - prod(1 - r_swap_both)
+), .(model, path_id)]
+
+# Spearman rank correlations per model --------------------------------------
+
+cor_swap <- path_Pk_swap[, .(
+  rho_swap_cc   = cor(Pk_baseline, Pk_swap_cc,   method = "spearman"),
+  rho_swap_btw  = cor(Pk_baseline, Pk_swap_btw,  method = "spearman"),
+  rho_swap_both = cor(Pk_baseline, Pk_swap_both, method = "spearman"),
+  n_paths = .N
+), model]
+
+print(cor_swap[order(-rho_swap_cc)])
+
+# Top-10 overlap: how many of the top-10 paths are shared? ------------------
+
+top_overlap_fun <- function(dt, k = 10) {
+  dt[, {
+    n <- min(k, .N)
+    top_base <- path_id[order(-Pk_baseline)][1:n]
+    top_cc   <- path_id[order(-Pk_swap_cc)][1:n]
+    top_btw  <- path_id[order(-Pk_swap_btw)][1:n]
+    top_both <- path_id[order(-Pk_swap_both)][1:n]
+    .(overlap_cc   = length(intersect(top_base, top_cc))   / n,
+      overlap_btw  = length(intersect(top_base, top_btw))  / n,
+      overlap_both = length(intersect(top_base, top_both)) / n,
+      n_compared = n)
+  }, model]
+}
+
+overlap_10 <- top_overlap_fun(path_Pk_swap, k = 10)
+print(overlap_10[order(-overlap_cc)])
+
+# Plot: correlation heatmap per model and substitution ----------------------
+
+cor_long <- melt(cor_swap, id.vars = c("model", "n_paths"),
+                 variable.name = "substitution", value.name = "rho")
+
+cor_long[, substitution := fcase(
+  substitution == "rho_swap_cc",   "C \u2192 SLOC",
+  substitution == "rho_swap_btw",  "Betweenness \u2192 Eigenvector",
+  substitution == "rho_swap_both", "Both swapped"
+)]
+
+cor_long[, model := factor(model, levels = model_ordered[, model])]
+
+plot_swap_robustness <- ggplot(cor_long, aes(substitution, model, fill = rho)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sprintf("%.2f", rho)), size = 2.5) +
+  scale_fill_viridis_c(option = "D", direction = 1, limits = c(0, 1),
+                       name = expression(rho[s])) +
+  labs(x = "", y = "") +
+  theme_AP() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+plot_swap_robustness
+
+# Plot: top-10 overlap heatmap ---------------------------------------------
+
+overlap_long <- melt(overlap_10, id.vars = c("model", "n_compared"),
+                     variable.name = "substitution", value.name = "overlap")
+
+overlap_long[, substitution := fcase(
+  substitution == "overlap_cc",   "C \u2192 SLOC",
+  substitution == "overlap_btw",  "Betweenness \u2192 Eigenvector",
+  substitution == "overlap_both", "Both swapped"
+)]
+
+overlap_long[, model := factor(model, levels = model_ordered[, model])]
+
+plot_overlap <- ggplot(overlap_long, aes(substitution, model, fill = overlap)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = scales::percent(overlap, accuracy = 1)), size = 2.5) +
+  scale_fill_viridis_c(option = "D", direction = 1, limits = c(0, 1),
+                       name = "Overlap", labels = scales::percent) +
+  labs(x = "", y = "") +
+  theme_AP() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+plot_overlap
+
+# Merge both panels for supplementary figure -------------------------------
+
+plot_grid(plot_swap_robustness, plot_overlap, ncol = 2, 
+          labels = c("a", "b"), align = "h", axis = "tb")
+
+# OMNIBUS METRICS ACROSS ALL MODELS ############################################
+
+# Rank correlations: summary across models ----------------------------------
+
+omnibus_cor <- cor_long[, .(
+  mean_rho   = round(mean(rho, na.rm = TRUE), 3),
+  median_rho = round(median(rho, na.rm = TRUE), 3),
+  min_rho    = round(min(rho, na.rm = TRUE), 3),
+  max_rho    = round(max(rho, na.rm = TRUE), 3),
+  sd_rho     = round(sd(rho, na.rm = TRUE), 3)
+), substitution]
+
+cat("\n--- Rank correlation summary ---\n")
+print(omnibus_cor)
+
+# Top-10 overlap: summary across models -------------------------------------
+
+omnibus_overlap <- overlap_long[, .(
+  mean_overlap   = round(mean(overlap, na.rm = TRUE), 3),
+  median_overlap = round(median(overlap, na.rm = TRUE), 3),
+  min_overlap    = round(min(overlap, na.rm = TRUE), 3),
+  max_overlap    = round(max(overlap, na.rm = TRUE), 3),
+  sd_overlap     = round(sd(overlap, na.rm = TRUE), 3)
+), substitution]
+
+cat("\n--- Top-10 overlap summary ---\n")
+print(omnibus_overlap)
+
+# Weighted by number of paths (larger models count more) --------------------
+
+omnibus_cor_weighted <- cor_long[, .(
+  weighted_mean_rho = round(weighted.mean(rho, n_paths, na.rm = TRUE), 3)
+), substitution]
+
+omnibus_overlap_weighted <- overlap_long[, .(
+  weighted_mean_overlap = round(weighted.mean(overlap, n_compared, na.rm = TRUE), 3)
+), substitution]
+
+cat("\n--- Path-weighted rank correlation ---\n")
+print(omnibus_cor_weighted)
+
+cat("\n--- Path-weighted top-10 overlap ---\n")
+print(omnibus_overlap_weighted)
+
+# Where do "lost" top-10 paths end up under each substitution? -----------------
+
+top10_fate <- path_Pk_swap[, {
+  n <- min(10, .N)
+  base_top <- path_id[order(-Pk_baseline)][1:n]
+  
+  rank_cc   <- frank(-Pk_swap_cc)
+  rank_btw  <- frank(-Pk_swap_btw)
+  rank_both <- frank(-Pk_swap_both)
+  
+  lost_cc   <- setdiff(base_top, path_id[order(-Pk_swap_cc)][1:n])
+  lost_btw  <- setdiff(base_top, path_id[order(-Pk_swap_btw)][1:n])
+  lost_both <- setdiff(base_top, path_id[order(-Pk_swap_both)][1:n])
+  
+  rbind(
+    if (length(lost_cc) > 0) 
+      data.table(substitution = "C_to_SLOC", 
+                 path_id = lost_cc,
+                 new_rank = rank_cc[match(lost_cc, path_id)]),
+    if (length(lost_btw) > 0) 
+      data.table(substitution = "Btw_to_Eigen", 
+                 path_id = lost_btw,
+                 new_rank = rank_btw[match(lost_btw, path_id)]),
+    if (length(lost_both) > 0) 
+      data.table(substitution = "Both", 
+                 path_id = lost_both,
+                 new_rank = rank_both[match(lost_both, path_id)])
+  )
+}, model]
+
+# Summary: how far do lost paths fall? -----------------------------------------
+
+top10_fate[, .(
+  median_new_rank = median(new_rank),
+  max_new_rank    = max(new_rank),
+  n_lost          = .N
+), substitution]
+```
 
 ```{r merge_descriptive_flow, dependson="some_stats", fig.height=3.9, fig.width=6}
 
@@ -713,8 +1056,8 @@ all_graphs[, language := fcase(model %chin% python_models, "python",
 
 plot_specs <- list(additive = list(paths_col = "paths_tbl_additive", 
                                    out_col = "plot_obj_additive"),
-                   power_mean = list(paths_col = "paths_tbl_power_mean",  
-                                     out_col = "plot_obj_power"))
+                   compensatory = list(paths_col = "paths_tbl_compensatory",
+                                       out_col = "plot_obj_compensatory"))
 
 # Plot -------------------------------------------------------------------------
 
@@ -758,21 +1101,21 @@ plot_all_risky_paths <- plot_grid(legend2, plot_all_risky_paths, ncol = 1, rel_h
 ```
 
 
-```{r same_additive_power_paths, dependson="ua_sa"}
+```{r same_additive_compensatory_paths, dependson="ua_sa"}
 
-# HOW MANY OF THE TOP N PATHS ARE THE SAME IN THE ADDITIVE AND POWER-MEAN? ###
+# HOW MANY OF THE TOP N PATHS ARE THE SAME IN THE ADDITIVE AND COMPENSATORY? ###
 
 top_n <- 10
 top10 <- paths_us_all[, .SD[order(-P_median)][1:top_n], .(model, risk_form)]
 
 # Separate the two risk definitions --------------------------------------------
 
-top_add <- unique(top10[risk_form == "additive",  .(model, path_id)]) 
-top_pow <- unique(top10[risk_form == "power_mean", .(model, path_id)])
+top_add <- unique(top10[risk_form == "additive",      .(model, path_id)])
+top_com <- unique(top10[risk_form == "compensatory",  .(model, path_id)])
 
 # Count overlaps per model -----------------------------------------------------
 
-top_add[top_pow, on = .(model, path_id), .N, model] %>%
+top_add[top_com, on = .(model, path_id), .N, model] %>%
   na.omit() %>%
   .[selected_models, on = .(model)] %>%
   .[order(-N)] 
@@ -785,7 +1128,7 @@ top_add[top_pow, on = .(model, path_id), .N, model] %>%
 
 plot_spread_risk <- paths_all[order(-path_risk_score), .SD[1:10], .(model, risk_form)] %>%
   .[selected_models, on = .(model)] %>%
-  .[, risk_form:= fifelse(risk_form == "power_mean", "compensatory", risk_form)] %>%
+  .[risk_form %in% c("additive", "compensatory")] %>%
   ggplot(., aes(reorder(model, risk_slope), risk_slope, fill = risk_form)) +
   scale_fill_manual(values = color_functional_forms, name = "") +
   geom_boxplot() +
@@ -859,7 +1202,7 @@ table_top5
 
 table_top5 %>%
   .[selected_models, on = .(model)] %>%
-  melt(., measure.vars = c("additive", "power_mean")) %>%
+  melt(., measure.vars = c("additive", "compensatory")) %>%
   ggplot(., aes(reorder(model, value), value, fill = variable)) +
   geom_bar(stat = "identity", position = position_dodge(0.5)) +
   coord_flip() +
@@ -905,14 +1248,15 @@ functions_to_check <- c("main_grassland_management", "stomate_main", "model",
 plot_sa_functions <- indices_all[name %in% functions_to_check] %>%
   .[, name:= factor(name, levels = functions_to_check)] %>%
   .[sensitivity == "Si"] %>%
+  .[risk_form == "additive"] %>%
   ggplot(., aes(parameters, original, fill = model)) +
   geom_bar(stat = "identity") +
   labs(x = "", y = expression(S[p])) +
   scale_fill_manual(values = c("#0072B2", "#D55E00", "#009E73"), name = "") +
-  scale_x_discrete(labels = c(a_raw = expression(alpha),
-                              b_raw = expression(beta),
-                              c_raw = expression(gamma), 
-                              p = expression(p))) +
+  scale_x_discrete(labels = c(alpha = expression(alpha),
+                              beta  = expression(beta),
+                              gamma = expression(gamma),
+                              p     = expression(p))) +
   facet_wrap(~name, ncol = 1) +
   theme_AP() + 
   scale_y_continuous(breaks = breaks_pretty(n = 2)) +
@@ -969,6 +1313,308 @@ all_graphs[, path_fix_heatmap:= Map(
 
 all_graphs$path_fix_heatmap
 ```
+
+# Real-model scalability
+
+```{r model_scalability, dependson=c("run_analysis", "ua_sa", "some_stats")}
+
+# REAL-MODEL SCALABILITY: TIMING AND RANK STABILITY ###########################
+################################################################################
+
+# This code extracts timing and rank stability metrics from the 14 domain models
+# already analyzed here. 
+
+set.seed(123)
+
+# 1. RE-TIME THE FULL PIPELINE PER MODEL ########################################
+# We re-run all_paths_fun and uncertainty_fun to get clean wall-clock times
+
+N_ua <- 2^10  # same as in the main analysis
+
+real_model_timing <- all_graphs[model != "VIC", {
+  
+  g <- graph[[1]]
+  m <- model
+  
+  cat("\n=== Model:", m, "===\n")
+  
+  n_nodes <- igraph::vcount(g)
+  n_edges <- igraph::ecount(g)
+  
+  # Time all_paths_fun ---------------------------------------------------------
+  
+  t_paths <- system.time({
+    out <- tryCatch(
+      softwareRisk::all_paths_fun(
+        graph          = g,
+        alpha          = 0.6,
+        beta           = 0.3,
+        gamma          = 0.1,
+        p              = 1,
+        complexity_col = "cyclomatic_complexity"
+      ),
+      error = function(e) {
+        cat("  all_paths_fun failed:", e$message, "\n")
+        NULL
+      }
+    )
+  })["elapsed"]
+  
+  n_paths <- if (!is.null(out) && nrow(out$paths) > 0) nrow(out$paths) else NA_integer_
+  
+  cat("  Nodes:", n_nodes, " Edges:", n_edges, " Paths:", n_paths, "\n")
+  
+  # Time uncertainty_fun (compensatory) -----------------------------------------
+
+  t_ua <- NA_real_
+  if (!is.null(out) && nrow(out$paths) > 0) {
+    t_ua <- system.time({
+      tryCatch(
+        softwareRisk::uncertainty_fun(
+          all_paths_out = out,
+          N             = N_ua,
+          order         = "first"
+        ),
+        error = function(e) {
+          cat("  uncertainty_fun failed:", e$message, "\n")
+          NULL
+        }
+      )
+    })["elapsed"]
+  }
+  
+  t_total <- t_paths + ifelse(is.na(t_ua), 0, t_ua)
+  
+  cat("  Time - paths:", round(t_paths, 2),
+      "s | UA:", round(t_ua, 2),
+      "s | total:", round(t_total, 2), "s\n")
+  
+  .(n_nodes  = n_nodes,
+    n_edges  = n_edges,
+    n_paths  = n_paths,
+    t_paths  = t_paths,
+    t_ua     = t_ua,
+    t_total  = t_total)
+  
+}, model]
+
+print(real_model_timing[order(-n_paths)])
+
+# 2. RANK STABILITY FROM EXISTING UA DRAWS =====================================
+
+compute_stability_safe <- function(ua_vec_list, n_p) {
+  
+  if (n_p < 10) {
+    return(data.table(top1_stability = NA_real_, 
+                      top10_jaccard = NA_real_, 
+                      n_paths = n_p))
+  }
+  
+  n_draws <- length(ua_vec_list[[1]])
+  
+  # Build Pk matrix in chunks to avoid single huge allocation
+  Pk_matrix <- matrix(NA_real_, nrow = n_p, ncol = n_draws)
+  for (i in seq_len(n_p)) {
+    Pk_matrix[i, ] <- ua_vec_list[[i]]
+  }
+  
+  # Rank one column at a time (avoids full rank_matrix in memory)
+  top1_counts <- integer(n_p)
+  k_top <- min(10, n_p)
+  
+  # Sample pairs for Jaccard upfront
+  n_pairs <- min(300, choose(n_draws, 2))
+  pi_idx <- sample(n_draws, n_pairs, replace = TRUE)
+  pj_idx <- sample(n_draws, n_pairs, replace = TRUE)
+  valid <- pi_idx != pj_idx
+  pi_idx <- pi_idx[valid]
+  pj_idx <- pj_idx[valid]
+  
+  # Store top-10 sets per draw (only for sampled draws)
+  draws_needed <- unique(c(pi_idx, pj_idx))
+  top10_cache <- vector("list", n_draws)
+  
+  for (d in seq_len(n_draws)) {
+    ranks_d <- frank(-Pk_matrix[, d], ties.method = "average")
+    top1_counts[which.min(ranks_d)] <- top1_counts[which.min(ranks_d)] + 1L
+    
+    if (d %in% draws_needed) {
+      top10_cache[[d]] <- order(ranks_d)[1:k_top]
+    }
+  }
+  
+  top1_stab <- max(top1_counts) / n_draws
+  
+  # Jaccard from cached top-10 sets
+  jac <- vapply(seq_along(pi_idx), function(idx) {
+    a <- top10_cache[[pi_idx[idx]]]
+    b <- top10_cache[[pj_idx[idx]]]
+    if (is.null(a) || is.null(b)) return(NA_real_)
+    length(intersect(a, b)) / length(union(a, b))
+  }, numeric(1))
+  
+  data.table(top1_stability = top1_stab,
+             top10_jaccard = mean(jac, na.rm = TRUE),
+             n_paths = n_p)
+}
+
+# Process one model-risk_form at a time ----------------------------------------
+
+combos <- unique(paths_us_all[, .(model, risk_form)])
+
+real_model_stability <- rbindlist(lapply(seq_len(nrow(combos)), function(i) {
+  
+  m  <- combos$model[i]
+  rf <- combos$risk_form[i]
+  
+  cat("  Stability:", m, rf, "\n")
+  
+  sub <- paths_us_all[model == m & risk_form == rf]
+  result <- compute_stability_safe(sub$uncertainty_analysis, nrow(sub))
+  result[, `:=`(model = m, risk_form = rf)]
+  
+  gc()  # free memory between models
+  result
+}))
+
+print(real_model_stability[order(-n_paths)])
+
+# 3. MERGE TIMING AND STABILITY ================================================
+
+real_scalability <- merge(
+  real_model_timing,
+  real_model_stability[risk_form == "compensatory",
+                       .(model, top1_stability, top10_jaccard)],
+  by = "model", all.x = TRUE
+)
+
+real_scalability <- real_scalability[order(-n_paths)]
+
+cat("\n\n=== REAL MODEL SCALABILITY ===\n")
+print(real_scalability)
+
+write.xlsx(real_scalability, "real_model_scalability.xlsx")
+
+# 4. PLOTS =====================================================================
+
+# A) Timing by stage per model -------------------------------------------------
+
+time_real_long <- melt(
+  real_scalability[!is.na(t_total)],
+  id.vars = c("model", "n_nodes", "n_paths"),
+  measure.vars = c("t_paths", "t_ua"),
+  variable.name = "stage", value.name = "seconds"
+)
+
+time_real_long[, stage := fcase(
+  stage == "t_paths", "Path enumeration",
+  stage == "t_ua",    "Uncertainty / sensitivity analysis"
+)]
+
+time_real_long[, model := factor(model, 
+  levels = real_scalability[order(n_paths), model])]
+
+# B) Stability per model -------------------------------------------------------
+
+stability_real_long <- melt(
+  real_scalability[!is.na(top1_stability)],
+  id.vars = c("model", "n_nodes", "n_paths"),
+  measure.vars = c("top1_stability", "top10_jaccard"),
+  variable.name = "metric", value.name = "value"
+)
+
+stability_real_long[, metric := fcase(
+  metric == "top1_stability", "Top-1 stability",
+  metric == "top10_jaccard",  "Top-10 Jaccard similarity"
+)]
+
+stability_real_long[, model := factor(model,
+  levels = real_scalability[order(n_paths), model])]
+
+# OMNIBUS SUMMARY ##############################################################
+
+cat("\n--- Real model timing summary ---\n")
+print(real_scalability[!is.na(t_total), .(
+  median_total_s = round(median(t_total), 1),
+  max_total_s    = round(max(t_total), 1),
+  median_paths   = median(n_paths),
+  max_paths      = max(n_paths)
+)])
+
+cat("\n--- Real model stability summary ---\n")
+print(real_scalability[!is.na(top1_stability), .(
+  median_top1    = round(median(top1_stability), 3),
+  min_top1       = round(min(top1_stability), 3),
+  max_top1       = round(max(top1_stability), 3),
+  median_jaccard = round(median(top10_jaccard), 3),
+  min_jaccard    = round(min(top10_jaccard), 3),
+  max_jaccard    = round(max(top10_jaccard), 3)
+)])
+
+```
+
+```{r plot_real_model_scalability, dependson="model_scalability", fig.height = 4.5, fig.width=5.5}
+
+plot_time_real <- ggplot(time_real_long, 
+                         aes(model, seconds, fill = stage)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_y_log10(breaks = c(0.1, 1, 10, 100, 1000),
+                labels = scales::label_math(10^.x, format = log10)) +
+  labs(x = "", y = "Time (seconds, log scale)") +
+  scale_fill_brewer(palette = "Set2", name = "", 
+                    guide = guide_legend(nrow = 2)) +
+  theme_AP() +
+  theme(legend.position = "top")
+
+plot_time_real
+
+plot_stability_real <- ggplot(stability_real_long,
+                              aes(model, value, fill = metric)) +
+  geom_bar(stat = "identity", position = position_dodge(0.7), width = 0.6) +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
+  labs(x = "", y = "Stability") +
+  scale_fill_brewer(palette = "Set1", name = "", 
+                    guide = guide_legend(nrow = 2)) +
+  theme_AP() +
+  theme(legend.position = "top")
+
+plot_stability_real
+
+plot_time_vs_paths <- real_scalability[!is.na(t_total)] %>%
+  ggplot(., aes(n_paths, t_total)) +
+  geom_point(size = 2) +
+  geom_text_repel(aes(label = model), size = 2, max.overlaps = 20,
+                  min.segment.length = 0, seed = 123) +
+  scale_x_log10(labels = scales::label_math(10^.x, format = log10)) +
+  scale_y_log10() +
+  labs(x = "Number of paths (log)", y = "Total time (seconds, log)") +
+  theme_AP()
+
+plot_time_vs_paths
+
+plot_stab_vs_paths <- real_scalability[!is.na(top1_stability)] %>%
+  ggplot(., aes(n_paths, top1_stability)) +
+  geom_point(size = 2) +
+  geom_text_repel(aes(label = model), size = 2, max.overlaps = 20,
+                  min.segment.length = 0, seed = 123) +
+  scale_x_log10(labels = scales::label_math(10^.x, format = log10)) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(x = "Number of paths (log)", y = "Top-1 stability") +
+  theme_AP()
+
+plot_stab_vs_paths
+
+# E) Merge panels --------------------------------------------------------------
+
+top_row <- plot_grid(plot_time_real, plot_stability_real, ncol = 2,
+                     labels = c("a", "b"), align = "h", axis = "tb")
+bottom_row <- plot_grid(plot_time_vs_paths, plot_stab_vs_paths, ncol = 2,
+                        labels = c("c", "d"), align = "h", axis = "tb")
+plot_grid(top_row, bottom_row, ncol = 1, rel_heights = c(0.45, 0.55))
+```
+
 
 # Analysis of git logs
 

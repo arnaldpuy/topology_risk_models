@@ -42,9 +42,16 @@ knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 # PRELIMINARY FUNCTIONS #######################################################
 ################################################################################
 
-sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales", 
-                          "cowplot", "readxl", "ggrepel", "tidytext", "here", 
-                          "tidygraph", "igraph", "foreach", "parallel", "ggraph", 
+# Ensure the installed softwareRisk (>= 0.2.0) is loaded. If an older version
+# is attached in the current session (e.g. via a previous devtools::load_all()),
+# detach it first so library() picks up the correct installed copy.
+if ("package:softwareRisk" %in% search()) {
+  detach("package:softwareRisk", unload = TRUE, character.only = TRUE)
+}
+
+sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales",
+                          "cowplot", "readxl", "ggrepel", "tidytext", "here",
+                          "tidygraph", "igraph", "foreach", "parallel", "ggraph",
                           "tools", "purrr", "sensobol", "benchmarkme", "softwareRisk"))
 
 # Set seed ---------------------------------------------------------------------
@@ -75,36 +82,34 @@ lab_expr <- c(b1 = expression(C %in% "(" * 0 * ", 10" * "]"),
 
 data("synthetic_graph")
 
-# Define weights and compute node metrics---------------------------------------
+# Define weights ---------------------------------------------------------------
 
 alpha_weight <- 0.6
 beta_weight <- 0.3
 gamma_weight <- 0.1
 
+# Prepare graph node attributes needed for plotting ---------------------------
+
 synthetic_graph <- synthetic_graph %>%
   activate(nodes) %>%
-  mutate(cyclo = round(scales::rescale(cyclo, to = c(1, 60))), 
-         indeg = degree(synthetic_graph, mode = "in"), 
+  mutate(cyclo = round(scales::rescale(cyclo, to = c(1, 60))),
+         indeg = degree(synthetic_graph, mode = "in"),
          outdeg = degree(synthetic_graph, mode = "out"),
-         btw = betweenness(synthetic_graph, directed = TRUE, weights = NULL, 
-                           normalized = FALSE), 
-         cyclo_sc = rescale(cyclo), 
-         indeg_sc = rescale(indeg),
-         btw_sc = rescale(btw), 
-         risk_score =  alpha_weight * cyclo_sc + beta_weight * indeg_sc + 
-           gamma_weight * btw_sc, 
          cyclo_class = case_when(cyclo <= 10 ~ "green",
                                  cyclo <= 20 ~ "orange",
                                  cyclo <= 50 ~ "red",
                                  cyclo >  50 ~ "purple",
-                                 TRUE ~ "grey"), 
-         complexity_category = cut(cyclo, 
+                                 TRUE ~ "grey"),
+         complexity_category = cut(cyclo,
                                    breaks = c(-Inf, 10, 20, 50, Inf),
                                    labels = c("b1","b2","b3","b4")))
 
 # Compute all paths ------------------------------------------------------------
 
-all_dt <- softwareRisk::all_paths_fun(graph = synthetic_graph, risk_form = "additive", 
+all_dt <- softwareRisk::all_paths_fun(graph = synthetic_graph,
+                                      alpha = alpha_weight,
+                                      beta  = beta_weight,
+                                      gamma = gamma_weight,
                                       complexity_col = "cyclo")
 
 # Extract paths ----------------------------------------------------------------
@@ -130,7 +135,7 @@ path_choices <- sample(paths_tbl$path_id, size = n_runs, replace = TRUE)
 # in the chain the first failure happens (for slope analysis) ------------------
 
 sim_results <- map_dfr(seq_len(n_runs), function(i) {
-  
+
   pid <- path_choices[i]
   v_names <- paths_tbl$path_nodes[[pid]]
   ps <- node_df$risk_score[match(v_names, node_df$name)]
@@ -156,7 +161,7 @@ empirical_tbl <- sim_results %>%
 paths_eval <- paths_tbl %>%
   left_join(empirical_tbl, by = "path_id")
 
-cat("Correlation(P_k, empirical failure):", 
+cat("Correlation(P_k, empirical failure):",
     cor(paths_eval$path_risk_score, paths_eval$emp_fail_rate, use = "complete.obs"), "\n")
 
 # ILLUSTRATION OF THE GINI INDEX: FIXING TOP-RISK NODES VS RANDOM NODES ########
@@ -181,11 +186,11 @@ set.seed(42)
 
 gini_effect_tbl <- top_node_tbl %>%
   mutate(P_orig = map_dbl(p_vec, ~ if (length(.x) == 0) 0 else 1 - prod(1 - .x)),
-         
+
          # Path failure if we set the risk of the top-risk node at 0 ----------------
          P_fix_top = map2_dbl(p_vec, idx_top, recompute_Pk),
          rand_idx = map_int(p_vec, ~ sample(seq_along(.x), 1)),
-         
+
          # Path failure if we randomly fix any node ---------------------------------
          P_fix_rand = map2_dbl(p_vec, rand_idx, recompute_Pk)) %>%
   mutate(drop_top  = P_orig - P_fix_top,
@@ -212,8 +217,8 @@ slope_eval <- paths_eval %>%
 # how many nodes and paths to show in the heatmap ------------------------------
 
 number_of_interest <- 20
-N_nodes <- number_of_interest   
-K_paths <- number_of_interest   
+N_nodes <- number_of_interest
+K_paths <- number_of_interest
 
 # top-N nodes by failure probability -------------------------------------------
 
@@ -221,13 +226,13 @@ top_nodes <- node_df %>%
   arrange(desc(risk_score)) %>%
   slice_head(n = N_nodes)
 
-# top-K paths by path failure probability --------------------------------------  
+# top-K paths by path failure probability --------------------------------------
 
 top_paths <- paths_tbl %>%
   arrange(desc(path_risk_score)) %>%
   slice_head(n = K_paths)
 
-# COMPUTE ######################################################################  
+# COMPUTE ######################################################################
 
 # make a named vector for fast lookup of risk_score by node name -------------------
 
@@ -237,33 +242,33 @@ p_map <- setNames(node_df$risk_score, node_df$name)
 
 delta_tbl <- map_dfr(seq_len(nrow(top_nodes)), function(i) {
   node_name <- top_nodes$name[i]
-  
+
   map_dfr(seq_len(nrow(top_paths)), function(j) {
     pid <- top_paths$path_id[j]
     nodes_vec <- top_paths$path_nodes[[j]]
     P_orig <- top_paths$path_risk_score[j]
-    
+
     # if node not in this path, improvement is zero ----------------------------
-    
+
     if (!node_name %in% nodes_vec) {
-      tibble(node = node_name, 
+      tibble(node = node_name,
              path_id = pid,
              deltaP = 0)
     } else {
-      
+
       # failure probs along the path -------------------------------------------
-      
+
       p_vec <- p_map[nodes_vec]
-      
+
       # if node appears multiple times, fixing ANY of its appearances is enough:
-      
+
       idxs <- which(nodes_vec == node_name)
-      
+
       # we fix all occurrences (set all to zero) ------------
-      
+
       p_vec_fix <- p_vec
       p_vec_fix[idxs] <- 0
-      
+
       P_fix <- if (length(p_vec_fix) == 0) 0 else 1 - prod(1 - p_vec_fix)
       tibble(node = node_name,
              path_id = pid,
@@ -282,7 +287,7 @@ delta_tbl <- map_dfr(seq_len(nrow(top_nodes)), function(i) {
 # Rows/columns with dark colors: diffuse risk.
 
 delta_tbl <- delta_tbl %>%
-  mutate(node = factor(node, levels = rev(top_nodes$name)),  
+  mutate(node = factor(node, levels = rev(top_nodes$name)),
          path_id = factor(path_id, levels = top_paths$path_id))
 
 ```
@@ -305,7 +310,7 @@ size_points <- 1
 
 distribution_cc <- node_df %>%
   ggplot(., aes(cyclomatic_complexity)) +
-  geom_histogram() + 
+  geom_histogram() +
   labs(x = "C", y = "Nº nodes") +
   theme_AP()
 
@@ -347,7 +352,7 @@ fig_Pk <- ggplot(paths_eval, aes(x = path_risk_score, y = emp_fail_rate)) +
   geom_point(alpha = 0.5, size = size_points) +
   geom_abline(slope = 1, intercept = 0, colour = "red", linetype = 2) +
   labs(x = expression("Theoretical " * P[k]),
-       y = expression("Empirical " * P[k])) + 
+       y = expression("Empirical " * P[k])) +
   theme_AP()
 
 fig_Pk
@@ -362,7 +367,7 @@ fig_gini <- ggplot(gini_effect_tbl, aes(x = gini_node_risk)) +
   geom_point(aes(y = drop_rand, colour = "Fix random node"), alpha = 0.4) +
   labs(x = expression(G[k]),
        y = expression("Reduction in " * P[k]), colour = NULL) +
-  theme_AP() + 
+  theme_AP() +
   theme(legend.position = c(0.4, 0.78))
 
 fig_gini
@@ -378,7 +383,7 @@ maxP <- max(delta_tbl$deltaP, na.rm = TRUE)
 
 fig_heat <- ggplot(delta_tbl, aes(x = path_id, y = node, fill = deltaP)) +
   geom_tile() +
-  scale_fill_viridis_c(option = "C", 
+  scale_fill_viridis_c(option = "C",
                        name = expression(Delta * P[k]),
                        trans  = "sqrt") +
   theme_AP() +
@@ -386,7 +391,7 @@ fig_heat <- ggplot(delta_tbl, aes(x = path_id, y = node, fill = deltaP)) +
         axis.text.y = element_text(size = 5),
         axis.title.x = element_text(margin = margin(t = 5)),
         axis.title.y = element_text(margin = margin(r = 5))) +
-  labs(x = "Path ID", y = "Node ID") 
+  labs(x = "Path ID", y = "Node ID")
 
 fig_heat
 ```
@@ -409,10 +414,10 @@ fig_slope
 
 # MERGE ALL FIGURES ############################################################
 
-top <- plot_grid(toy_graph, distribution_cc, fig_Pk, ncol = 3, labels = "auto", 
+top <- plot_grid(toy_graph, distribution_cc, fig_Pk, ncol = 3, labels = "auto",
                  rel_widths = c(0.45, 0.25, 0.3))
 top_final <- plot_grid(legend, top, ncol = 1, rel_heights = c(0.13, 0.87))
-bottom <- plot_grid(fig_gini, fig_heat, fig_slope, ncol = 3, labels = c("d", "e", "f"), 
+bottom <- plot_grid(fig_gini, fig_heat, fig_slope, ncol = 3, labels = c("d", "e", "f"),
                     rel_widths = c(0.3, 0.45, 0.25))
 final_plot <- plot_grid(top_final, bottom, ncol = 1)
 final_plot
@@ -440,8 +445,3 @@ cat("Num cores:   "); print(detectCores(logical = FALSE))
 
 cat("Num threads: "); print(detectCores(logical = FALSE))
 ```
-
-
-
-
-
