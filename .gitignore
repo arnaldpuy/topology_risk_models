@@ -47,4 +47,9 @@ dynamic_validation/VIC/
 dynamic_validation/HYPE/
 dynamic_validation/results/
 
+# Knit-ed / rendered artefacts from the .md files in dynamic_validation/
+dynamic_validation/*.html
+dynamic_validation/*_files/
+dynamic_validation/*_cache/
+
 .Rproj.user
