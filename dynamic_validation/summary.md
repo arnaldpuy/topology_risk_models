@@ -144,7 +144,7 @@ Mapped 1:1 to the weaknesses above; ordered by leverage.
 
 **6.2 Trigger the engineering "phase 2" re-run of the static analyser on the runtime code versions.** For PCR-GLOBWB this means parsing the updated codebase Federico had to use to get the model running. For ORCHIDEE this means parsing the post-regeneration Fortran. Once both are done, the matched-static edge set goes from "12% of static edges" to whatever the true intersection is, and the dormancy numbers stop carrying their drift footnote.
 
-**6.3 Push for VIC and HYPE runs.** Even a single configuration each gets us to four models, which is what the decision rule was written for. If a second PCR-GLOBWB configuration is also feasible (e.g. ISIMIP3 instead of the developer-shipped run), that would address §5.3 simultaneously.
+**6.3 Push for VIC and HYPE runs.** Even a single configuration each gets us to four models, which is what the decision rule was written for. If a second PCR-GLOBWB configuration is also feasible (e.g. ISIMIP3 instead of the developer-shipped run), that would address §5.3 simultaneously. *When VIC and HYPE runs land, the step-by-step refresh of every file in this folder (including `draft_results_paragraph.md`) is in the "Update checklist when VIC and HYPE arrive" section at the end of `draft_results_paragraph.md`.*
 
 **6.4 Audit name normalisation on a sample of unmatched edges.** Take 50 random unmatched static edges per model, hand-check whether the unmatched callees are (a) genuinely absent from the runtime trace, (b) present but renamed/mangled, or (c) present but in a class/module the normaliser collapsed away. This is half a day's work and gates the credibility of every coverage number.
 
