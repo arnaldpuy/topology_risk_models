@@ -29,4 +29,22 @@
 # Include the "functions" folder and its contents
 !functions/
 !functions/*.R
+
+# Include the dynamic-validation pipeline (scripts + docs only)
+!dynamic_validation/
+!dynamic_validation/README.md
+!dynamic_validation/pre_registration.md
+!dynamic_validation/summary.md
+!dynamic_validation/analysis/
+!dynamic_validation/analysis/*.R
+
+# Within dynamic_validation/: keep raw engineering exports and
+# regeneratable analysis outputs out of git. Commit them explicitly
+# if/when you decide to.
+dynamic_validation/ORCHIDEE/
+dynamic_validation/PCR/
+dynamic_validation/VIC/
+dynamic_validation/HYPE/
+dynamic_validation/results/
+
 .Rproj.user
