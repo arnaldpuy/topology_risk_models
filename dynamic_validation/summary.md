@@ -6,6 +6,17 @@
 
 This document is a point-in-time snapshot for collaborators. It records what has been built, what the analyses show, what those results buy the manuscript, and the work that still needs to happen before the validation is publication-ready.
 
+### A few terms used throughout
+
+- **Static call graph.** The graph of which functions call which, derived from the source code alone (no execution required). Built earlier in the project via `code_hydrological_models.R`.
+- **Path.** A simple chain of function calls from an entry function (something with no caller in the graph) to a sink function (something with no callee). Each path has a length in **hops** = number of edges = number of calls along the chain. A length-1 path is a single function call; a length-7 path is a chain of seven calls.
+- **P_k.** The path-level risk score from the manuscript (Eq. 5). Aggregates per-function risk into a single number per path. Bounded in [0, 1]. Higher = riskier path.
+- **CV_k.** The coefficient of variation of P_k across the (α, β, γ, p) uncertainty ensemble. Low CV_k = the path stays high-risk no matter how you define risk; high CV_k = its rank depends on the definition. We use the median-CV cutoff to isolate "robustly high-risk" paths.
+- **Runtime trace.** The set of (caller, callee) edges that were actually traversed when the model was run under a given configuration. Shipped by the engineers as `runtime_callgraph_edges.csv` per model.
+- **Exercised.** A static edge is *exercised* if it appears in the runtime trace; a static path is *exercised* (in the loose sense) if at least one of its edges is in the runtime trace, or (strict sense) if all of its edges are.
+- **Top / bottom decile.** Top decile = paths in the top 10% of P_k; bottom decile = bottom 10%. Used as the contrast for "high-risk vs low-risk".
+- **Effect size A** (Vargha & Delaney's common-language). The probability that a randomly drawn value from group X is greater than a randomly drawn value from group Y. A = 0.5 means no difference; A > 0.5 means group X tends to be larger; A < 0.5 means group X tends to be smaller. The pre-registration uses A > 0.55 as the threshold for "supportive".
+
 ---
 
 ## 1. What was built
@@ -43,7 +54,7 @@ Key design choices:
 
 ## 2. What was actually run
 
-Against ORCHIDEE + PCR-GLOBWB, with the static side restricted to additive UA (compensatory was originally planned as a robustness check; see §5):
+The handover specified five analyses; the table below records which of them produced numbers and which are still waiting on data. Analyses 2–4 need a per-edge runtime call count column that has not yet been shipped — the scripts are written and tested but they exit cleanly with a "no counts, skipping" message until the column arrives. Everything was run against ORCHIDEE + PCR-GLOBWB, with the static side restricted to additive UA (compensatory was originally planned as a robustness check but turned out to be redundant under how `uncertainty_fun` samples its parameters; see §5.8):
 
 | Analysis | Status | Output |
 |---|---|---|
@@ -60,14 +71,30 @@ Against ORCHIDEE + PCR-GLOBWB, with the static side restricted to additive UA (c
 
 ## 3. Headline results
 
-### Edge-level coverage diagnostics
+This section reports the actual numbers produced by the pipeline on ORCHIDEE and PCR-GLOBWB. It is organised as four progressively sharper tables. The first (§3.1) is a sanity check on how much of the static call graph the runtime trace actually reached. The second (§3.2) gives the raw top-vs-bottom contrast, which is dramatic but partly an artefact of how P_k correlates with path length. The third (§3.3) is the length-controlled version of that contrast — the apples-to-apples test the manuscript should rely on. The fourth (§3.4) characterises the high-risk paths that the runtime trace did *not* fully exercise, supporting the manuscript's "static finds what runtime misses" framing.
+
+### 3.1 Edge-level coverage diagnostics
+
+**What this table answers:** how much of each model's static call graph was actually touched by the runtime trace under the chosen configuration. This is a precondition for any downstream coverage statement — if the runtime reaches only a tiny fraction of the static graph, every other number in this section is conditioned on that intersection.
 
 | Model | static paths | static edges | runtime edges | matched | runtime coverage |
 |---|---|---|---|---|---|
 | ORCHIDEE | 3152 | 1368 | 767 | 168 | 12.3% |
 | PCR-GLOBWB | 101 | 116 | 144 | 9 | 7.8% |
 
-### Unstratified coverage (additive, all paths)
+**Columns:**
+
+- *static paths*: total number of simple paths enumerated from the static call graph for this model.
+- *static edges*: total number of unique caller → callee edges in the static call graph.
+- *runtime edges*: total number of unique caller → callee edges observed in the runtime trace.
+- *matched*: edges present in both sets (i.e. static edges that the runtime trace actually traversed).
+- *runtime coverage*: matched / static edges. The fraction of the static call graph that the runtime trace reached.
+
+**Reading:** the runtime trace covered ~12% of ORCHIDEE's static graph and ~8% of PCR-GLOBWB's. Some of that gap is genuine dormancy of the chosen configuration (which is interesting — see §3.4); some is suspected codebase drift between the static snapshot and the runtime executable (see §5.2 in this document).
+
+### 3.2 Unstratified coverage — the headline contrast (additive, all paths)
+
+**What this table answers:** when we split the paths into the *top 10% by P_k* (high-risk) and the *bottom 10% by P_k* (low-risk), how does runtime coverage compare? This is the simplest version of the validation question.
 
 | Model | stratum | n | frac_any | frac_edge | frac_all | median hops |
 |---|---|---|---|---|---|---|
@@ -76,7 +103,20 @@ Against ORCHIDEE + PCR-GLOBWB, with the static side restricted to additive UA (c
 | PCR-GLOBWB | top decile | 13 | 92.3% | 45.5% | 7.7% | 4 |
 | PCR-GLOBWB | bottom decile | 15 | 0.0% | 0.0% | 0.0% | 1 |
 
-### Within-length deciles (the apples-to-apples test, ORCHIDEE)
+**Columns:**
+
+- *stratum*: high-risk (top decile of P_k, with the CV_k < median filter to keep only robustly high-risk paths) or low-risk (bottom decile of P_k).
+- *n*: number of paths in that stratum.
+- *frac_any*: fraction of paths in the stratum where **at least one** edge of the path was exercised at runtime. Loose definition.
+- *frac_edge*: mean over paths in the stratum of (number of edges of the path that were exercised) / (total edges in the path). Length-insensitive — a long path with half its edges exercised contributes the same 0.5 as a length-2 path with one edge exercised.
+- *frac_all*: fraction of paths where **every** edge was exercised at runtime. Strict definition.
+- *median hops*: median path length in the stratum.
+
+**Reading:** the contrast is large under all three metrics, but the rightmost column makes the catch clear — top-decile paths in ORCHIDEE are typically 7 hops long while bottom-decile paths are typically 1 hop. The reason is mechanical: P_k aggregates over node risks under a saturating-OR formula (Eq. 5 of the manuscript), so longer paths almost always score higher. Some of the "100% vs 12% any-exercised" contrast is therefore static risk doing real work; some is just the fact that longer paths have more chances to contain an exercised edge. The length-controlled version is in §3.3.
+
+### 3.3 Within-length deciles — the apples-to-apples test (ORCHIDEE)
+
+**What this table answers:** within each path-length class separately, does the framework still discriminate? Concretely: bin paths by hops (1, 2, 3–4, 5–7, 8+), then within each bin take the top vs bottom decile of P_k and compare runtime coverage. Length is held constant by construction.
 
 | hops bin | n top / bot | median frac_edge (top vs bot) | Wilcoxon p | A | reading |
 |---|---|---|---|---|---|
@@ -86,9 +126,22 @@ Against ORCHIDEE + PCR-GLOBWB, with the static side restricted to additive UA (c
 | 5–7 | 133 / 133 | 0.43 vs 0.20 | <10⁻³⁵ | **0.93** | strongly supportive |
 | 8+ | 16 / 16 | 0.44 vs 0.25 | <10⁻⁶ | **1.00** | maximal |
 
-PCR-GLOBWB: only the hops=1 bin had enough paths for a within-length cut, and both strata exercise 0% — uninformative.
+**Columns:**
 
-### Within-length dormancy (ORCHIDEE top-decile)
+- *hops bin*: path length category. The bin "3–4" contains paths of 3 or 4 hops; "8+" contains paths of 8 hops or more.
+- *n top / bot*: number of paths in the top-decile and bottom-decile strata *within this bin*.
+- *median frac_edge (top vs bot)*: median value of frac_edge for the top-decile stratum versus the bottom-decile stratum. Compare the two side by side: this is the within-length contrast.
+- *Wilcoxon p*: p-value of a two-sample Wilcoxon rank-sum test on frac_edge between the two strata, within this bin.
+- *A*: common-language effect size A for the same comparison. > 0.5 = top-decile paths tend to have higher frac_edge than bottom-decile; < 0.5 = the reverse; 0.5 = no difference.
+- *reading*: one-word summary of whether the cell supports the framework. Pre-registered threshold for "supportive" is A > 0.55 with p < 0.05.
+
+**Reading:** for paths of three hops or more — i.e. wherever P_k is doing genuine path-level integration over multiple node risks — the framework discriminates strongly, with effect sizes A = 0.78, 0.93 and 1.00. For paths of one or two hops the framework fails (length-1 actually reverses): high-cyclomatic-complexity single-function calls in ORCHIDEE tend to live in error-handling or rarely-fired branches, while low-complexity single-function calls are heavily used utility functions. This is consistent with the manuscript's framing of P_k as a path-level metric — at length 1 there is no path to integrate over.
+
+PCR-GLOBWB: only the hops=1 bin had enough paths for a within-length cut, and both strata exercise 0% — no signal either way. Cross-model claims here rest on ORCHIDEE.
+
+### 3.4 Within-length dormancy — the complementarity claim (ORCHIDEE top-decile)
+
+**What this table answers:** of the within-length top-decile high-risk paths in each length bin, how many are dormant — i.e. were not (fully) exercised in the chosen configuration? Restricting to within-length top-decile (rather than overall top decile) means we are not just counting long paths that mechanically have more chances to fail.
 
 | hops bin | n | dormant loose | dormant strict |
 |---|---|---|---|
@@ -98,11 +151,20 @@ PCR-GLOBWB: only the hops=1 bin had enough paths for a within-length cut, and bo
 | 5–7 | 133 | 0 (0%) | 133 (100%) |
 | 8+ | 8 | 0 (0%) | 8 (100%) |
 
+**Columns:**
+
+- *hops bin*: same as in §3.3.
+- *n*: number of within-length top-decile high-risk paths in this bin (the same n_top column as §3.3).
+- *dormant loose*: paths for which **no** edge was exercised at runtime. The most conservative "completely missed" count.
+- *dormant strict*: paths for which **at least one edge was missed** by the runtime trace (i.e. the path was not fully traversed).
+
+**Reading:** in the long bins (5–7, 8+) loose dormancy is zero — every top-decile high-risk path of that length had at least one of its edges exercised. But strict dormancy is 100% in every bin of three or more hops: *no* top-decile high-risk path had every one of its edges exercised in the chosen configuration. The substantive number for the manuscript is the hops 3–4 row: 5 out of 100 (5%) of within-length top-decile high-risk paths were completely dormant under the reference configuration. The framework is flagging execution chains that the chosen run touched only partially, which is the framework's intended role.
+
 ---
 
 ## 4. How this builds on and defends the manuscript
 
-The framework's central claim is that path-level static risk identifies execution paths that *concentrate systemic risk in scientific software*. Each of the five analyses in the handover targets a specific reviewer counter-claim. We can now mark off two of those counter-claims, partially address a third, and explicitly preserve the framework's most important framing concession.
+This section is the bridge from the numbers in §3 to the claims the manuscript needs to make. The framework's central claim is that path-level static risk identifies execution paths that *concentrate systemic risk in scientific software*. Each of the five analyses in the handover was designed to address a specific reviewer counter-claim. With the numbers now in hand, we can mark off two of those counter-claims, partially address a third, and explicitly preserve the framework's most important framing concession (that static risk is *potential* and not *realised* vulnerability).
 
 **Claim defended: "the framework discriminates beyond what trivial baselines would predict."** The unstratified coverage contrast (100% vs 12.3% any-exercised in ORCHIDEE; 92.3% vs 0% in PCR) confirms that top-decile P_k paths are an order of magnitude more likely to be exercised than bottom-decile paths. Once we control for path length — necessary because the saturating-OR aggregator is monotone in path length — the within-length effect sizes on ORCHIDEE are A = 0.78–1.00 across hops 3–8+, all p < 10⁻⁶. This *exceeds the pre-registered threshold of A > 0.55* in every length bin in the range where the framework is designed to apply. It is the cleanest evidence that static topology is doing more than reproducing path length.
 
@@ -138,7 +200,7 @@ These are written so that a reviewer's most natural objections appear on this li
 
 ## 6. What needs to happen to strengthen the validation
 
-Mapped 1:1 to the weaknesses above; ordered by leverage.
+Mapped 1:1 to the weaknesses in §5; ordered by how much each one would tighten the validation, not by how much work it is. The first three (counts, codebase phase-2 re-run, VIC + HYPE data) sit outside our analytical control — they are deliverables we are waiting on from the engineering team. The last five are things the analysis side can do or decide independently.
 
 **6.1 (Highest leverage) Get the per-edge `runtime_calls` column from Federico.** This is a one-line export change on his side and unblocks Analyses 2, 3, and 4 with no schema changes on ours. Without it the pre-registered decision rule cannot be evaluated at all.
 
