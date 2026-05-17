@@ -1,0 +1,8 @@
+model,risk_form,hops_bin,stratum,n_paths,frac_any,frac_edge
+ORCHIDEE,additive,1,bottom_decile,174,0.103448275862069,0.103448275862069
+ORCHIDEE,additive,2,bottom_decile,108,0.148148148148148,0.0740740740740741
+ORCHIDEE,additive,3-4,bottom_decile,34,0.147058823529412,0.0465686274509804
+ORCHIDEE,additive,5-7,top_decile,206,1,0.468307905686547
+ORCHIDEE,additive,8+,top_decile,112,1,0.44156746031746
+PCR-GLOBWB,additive,1,bottom_decile,15,0,0
+PCR-GLOBWB,additive,3-4,top_decile,13,0.923076923076923,0.455128205128205

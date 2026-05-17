@@ -1,0 +1,147 @@
+file,function,type,line,call,call_line,runtime_calls
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatedirectrunoff,python,2398,improvedarnoscheme,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,estimatetranspirationandbaresoilevap,python,2559,min,,9516
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,estimatetranspirationandbaresoilevap,python,2559,pcrmul,,27084
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,estimatetranspirationandbaresoilevap,python,2559,pcrdiv,,10248
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,estimatetranspirationandbaresoilevap,python,2559,pcradd,,12444
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,uppersoilupdate,python,3662,calculatedirectrunoff,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,uppersoilupdate,python,3662,estimatetranspirationandbaresoilevap,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,uppersoilupdate,python,3662,waterbalancecheck,,7320
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,uppersoilupdate,python,3662,calculatewaterdemand,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,uppersoilupdate,python,3662,estimatesoilfluxes,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,uppersoilupdate,python,3662,getsoilstates,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,uppersoilupdate,python,3662,updatesoilstates,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getmapattributesall,python,1836,communicate,,4277
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getmapattributesall,python,1836,__init__,,4277
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getmapattributesall,python,1836,<built-in method gc.collect>,,4277
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/subprocess.py,_execute_child,python,1826,<built-in method _posixsubprocess.fork_exec>,,4278
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,singletrynetcdf2pcrobjclone,python,571,getmapattributesall,,4132
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,singletrynetcdf2pcrobjclone,python,571,debug,,16528
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/pcrglobwb.py,__init__,python,50,createsubmodels,,1
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/meteo.py,read_forcings,python,1003,netcdf2pcrobjclone,,1098
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landSurface.py,update,python,1232,partitioninggroundsurfaceabstraction,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landSurface.py,update,python,1232,updatelc,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landSurface.py,update,python,1232,pcrmul,,86497
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landSurface.py,update,python,1232,pcradd,,88336
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,ifthen,python,5,<built-in method pcraster._pcraster.checkandexec>,,91793
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,ifthenelse,python,28,<built-in method pcraster._pcraster.checkandexec>,,129726
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,pcrgt,python,99,<built-in method pcraster._pcraster.checkandexec>,,85809
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,min,python,175,<built-in method pcraster._pcraster.checkandexec>,,141363
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,max,python,198,<built-in method pcraster._pcraster.checkandexec>,,325733
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,cover,python,221,<built-in method pcraster._pcraster.checkandexec>,,101887
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,pcrmul,python,958,<built-in method pcraster._pcraster.checkandexec>,,339676
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,pcrfdiv,python,977,<built-in method pcraster._pcraster.checkandexec>,,149703
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,pcrpow,python,996,<built-in method pcraster._pcraster.checkandexec>,,19052
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,pcrbadd,python,1081,<built-in method pcraster._pcraster.checkandexec>,,541973
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,pcrbmin,python,1100,<built-in method pcraster._pcraster.checkandexec>,,282367
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,mapminimum,python,1992,<built-in method pcraster._pcraster.checkandexec>,,29292
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,mapmaximum,python,2006,<built-in method pcraster._pcraster.checkandexec>,,29300
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,areatotal,python,3399,<built-in method pcraster._pcraster.checkandexec>,,30385
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/subprocess.py,communicate,python,1177,<method 'read' of '_io.bufferedreader' objects>,,4278
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterbalancecheck,python,2064,getminmaxmean,,29280
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterbalancecheck,python,2064,pcradd,,181170
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterbalancecheck,python,2064,pcrsub,,61488
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/framework/dynamicFramework.py,run,python,47,_rundynamic,,1
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/framework/frameworkBase.py,_rundynamic,python,360,dynamic,,366
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/logging/__init__.py,flush,python,1131,<method 'flush' of '_io.textiowrapper' objects>,,59181
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/subprocess.py,__init__,python,817,_execute_child,,4278
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operations.py,maptotal,python,52,<built-in method pcraster._pcraster.maptotal>,,58643
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/logging/__init__.py,handle,python,1667,callhandlers,,51335
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/logging/__init__.py,handle,python,1011,emit,,55258
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/deterministic_runner.py,main,python,70,run,,1
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/deterministic_runner.py,main,python,70,__init__,,1
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,singletrynetcdf2pcrobjclonewithouttime,python,118,getmapattributesall,,145
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/ncConverter.py,data2netcdf,python,176,exists,,5268
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/reporting.py,additional_post_processing,python,717,pcrmul,,10248
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/reporting.py,report,python,1027,data2netcdf,,2634
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/reporting.py,report,python,1027,post_processing,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/reporting.py,report,python,1027,pcradd,,35868
+<frozen genericpath>,exists,python,16,<built-in method posix.stat>,,5287
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/logging/__init__.py,emit,python,1139,flush,,59181
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getminmaxmean,python,1939,mapminimum,,29291
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getminmaxmean,python,1939,mapmaximum,,29291
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getminmaxmean,python,1939,maptotal,,29291
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getminmaxmean,python,1939,getmaptotal,,29291
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getmaptotal,python,1879,maptotal,,29352
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/reporting.py,post_processing,python,388,additional_post_processing,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,ifthen,,40992
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,min,,29280
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,max,,40992
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,cover,,46848
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,areatotal,,23424
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,waterbalancecheck,,5856
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,getvaldivzero,,11712
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,pcrmul,,17568
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,pcrdiv,,11712
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,pcradd,,11712
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,pcrsub,,11712
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,waterabstractionandallocation,python,2419,debug,,17568
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,updatelc,python,932,uppersoilupdate,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,updatelc,python,932,getpotet,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,updatelc,python,932,interceptionupdate,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,updatelc,python,932,snowmelthbvsimple,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,updatelc,python,932,getvaldivzero,,4392
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,getpotet,python,1103,waterbalancecheck,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,getpotet,python,1103,netcdf2pcrobjclone,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,estimatetranspirationandbaresoilevap,,732
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,ifthenelse,,20496
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,min,,40626
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,max,,82716
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,areatotal,,5856
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,waterbalancecheck,,4392
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,waterabstractionandallocation,,5856
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,getvaldivzero,,24888
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,pcrmul,,72834
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,pcrdiv,,24156
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,pcradd,,62586
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,pcrsub,,63318
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,calculatewaterdemand,python,1594,debug,,11712
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/routing.py,accutraveltime,python,645,getcharacteristicdistance,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/routing.py,getcharacteristicdistance,python,569,pcrpow,,1830
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/routing.py,update,python,824,simple_update,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/routing.py,update,python,824,returninundationfractionandflooddepth,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/routing.py,simple_update,python,1062,waterbalancecheck,,732
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/routing.py,simple_update,python,1062,accutraveltime,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/routing.py,simple_update,python,1062,update,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,interceptionupdate,python,1136,waterbalancecheck,,2928
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,interceptionupdate,python,1136,netcdf2pcrobjclone,,1464
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,snowmelthbvsimple,python,1361,waterbalancecheck,,4392
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,improvedarnoscheme,python,2413,pcrmul,,13176
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,improvedarnoscheme,python,2413,pcrpow,,4392
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,improvedarnoscheme,python,2413,pcradd,,13176
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,estimatesoilfluxes,python,2705,pcrmul,,17568
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/routing.py,returninundationfractionandflooddepth,python,1307,ifthenelse,,23790
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getvaldivzero,python,1960,ifthenelse,,52397
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getvaldivzero,python,1960,max,,52397
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getvaldivzero,python,1960,pcrgt,,52397
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,getvaldivzero,python,1960,pcrdiv,,52397
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operators.py,pcrgt,python,38,pcrgt,,85809
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,getsoilstates,python,1440,min,,10248
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,getsoilstates,python,1440,max,,16104
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,getsoilstates,python,1440,pcrmul,,19032
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,getsoilstates,python,1440,pcrpow,,7320
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,getsoilstates,python,1440,pcrsub,,10248
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,updatesoilstates,python,3401,max,,13176
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,updatesoilstates,python,3401,pcradd,,29280
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/landCover.py,updatesoilstates,python,3401,pcrsub,,20496
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/waterBodies.py,update,python,391,getwaterbodyoutflow,,366
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operators.py,pcrmul,python,54,pcrmul,,329366
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operators.py,pcrdiv,python,62,pcrfdiv,,147115
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operators.py,pcrpow,python,78,pcrpow,,19052
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operators.py,pcradd,python,94,pcrbadd,,535012
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/site-packages/pcraster/operators.py,pcrsub,python,102,pcrbmin,,257470
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/logging/__init__.py,_log,python,1641,handle,,51335
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/logging/__init__.py,debug,python,1498,_log,,47412
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/logging/__init__.py,callhandlers,python,1721,handle,,59181
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,netcdf2pcrobjclonewithouttime,python,97,singletrynetcdf2pcrobjclonewithouttime,,145
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/virtualOS.py,netcdf2pcrobjclone,python,258,singletrynetcdf2pcrobjclone,,4132
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/deterministic_runner.py,__init__,python,46,__init__,,1
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/deterministic_runner.py,dynamic,python,56,report,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/deterministic_runner.py,dynamic,python,56,update,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/deterministic_runner.py,dynamic,python,56,read_forcings,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/pcrglobwb.py,createsubmodels,python,106,__init__,,1
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/pcrglobwb.py,update,python,464,update,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/pcrglobwb.py,update,python,464,update,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/pcrglobwb.py,update,python,464,update,,366
+/mnt/c/Users/feded/Desktop/MachineLearning/ProjectMetrics/RuntimeExpermients/PCR/PCR-GLOBWB_model/model/pcrglobwb.py,read_forcings,python,460,read_forcings,,366
+/home/doenitz/anaconda3/envs/pcrglobwb_python3/lib/python3.14/logging/__init__.py,emit,python,1251,emit,,55258

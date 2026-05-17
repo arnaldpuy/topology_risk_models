@@ -43,24 +43,18 @@
 !questionnaire_data/*.pdf
 !questionnaire_data/*.xlsx
 
-# Include the dynamic-validation pipeline (scripts + docs only)
+# Dynamic-validation: only the model folders and the results folder are
+# tracked in git (and therefore uploaded to GitHub). The supporting docs
+# (.md files) and the per-analysis scripts in analysis/ stay on disk
+# locally but are NOT tracked - the canonical workflow for the manuscript
+# is code_dynamic_validation.{Rmd,R,pdf} at the repo root.
 !dynamic_validation/
-!dynamic_validation/README.md
-!dynamic_validation/pre_registration.md
-!dynamic_validation/summary.md
-!dynamic_validation/analysis/
-!dynamic_validation/analysis/*.R
 
-# Within dynamic_validation/: keep raw engineering exports and
-# regeneratable analysis outputs out of git. Commit them explicitly
-# if/when you decide to.
-dynamic_validation/ORCHIDEE/
-dynamic_validation/PCR/
-dynamic_validation/VIC/
-dynamic_validation/HYPE/
-dynamic_validation/results/
+# Local-only files inside dynamic_validation/ (not tracked, not pushed)
+dynamic_validation/*.md
+dynamic_validation/analysis/
 
-# Knit-ed / rendered artefacts from the .md files in dynamic_validation/
+# Knit-ed / rendered artefacts (local-only too)
 dynamic_validation/*.html
 dynamic_validation/*_files/
 dynamic_validation/*_cache/
