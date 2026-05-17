@@ -143,12 +143,30 @@ PCR-GLOBWB: only the hops=1 bin had enough paths for a within-length cut, and bo
 
 **What this table answers:** among the paths that runtime actually exercised, does $P_k$ rank-order their runtime intensity correctly? This is the second leg of the pre-registered decision rule.
 
+Before the correlation itself, it helps to see *how often* each aggregator fires and *with what magnitude*. The two are different in kind: $E_k^{\mathrm{sum}}$ is non-zero whenever any one edge of the path was exercised; $E_k^{\min}$ is non-zero only when every edge of the path was exercised at least once.
+
+| Model | n paths | any edge exercised | $E_k^{\mathrm{sum}} > 0$ | $E_k^{\min} > 0$ (every edge exercised) |
+|---|---|---|---|---|
+| ORCHIDEE | 3,152 | 2,100 (67 %) | 2,100 (67 %) | **38 (1.2 %)** |
+| PCR-GLOBWB | 101 | 17 (17 %) | 17 (17 %) | **5 (5 %)** |
+
+On the subset of paths where each aggregator is non-zero, the magnitudes are very different too. $E_k^{\mathrm{sum}}$ has a heavy right tail (a few paths see hundreds or thousands of calls along their full length); $E_k^{\min}$ on its tiny non-zero subset is dominated by paths whose rarest edge fired only once.
+
+| Model | $E_k^{\mathrm{sum}}$ median (range on > 0 subset) | $E_k^{\min}$ median (range on > 0 subset) |
+|---|---|---|
+| ORCHIDEE | 1,488 calls (1 – 8,929) | 1 call (1 – 1,489) |
+| PCR-GLOBWB | 4,132 calls (1 – 64,427) | 1 call (1 – 11,712) |
+
+With that distributional picture in mind, the rank correlations are:
+
 | Model | n exercised paths | Spearman ρ (P_k, E_k_sum) | 95% CI | Kendall τ | Spearman with E_k_min (robustness) |
 |---|---|---|---|---|---|
-| ORCHIDEE | 2100 | **0.79** | [0.77, 0.81] | 0.62 | -0.21 |
+| ORCHIDEE | 2100 | **0.79** | [0.77, 0.81] | 0.62 | **-0.21** |
 | PCR-GLOBWB | 17 | 0.11 | [-0.51, 0.62] | 0.15 | -0.62 |
 
-**Reading:** ORCHIDEE shows a strong positive rank correlation between static $P_k$ and the sum of per-edge runtime calls along the path. The bootstrap CI is bounded well above zero, meeting the pre-registered ρ > 0 criterion. The negative correlation with $E_k^{\min}$ confirms the degeneracy that motivated switching the primary aggregator (see deviation log): under min, $E_k$ collapses to a near-binary "is the path fully traversed" indicator that anti-correlates with length. PCR-GLOBWB has only 17 exercised paths so its CI brackets zero — no conclusion either way.
+**Reading:** ORCHIDEE shows a strong positive rank correlation between static $P_k$ and the sum of per-edge runtime calls along the path. The bootstrap CI is bounded well above zero, meeting the pre-registered ρ > 0 criterion. The negative correlation with $E_k^{\min}$ is the second story embedded in the same table — and it is **not** a counter-signal. Under min, $E_k$ goes to zero as soon as any one edge of the path is missed by the runtime trace. In ORCHIDEE 98.8 % of paths satisfy that condition (a single missed edge along a 7-hop chain is enough), so the paths that survive with $E_k^{\min} > 0$ are typically the short, well-trodden ones rather than the long, statically high-risk ones. Since $P_k$ rewards length via the saturating-OR aggregator (Eq. 5), $E_k^{\min}$ ends up anti-correlated with $P_k$ for a purely mechanical reason. At this configuration's coverage (~12 % of static edges in ORCHIDEE; ~8 % in PCR-GLOBWB), $E_k^{\min}$ carries essentially the same information as the binary `all_exercised` flag from §3.2 and is too sparse to rank-order paths; this is why the pre-registered primary aggregator was switched to `sum`. If a future phase-2 run with matched static and runtime codebases raises coverage substantially, $E_k^{\min}$ may regain discriminative power and the comparison is worth re-running.
+
+PCR-GLOBWB has only 17 exercised paths so its CI brackets zero — no conclusion either way on the rank correlation.
 
 ### 3.5 Reverse predictive check (Analysis 3, ORCHIDEE)
 
