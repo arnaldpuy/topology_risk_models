@@ -34,9 +34,9 @@ dynamic_validation/
     00b_extract_ua_summary.R  one-off: slims the 1.78 GB full_ua_df.csv to an 8.7 MB summary
     01_join_static_dynamic.R  per-path join of static graph + runtime trace
     02_coverage.R             Analysis 1 (path coverage) + 1b (within-length deciles + Wilcoxon)
-    03_rank_correlation.R     Analysis 2 (Spearman P_k vs E_k)              [blocked on counts]
-    04_reverse_predictive.R   Analysis 3 (reverse predictive check)         [blocked on counts]
-    05_matched_contrast.R     Analysis 4 (matched-frequency contrast)       [blocked on counts]
+    03_rank_correlation.R     Analysis 2 (Spearman P_k vs E_k)
+    04_reverse_predictive.R   Analysis 3 (reverse predictive check)
+    05_matched_contrast.R     Analysis 4 (matched-frequency contrast)
     06_dormant_paths.R        Analysis 5 (dormant high-risk paths)
     07_cross_model_synthesis.R headline table + main-text figure
   results/per_model/          *_paths_joined.csv + edge diagnostics per model
@@ -48,7 +48,7 @@ Key design choices:
 - **Pre-registration locked first.** All decisions in `pre_registration.md` (aggregation, threshold, decile cut, effect-size convention, decision rule) were set before any analysis ran against the dynamic data, with a deviation log at the bottom.
 - **Three coverage metrics, not one.** `frac_any` (loose: ≥1 edge exercised), `frac_all` (strict: all edges exercised), and `frac_edge` (mean fraction of edges per path exercised — length-insensitive). The triplet defuses the path-length confound described in §5.
 - **Slim uncertainty summary.** The 1.78 GB `full_ua_df.csv` was reduced to an 8.7 MB `full_ua_summary.csv` containing per-path P_k quantiles and an exact P_k_sd computed from the ensemble vector. The slim file is small enough to commit and makes the validation reproducible without the raw monster.
-- **Blocked analyses are wired but soft-fail.** Analyses 2/3/4 require `runtime_calls` on the matched-static edge set, which is not yet shipped. The scripts exit cleanly with a `[label] No per-edge runtime counts ... Skipping.` message until the column arrives — no schema changes needed downstream.
+- **Count-dependent analyses are wired with graceful soft-fail.** Analyses 2/3/4 require `runtime_calls` on the matched-static edge set. While that column was missing they exited cleanly with a `[label] No per-edge runtime counts ... Skipping.` message; from the 2026-05-17 export onwards they produce numbers without any schema changes downstream. The same fallback is preserved so the pipeline still runs if a future model is shipped without counts.
 
 ---
 
@@ -189,7 +189,7 @@ PCR-GLOBWB: only the hops=1 bin had enough paths for a within-length cut, and bo
 **Columns:**
 
 - *hops bin*: same as in §3.3.
-- *n*: number of within-length top-decile high-risk paths in this bin (the same n_top column as §3.3).
+- *n*: number of within-length top-decile high-risk paths in this bin (the same "n top" column as §3.3).
 - *dormant loose*: paths for which **no** edge was exercised at runtime. The most conservative "completely missed" count.
 - *dormant strict*: paths for which **at least one edge was missed** by the runtime trace (i.e. the path was not fully traversed).
 
@@ -199,11 +199,13 @@ PCR-GLOBWB: only the hops=1 bin had enough paths for a within-length cut, and bo
 
 ## 4. How this builds on and defends the manuscript
 
-This section is the bridge from the numbers in §3 to the claims the manuscript needs to make. The framework's central claim is that path-level static risk identifies execution paths that *concentrate systemic risk in scientific software*. Each of the five analyses in the handover was designed to address a specific reviewer counter-claim. With the numbers now in hand, we can mark off two of those counter-claims, partially address a third, and explicitly preserve the framework's most important framing concession (that static risk is *potential* and not *realised* vulnerability).
+This section is the bridge from the numbers in §3 to the claims the manuscript needs to make. The framework's central claim is that path-level static risk identifies execution paths that *concentrate systemic risk in scientific software*. Each of the five analyses in the handover was designed to address a specific reviewer counter-claim. With the numbers now in hand — including the rank-correlation, reverse-predictive and matched-frequency results that arrived in the 2026-05-17 export — we can mark off all five counter-claims on ORCHIDEE, leave the cross-model generalisation pending VIC and HYPE, and explicitly preserve the framework's most important framing concession (that static risk is *potential* and not *realised* vulnerability).
 
 **Claim defended: "the framework discriminates beyond what trivial baselines would predict."** The unstratified coverage contrast (100% vs 12.3% any-exercised in ORCHIDEE; 92.3% vs 0% in PCR) confirms that top-decile P_k paths are an order of magnitude more likely to be exercised than bottom-decile paths. Once we control for path length — necessary because the saturating-OR aggregator is monotone in path length — the within-length effect sizes on ORCHIDEE are A = 0.78–1.00 across hops 3–8+, all p < 10⁻⁶. This *exceeds the pre-registered threshold of A > 0.55* in every length bin in the range where the framework is designed to apply. It is the cleanest evidence that static topology is doing more than reproducing path length.
 
 **Claim defended: "static analysis identifies vulnerabilities that runtime profiling alone misses."** This was the manuscript's own framing of complementarity rather than substitutability, and it is now empirically grounded. At hops 3–4, 5% of within-length top-decile high-risk paths have zero edges exercised in the chosen ORCHIDEE configuration; at every length bin ≥3, *no* top-decile path has every edge exercised. The runtime trace touches the beginnings and middles of high-risk execution chains but not their full traversal — exactly the "potential vulnerability" the framework was built to flag.
+
+**Claim defended: "the framework adds information beyond execution frequency itself."** This is the harder reviewer worry, addressed by Analyses 3 and 4. Restricting to the runtime-heavy decile of paths (those with the highest $E_k^{sum}$) and comparing high- versus low-$P_k$ strata within that subset, ORCHIDEE shows a significant gap in path-mean cyclomatic complexity ($A = 0.59$, $p = 0.004$). Mahalanobis nearest-neighbour matching of high- and low-$P_k$ paths on $E_k^{sum}$, hops and statement count produces an even larger gap (211 pairs; median cyclomatic complexity 77 vs 12, $A = 0.81$). So even when execution frequency is held fixed by design, the static framework still separates complex from simple execution paths — runtime weighting alone does not subsume it.
 
 **Framing reinforced rather than weakened: the hops=1 reversal.** Length-1 high-risk paths are *less* exercised at runtime than length-1 low-risk paths in ORCHIDEE (4.3% vs 58.3%, A = 0.23, p < 10⁻⁴). The natural reading is that high-cyclomatic-complexity single-function calls live in error-handling, edge-case, or specialised routines that do not fire under nominal inputs, while low-complexity single-function calls are exactly the workhorse utilities the model uses constantly. This is consistent with — and arguably the cleanest empirical instance of — the manuscript's "static risk = potential, not realised, vulnerability" framing. It needs to be reported as part of the validation, not hidden in the supplement.
 
@@ -221,7 +223,7 @@ These are written so that a reviewer's most natural objections appear on this li
 
 **5.3 PCR-GLOBWB is statistically thin.** Only 13 paths in the unstratified top decile; only one length bin (hops=1) has enough paths for the within-length cut, and that bin shows zero exercise on both sides. PCR is providing essentially no validation signal at present, and any cross-model claim relies on ORCHIDEE alone.
 
-**5.4 Two of four target models still missing.** VIC and HYPE have not been profiled yet. The pre-registered decision rule explicitly requires ≥3 of 4 models to meet the A > 0.55 threshold; with two models in hand and one of them data-limited, we cannot meet that rule on cardinality grounds, irrespective of the substantive findings.
+**5.4 Two of four target models still missing.** VIC and HYPE have not been profiled yet. The pre-registered decision rule explicitly requires ≥3 of 4 models to meet the A > 0.55 threshold; with two models in hand and one of them data-limited, we cannot meet that rule on cardinality grounds, even though ORCHIDEE on its own meets both legs cleanly. The cardinality criterion is what now gates the full pre-registered claim.
 
 **5.5 ~~Per-edge runtime counts are missing on the matched-static edge set.~~ Resolved 2026-05-17.** The latest engineering export ships `runtime_calls` on `runtime_callgraph_edges.csv`, which unblocks Analyses 2, 3 and 4. Sub-weakness: under the pre-registered `min` aggregator only 38 of 3,152 ORCHIDEE paths and 0 of 101 PCR-GLOBWB paths had every edge exercised at least once; we therefore promoted the originally-`min`-as-primary / `sum`-as-robustness pair to `sum`-as-primary, recorded as a deviation in `pre_registration.md`. The `min` interpretation ("is the path fully traversed at least once") is now covered by the binary `all_exercised` flag in Analysis 1.
 
@@ -235,7 +237,7 @@ These are written so that a reviewer's most natural objections appear on this li
 
 ## 6. What needs to happen to strengthen the validation
 
-Mapped 1:1 to the weaknesses in §5; ordered by how much each one would tighten the validation, not by how much work it is. The first three (counts, codebase phase-2 re-run, VIC + HYPE data) sit outside our analytical control — they are deliverables we are waiting on from the engineering team. The last five are things the analysis side can do or decide independently.
+Mapped 1:1 to the weaknesses in §5; ordered by how much each one would tighten the validation, not by how much work it is. The first item (counts) was resolved on 2026-05-17; the next two (codebase phase-2 re-run, VIC + HYPE data) still sit outside our analytical control — they are deliverables we are waiting on from the engineering team. The remaining five are things the analysis side can do or decide independently.
 
 **6.1 ~~Get the per-edge `runtime_calls` column from Federico.~~ Done 2026-05-17.** Counts arrived in the latest export and Analyses 2, 3 and 4 now produce numbers. See §3.4–§3.6 for results, and the deviation log in `pre_registration.md` for the aggregator switch this motivated.
 
@@ -251,7 +253,7 @@ Mapped 1:1 to the weaknesses in §5; ordered by how much each one would tighten 
 
 **6.7 Add a second configuration per model where feasible.** This is the single most powerful answer to "your dormant set is configuration-specific" — running the same analysis on a different developer-shipped configuration of each model and showing that the dormant *set* is different but the dormant *fraction* is in the same ballpark would be a strong robustness statement. The handover's pre-committed configurations table (§4 of the handover) already lists backup options for PCR-GLOBWB and ORCHIDEE.
 
-**6.8 Draft the ~400-word Results paragraph and ~250-word Methods paragraph called for in the handover §7.** Numbers are now stable enough for a first pass. The Results paragraph should lead with the within-length finding, fold the dormancy claim in as complementarity, and explicitly *not* claim the pre-registered decision rule is met. The Methods paragraph should specify the within-length cut and the hops ≥ 3 restriction.
+**6.8 ~~Draft the ~400-word Results paragraph and ~250-word Methods paragraph called for in the handover §7.~~ Done 2026-05-17.** The draft now lives at [`draft_results_paragraph.md`](draft_results_paragraph.md) and folds in the rank-correlation and matched-frequency findings. It claims that the pre-registered decision rule is met cleanly on ORCHIDEE and scopes the cardinality criterion (≥3 of 4 models) as pending VIC and HYPE. Update markers `[UPDATE WHEN VIC AND HYPE ARRIVE]` flag the sentences that need refreshing once the other two models land.
 
 ---
 
@@ -261,4 +263,4 @@ With the 2026-05-17 runtime export and the previously-built pipeline, ORCHIDEE n
 
 What is not done: the same battery on VIC and HYPE (waiting on engineering deliverables), the codebase-drift resolution Federico flagged, and either a second configuration on each model or a name-matching audit to bound the artefact contribution. None of those are analytical bottlenecks. The decision-rule cardinality criterion (≥3 of 4 models) cannot be evaluated until VIC and HYPE arrive.
 
-The most useful thing the analysis side can do now is draft the Results paragraph (already in `draft_results_paragraph.md`, now refreshed with the new numbers) and hold the rest pending the missing inputs.
+The most useful thing the analysis side can do on its own right now is the name-matching audit in §6.4 — a half-day of hand-checking that would tighten the credibility of every coverage and dormancy number by separating genuine dormancy from name-normalisation artefacts. Beyond that, the work is gated on engineering deliverables: VIC + HYPE runtime traces, and the phase-2 static re-analysis on the actual runtime code versions.
