@@ -18,6 +18,10 @@
 !code_scalability_test.R
 !code_scalability_test.pdf
 
+!code_questionnaires.Rmd
+!code_questionnaires.R
+!code_questionnaires.pdf
+
 
 !README.md
 
@@ -29,6 +33,11 @@
 # Include the "functions" folder and its contents
 !functions/
 !functions/*.R
+
+# Include the "questionnaire_data" folder and its contents
+!questionnaire_data/
+!questionnaire_data/*.pdf
+!questionnaire_data/*.xlsx
 
 # Include the dynamic-validation pipeline (scripts + docs only)
 !dynamic_validation/
