@@ -79,4 +79,19 @@ must be recorded below with date and one-paragraph reason.
 
 ## Deviation log
 
-*(none yet)*
+**2026-05-17 — Primary E_k aggregator switched from `min` to `sum`.**
+On the first runtime export with per-edge counts (ORCHIDEE, PCR-GLOBWB),
+the `min` aggregator collapsed: only 38 of 3,152 ORCHIDEE paths and 0 of
+101 PCR-GLOBWB paths had every edge exercised at least once. Under `min`
+that means $E_k = 0$ for 99% of paths, which is informationally identical
+to the binary `all_exercised` flag (Analysis 1 frac_all). The Spearman
+correlation that Analysis 2 calls for, and the runtime-heavy decile cuts
+that Analyses 3 and 4 use, are not interpretable on a near-degenerate
+distribution. The `sum` aggregator (originally listed as robustness, §1)
+preserves the intended "runtime-heavy" notion and is what Analyses 2–4
+now use as primary. `min` is reported as robustness in Analysis 2 only.
+
+This is a re-ranking of the two pre-registered aggregators, not the
+introduction of a third. The original `min` motivation ("is the path
+fully traversed at least once") is now covered by the binary
+`all_exercised` flag in Analysis 1.

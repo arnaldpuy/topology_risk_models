@@ -10,7 +10,7 @@
 source("dynamic_validation/analysis/00_setup.R")
 
 RISK_FORM_PRIMARY <- "additive"
-EK_PRIMARY        <- "Ek_min"
+EK_PRIMARY        <- "Ek_sum"  # see pre_registration.md deviation log 2026-05-17
 TOP_RUNTIME_Q     <- 0.90
 TOP_P_Q           <- 0.50  # within runtime-heavy paths, split at median P_k
 METRICS           <- c("cyclomatic_complexity", "indeg", "btw")

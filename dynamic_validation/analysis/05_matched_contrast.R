@@ -13,7 +13,7 @@
 source("dynamic_validation/analysis/00_setup.R")
 
 RISK_FORM_PRIMARY <- "additive"
-EK_PRIMARY        <- "Ek_min"
+EK_PRIMARY        <- "Ek_sum"  # see pre_registration.md deviation log 2026-05-17
 TOP_DECILE        <- 0.90
 BOTTOM_DECILE     <- 0.10
 METRICS           <- c("cyclomatic_complexity", "indeg", "btw")
@@ -98,8 +98,8 @@ for (f in joined_files) {
   )
 
   per_metric <- lapply(METRICS, function(mt) {
-    a <- matched[matched$group == 1L, mt]
-    b <- matched[matched$group == 0L, mt]
+    a <- matched[[mt]][matched$group == 1L]
+    b <- matched[[mt]][matched$group == 0L]
     if (!length(a) || !length(b)) return(NULL)
     # Use unpaired here since MatchIt with replace=TRUE breaks strict pairing.
     w <- suppressWarnings(wilcox.test(a, b))

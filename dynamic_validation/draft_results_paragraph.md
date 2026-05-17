@@ -9,8 +9,10 @@ before the "top 5% of functions ≈ 70–80% of risk" concentration result (line
 (~245 words) is drafted below. Word counts and tone follow the existing
 paragraph in lines 152-161 (code churn) and the surrounding text.
 
-> **Status:** scoped to ORCHIDEE + PCR-GLOBWB. VIC and HYPE runs are
-> expected from the engineering team; once they land, the marked passages
+> **Status (2026-05-17 refresh):** scoped to ORCHIDEE + PCR-GLOBWB.
+> Per-edge runtime counts arrived in the latest export and Analyses 2, 3
+> and 4 now produce numbers — folded into the two paragraphs below. VIC
+> and HYPE runs are still pending; once they land, the marked passages
 > below need refreshing. See the "Update checklist when VIC and HYPE
 > arrive" section at the end of this file for what specifically changes.
 
@@ -54,26 +56,46 @@ function calls were less exercised than low-risk ones, consistent with the
 framework's design as an integrator over multi-node execution chains rather
 than a per-function score (Supplementary Materials, Fig. SX).
 
+Among the paths that runtime did exercise, static $P_k$ orders runtime
+intensity. The sum of per-edge call counts along each path
+($E_k^{sum}$) correlates strongly with the median static risk score
+across the uncertainty ensemble (Spearman $\rho = 0.79$, 95 % bootstrap
+CI [0.77, 0.81] over 2,100 exercised paths in ORCHIDEE; Kendall
+$\tau = 0.62$). The same conclusion holds when we hold execution
+frequency fixed. Restricting to the runtime-heavy decile and comparing
+high- versus low-$P_k$ paths within that subset, cyclomatic complexity
+remains significantly higher in the high-$P_k$ stratum (Wilcoxon
+$p = 0.004$, $A = 0.59$). Mahalanobis nearest-neighbour matching of
+high- and low-$P_k$ paths on $E_k^{sum}$, hops and total statement
+count (211 pairs in ORCHIDEE) produces an even larger gap in
+cyclomatic complexity (median 77 versus 12 per function; $A = 0.81$),
+indicating that static topology adds information beyond what runtime
+profiling alone provides. PCR-GLOBWB shows the same qualitative
+direction but the number of exercised paths is too small for either
+the rank correlation (CI brackets zero) or the matched contrast (fewer
+than five matching candidates per stratum) to support quantitative
+claims (Supplementary Materials).
+
 The same data substantiate the framework's intended role as a
-forward-looking indicator of latent vulnerability. Within each length bin
-of three or more hops in ORCHIDEE, no top-decile high-risk path had every
-edge exercised in the reference configuration, and at intermediate lengths
-(hops 3–4) 5% of within-length top-decile paths had no edge exercised at
-all. Dynamic profiling thus captures only a subset of the execution paths
-the static framework identifies as systemically risky.
-<!-- [UPDATE WHEN VIC AND HYPE ARRIVE]: replace the PCR-GLOBWB sentence with
-per-model dormancy numbers if VIC/HYPE generate enough within-length top-
-decile paths. If PCR-GLOBWB remains the only N-limited model, this sentence
-can stay essentially as is but note that three of the four models produced
-quantitative dormancy estimates. -->
-PCR-GLOBWB returns
-the same qualitative pattern but with insufficient $N$ in the within-length
-deciles to support quantitative claims (Supplementary Materials).
-Together, the within-length predictive contrasts and the dormancy of
-high-risk paths under fixed configurations corroborate the framework on two
-complementary axes: paths that are exercised at runtime are exercised
-preferentially when their static $P_k$ is high, and the high-risk paths
-that are not exercised are precisely those whose surveillance the method is
+forward-looking indicator of latent vulnerability. Within each length
+bin of three or more hops in ORCHIDEE, no top-decile high-risk path
+had every edge exercised in the reference configuration, and at
+intermediate lengths (hops 3–4) 5 % of within-length top-decile paths
+had no edge exercised at all.
+<!-- [UPDATE WHEN VIC AND HYPE ARRIVE]: if VIC/HYPE generate enough
+within-length top-decile paths to quantify dormancy, replace the
+PCR-GLOBWB sentence with per-model numbers and note that three of the
+four models produced quantitative dormancy estimates. -->
+Dynamic profiling thus captures only a subset of the execution paths
+the static framework identifies as systemically risky. Together, the
+preferential exercise of high-$P_k$ paths, the persistent gap in
+cyclomatic complexity after matching on execution frequency, and the
+substantial dormant fraction among statically high-risk paths
+corroborate the framework on three complementary axes: paths that are
+exercised at runtime are exercised preferentially when their static
+$P_k$ is high; static topology continues to discriminate after
+controlling for execution intensity; and the high-risk paths that are
+not exercised are precisely those whose surveillance the method is
 designed to support.
 
 ---
@@ -104,12 +126,27 @@ insensitive to path length. Because $P_k$ is monotone in path length under
 the saturating-OR aggregation (Eq. 5), we computed deciles of $P_k$
 within each path-length bin (1, 2, 3–4, 5–7 and 8+ hops) and compared
 coverage by within-bin two-sample Wilcoxon rank-sum tests, reporting the
-common-language effect size $A$ (Vargha and Delaney) as in Table S2. We
-treat the framework as predictive within a given length bin when $A > 0.55$
-and the Wilcoxon test rejects at $p < 0.05$, the same threshold used in
-the churn analysis. The full analysis pipeline, the joined static/dynamic
-path-level data and the locked pre-registration of decisions are available
-in the `dynamic_validation/` directory of the analysis repository.
+common-language effect size $A$ (Vargha and Delaney) as in Table S2.
+Per-edge runtime call counts were aggregated to a path-level intensity
+$E_k^{sum}$ by summing along the static path edges; an originally
+pre-registered $E_k^{min}$ (the bottleneck aggregator) collapsed to a
+near-binary indicator on first contact with the data and was demoted to
+a robustness check, reported alongside the Spearman correlation.
+Rank correlation between $P_k$ and $E_k^{sum}$ was estimated by Spearman
+$\rho$ with a 1,000-resample percentile bootstrap CI; the reverse
+predictive check (Analysis 3) restricted to the top decile of paths by
+$E_k^{sum}$ and compared high- versus low-$P_k$ strata on path-mean
+node attributes; the matched-frequency contrast (Analysis 4) paired
+high- and low-$P_k$ paths via Mahalanobis nearest-neighbour matching
+with replacement on $E_k^{sum}$, hops and total statement count
+(`MatchIt`). We treat the framework as predictive within a given length
+bin when $A > 0.55$ and the Wilcoxon test rejects at $p < 0.05$, the
+same threshold used in the churn analysis; the pre-registered global
+decision rule additionally requires Spearman $\rho > 0$ with bootstrap
+CI strictly above zero. The full analysis pipeline, the joined
+static/dynamic path-level data and the locked pre-registration of
+decisions are available in the `dynamic_validation/` directory of the
+analysis repository.
 
 ---
 
@@ -123,6 +160,9 @@ These need to be added to the existing SM document before submission.
 | "Fig. SX" (hops=1 reversal) | One supplementary figure: bar plot of frac_edge by hops bin × stratum × model | `dynamic_validation/results/synthesis/01b_within_length_deciles.pdf` |
 | "with insufficient N ... (Supplementary Materials)" | Sentence noting the PCR-GLOBWB N limitation and the bins that were exercisable | `dynamic_validation/summary.md` §5.3 |
 | "high-risk paths ... 5% had no edge exercised" | Supplementary table: within-length dormancy counts per model | `dynamic_validation/results/synthesis/05_dormant_summary.csv` |
+| "Spearman $\rho = 0.79$ ..." | Supplementary figure: per-model scatter of $P_k$ vs $\log_{10}(E_k^{sum} + 1)$ | `dynamic_validation/results/synthesis/02_scatter_ORCHIDEE.pdf`, `02_scatter_PCR-GLOBWB.pdf`, table `02_rank_correlation.csv` |
+| "Wilcoxon $p = 0.004$, $A = 0.59$" (reverse predictive) | Supplementary figure: boxplots of path-mean static metrics in high vs low $P_k$ within runtime-heavy decile | `dynamic_validation/results/synthesis/03_reverse_predictive_boxplots.pdf`, table `03_reverse_predictive.csv` |
+| "211 pairs ... $A = 0.81$" (matched contrast) | Supplementary table: matched contrast statistics + SMD diagnostics | `dynamic_validation/results/synthesis/04_matched_contrast.csv`, `04_matched_smd_diagnostics.csv` |
 | "dynamic_validation/ directory of the analysis repository" | Add a line in the data-availability section pointing to the directory | n/a |
 
 ---
@@ -132,15 +172,18 @@ These need to be added to the existing SM document before submission.
 So you can be sure they have not slipped in:
 
 - That the pre-registered decision rule for "framework predicts at runtime"
-  is met (it is not — only one of its two legs is testable on current data,
-  and only one of four models has a quantifiable within-length result).
-- That the codebase-drift question (Federico's email) is settled. The draft
-  is silent on this; the assumption is that the engineering "phase 2"
-  static re-run is being handled separately and either supersedes these
-  numbers or confirms them. If phase 2 lands before submission, the numbers
-  here may need refreshing.
-- That a Spearman ρ on P_k vs E_k is reported. Analysis 2 is blocked on the
-  missing `runtime_calls` column and the draft does not invoke it.
+  is met across all four target models. It is met *cleanly* for ORCHIDEE
+  on both legs (Spearman with CI > 0; A > 0.55 in Analyses 1b, 3 and 4)
+  but the "≥3 of 4 models" cardinality criterion cannot be evaluated until
+  VIC and HYPE arrive. The draft scopes accordingly.
+- That the codebase-drift question (Federico's email) is settled. The
+  draft is silent on this; the assumption is that the engineering
+  "phase 2" static re-run is being handled separately and either
+  supersedes these numbers or confirms them. If phase 2 lands before
+  submission, the numbers here may need refreshing.
+- That PCR-GLOBWB contributes quantitatively to the validation. With only
+  17 exercised paths, 5 runtime-heavy paths and 2 matching candidates per
+  stratum it does not, and the draft says so explicitly.
 - That VIC and HYPE have contributed. They have not, and the draft scopes
   honestly to "two of the four large models".
 

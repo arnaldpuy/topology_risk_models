@@ -8,7 +8,8 @@
 source("dynamic_validation/analysis/00_setup.R")
 
 RISK_FORM_PRIMARY <- "additive"
-EK_PRIMARY        <- "Ek_min"   # min aggregator is the pre-registered primary
+EK_PRIMARY        <- "Ek_sum"   # see pre_registration.md deviation log 2026-05-17
+EK_ROBUSTNESS     <- "Ek_min"   # reported alongside as a near-binary check
 N_BOOT            <- 1000L
 SEED              <- 123L
 
@@ -31,6 +32,9 @@ corr_results <- rbindlist(lapply(joined_files, function(f) {
 
   rho <- suppressWarnings(cor(dt$P_k_q50, dt[[EK_PRIMARY]], method = "spearman"))
   tau <- suppressWarnings(cor(dt$P_k_q50, dt[[EK_PRIMARY]], method = "kendall"))
+  rho_robust <- suppressWarnings(
+    cor(dt$P_k_q50, dt[[EK_ROBUSTNESS]], method = "spearman")
+  )
 
   boot_rho <- boot::boot(
     data      = dt,
@@ -57,12 +61,13 @@ corr_results <- rbindlist(lapply(joined_files, function(f) {
          width = 5, height = 4)
 
   data.table(
-    model     = m,
-    n_paths   = nrow(dt),
-    spearman  = rho,
-    kendall   = tau,
-    rho_ci_lo = ci[1],
-    rho_ci_hi = ci[2]
+    model            = m,
+    n_paths          = nrow(dt),
+    spearman_sum     = rho,
+    kendall_sum      = tau,
+    rho_sum_ci_lo    = ci[1],
+    rho_sum_ci_hi    = ci[2],
+    spearman_min     = rho_robust
   )
 }), fill = TRUE)
 

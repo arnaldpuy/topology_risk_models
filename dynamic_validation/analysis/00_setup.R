@@ -160,14 +160,19 @@ load_runtime_edges <- function(model_label, raw_subdir) {
   f <- file.path(raw_dir(raw_subdir), "runtime_callgraph_edges.csv")
   if (!file.exists(f)) stop("Missing ", f)
   dt <- fread(f)
-  # Schema as currently shipped: model, lang, caller, callee, caller_file,
-  # caller_line, callee_file_hint, callee_kind. No runtime_calls column yet.
+  # Schema: model, lang, caller, callee, caller_file, caller_line,
+  # callee_file_hint, callee_kind, runtime_calls (added in the May 2026 export).
   dt[, `:=`(
     caller_norm = norm_fun_name(caller),
     callee_norm = norm_fun_name(callee)
   )]
   if (!"runtime_calls" %in% names(dt)) dt[, runtime_calls := NA_integer_]
-  unique(dt[, .(caller_norm, callee_norm, runtime_calls)])
+
+  # Name normalisation can collapse multiple raw edges (different caller_file
+  # or call-site) into the same (caller_norm, callee_norm). Aggregate
+  # runtime_calls by sum so the per-edge intensity is preserved.
+  dt[, .(runtime_calls = sum(runtime_calls, na.rm = TRUE)),
+     by = .(caller_norm, callee_norm)]
 }
 
 # ---- Name normalisation ------------------------------------------------------

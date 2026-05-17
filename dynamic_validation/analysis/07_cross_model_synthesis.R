@@ -37,9 +37,10 @@ if (!is.null(coverage)) {
 if (!is.null(corr)) {
   headline <- merge(headline,
                     corr[, .(model,
-                             spearman_Pk_Ek    = spearman,
-                             spearman_ci_lo    = rho_ci_lo,
-                             spearman_ci_hi    = rho_ci_hi)],
+                             spearman_Pk_Eksum    = spearman_sum,
+                             spearman_ci_lo       = rho_sum_ci_lo,
+                             spearman_ci_hi       = rho_sum_ci_hi,
+                             spearman_Pk_Ekmin    = spearman_min)],
                     by = "model", all.x = TRUE)
 }
 
@@ -72,7 +73,8 @@ print(headline)
 
 dec <- NULL
 if (!is.null(corr) && !is.null(reverse)) {
-  cor_ok <- corr[, .(spearman_pos = spearman > 0 & rho_ci_lo > 0), by = model]
+  cor_ok <- corr[, .(spearman_pos = spearman_sum > 0 & rho_sum_ci_lo > 0),
+                 by = model]
   rev_ok <- reverse[, .(any_A_above = any(effect_A > 0.55, na.rm = TRUE)),
                    by = model]
   dec <- merge(cor_ok, rev_ok, by = "model", all = TRUE)
@@ -100,10 +102,10 @@ if (!is.null(coverage) && nrow(coverage)) {
 
   panels <- list(p_cov)
   if (!is.null(corr) && nrow(corr)) {
-    p_corr <- ggplot(corr, aes(x = model, y = spearman)) +
-      geom_pointrange(aes(ymin = rho_ci_lo, ymax = rho_ci_hi)) +
+    p_corr <- ggplot(corr, aes(x = model, y = spearman_sum)) +
+      geom_pointrange(aes(ymin = rho_sum_ci_lo, ymax = rho_sum_ci_hi)) +
       geom_hline(yintercept = 0, linetype = "dashed") +
-      labs(title = expression("Spearman " ~ rho ~ "(P"[k] ~ ", E"[k] ~ ")"),
+      labs(title = expression("Spearman " ~ rho ~ "(P"[k] ~ ", E"[k]^{sum} ~ ")"),
            x = NULL, y = NULL) +
       theme_minimal(base_size = 10)
     panels <- c(panels, list(p_corr))

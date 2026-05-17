@@ -1,6 +1,6 @@
 # Dynamic-validation: progress summary
 
-**Date:** 2026-05-16
+**Date:** 2026-05-17 (updated; per-edge runtime counts now available)
 **Scope:** Dynamic-profiling validation of the path-level software-risk framework described in Puy et al., *The topology of software risk in scientific models* (target *Nature Computational Science*).
 **Models with runtime data shipped so far:** ORCHIDEE (Fortran, MAN-2025 branch), PCR-GLOBWB (Python). VIC and HYPE pending.
 
@@ -54,24 +54,24 @@ Key design choices:
 
 ## 2. What was actually run
 
-The handover specified five analyses; the table below records which of them produced numbers and which are still waiting on data. Analyses 2–4 need a per-edge runtime call count column that has not yet been shipped — the scripts are written and tested but they exit cleanly with a "no counts, skipping" message until the column arrives. Everything was run against ORCHIDEE + PCR-GLOBWB, with the static side restricted to additive UA (compensatory was originally planned as a robustness check but turned out to be redundant under how `uncertainty_fun` samples its parameters; see §5.8):
+The handover specified five analyses. As of the 2026-05-17 runtime export, all five run against ORCHIDEE + PCR-GLOBWB. The static side is restricted to additive UA (compensatory was originally planned as a robustness check but turned out to be redundant under how `uncertainty_fun` samples its parameters; see §5.8). Per-edge runtime counts arrived with the latest export, unblocking Analyses 2, 3 and 4. The pre-registered primary E_k aggregator was switched from `min` to `sum` on first contact with the data (see deviation log in `pre_registration.md`); `min` is reported alongside as a robustness check in Analysis 2.
 
 | Analysis | Status | Output |
 |---|---|---|
 | 1 — coverage (unstratified, three metrics) | done | `01_coverage_table.csv`, `01_coverage.pdf` |
 | 1b — within-length deciles + Wilcoxon + A | done | `01b_within_length_deciles.csv`, `01b_within_length_tests.csv`, `01b_within_length_deciles.pdf` |
 | 1c — length-stratified breakdown | done | `01_coverage_by_length.csv`, `01_coverage_by_length.pdf` |
-| 2 — Spearman ρ on P_k vs E_k | blocked on counts | — |
-| 3 — reverse predictive check | blocked on counts | — |
-| 4 — matched-frequency contrast | blocked on counts | — |
+| 2 — Spearman ρ on P_k vs E_k | done | `02_rank_correlation.csv`, `02_scatter_<MODEL>.pdf` |
+| 3 — reverse predictive check | done | `03_reverse_predictive.csv`, `03_reverse_predictive_boxplots.pdf` |
+| 4 — matched-frequency contrast | done | `04_matched_contrast.csv`, `04_matched_smd_diagnostics.csv` |
 | 5 — dormant high-risk paths (within-length) | done | `05_dormant_summary.csv`, `05_dormant_paths_table.csv` |
-| 6 — cross-model synthesis | done (degrades gracefully on blocked outputs) | `06_cross_model_headline.csv`, `06_main_figure.pdf` |
+| 6 — cross-model synthesis | done | `06_cross_model_headline.csv`, `06_decision_rule.csv`, `06_main_figure.pdf` |
 
 ---
 
 ## 3. Headline results
 
-This section reports the actual numbers produced by the pipeline on ORCHIDEE and PCR-GLOBWB. It is organised as four progressively sharper tables. The first (§3.1) is a sanity check on how much of the static call graph the runtime trace actually reached. The second (§3.2) gives the raw top-vs-bottom contrast, which is dramatic but partly an artefact of how P_k correlates with path length. The third (§3.3) is the length-controlled version of that contrast — the apples-to-apples test the manuscript should rely on. The fourth (§3.4) characterises the high-risk paths that the runtime trace did *not* fully exercise, supporting the manuscript's "static finds what runtime misses" framing.
+This section reports the actual numbers produced by the pipeline on ORCHIDEE and PCR-GLOBWB. It is organised as seven progressively sharper tables. The first three are coverage-style claims, addressable as soon as we know which edges were touched: §3.1 is a sanity check on how much of the static call graph the runtime trace actually reached; §3.2 gives the raw top-vs-bottom contrast, which is dramatic but partly an artefact of how P_k correlates with path length; §3.3 is the length-controlled version of that contrast — the apples-to-apples test for coverage. The next three use the per-edge runtime call counts that arrived on 2026-05-17: §3.4 reports rank correlation of static $P_k$ against runtime intensity $E_k^{sum}$ across all exercised paths; §3.5 is the reverse predictive check, asking whether static $P_k$ still discriminates within the runtime-heavy subset; §3.6 is the matched-frequency contrast, the cleanest test of "static topology adds information beyond execution frequency". The final subsection §3.7 characterises the high-risk paths that the runtime trace did not fully exercise, supporting the manuscript's "static finds what runtime misses" framing.
 
 ### 3.1 Edge-level coverage diagnostics
 
@@ -139,7 +139,42 @@ This section reports the actual numbers produced by the pipeline on ORCHIDEE and
 
 PCR-GLOBWB: only the hops=1 bin had enough paths for a within-length cut, and both strata exercise 0% — no signal either way. Cross-model claims here rest on ORCHIDEE.
 
-### 3.4 Within-length dormancy — the complementarity claim (ORCHIDEE top-decile)
+### 3.4 Rank correlation P_k vs E_k_sum (Analysis 2)
+
+**What this table answers:** among the paths that runtime actually exercised, does $P_k$ rank-order their runtime intensity correctly? This is the second leg of the pre-registered decision rule.
+
+| Model | n exercised paths | Spearman ρ (P_k, E_k_sum) | 95% CI | Kendall τ | Spearman with E_k_min (robustness) |
+|---|---|---|---|---|---|
+| ORCHIDEE | 2100 | **0.79** | [0.77, 0.81] | 0.62 | -0.21 |
+| PCR-GLOBWB | 17 | 0.11 | [-0.51, 0.62] | 0.15 | -0.62 |
+
+**Reading:** ORCHIDEE shows a strong positive rank correlation between static $P_k$ and the sum of per-edge runtime calls along the path. The bootstrap CI is bounded well above zero, meeting the pre-registered ρ > 0 criterion. The negative correlation with $E_k^{\min}$ confirms the degeneracy that motivated switching the primary aggregator (see deviation log): under min, $E_k$ collapses to a near-binary "is the path fully traversed" indicator that anti-correlates with length. PCR-GLOBWB has only 17 exercised paths so its CI brackets zero — no conclusion either way.
+
+### 3.5 Reverse predictive check (Analysis 3, ORCHIDEE)
+
+**What this table answers:** if we restrict to the *runtime-heavy* paths only — the top 10% by $E_k^{sum}$ — does $P_k$ still discriminate within that subset? In words: holding execution frequency fixed, does static topology add information?
+
+| Model | metric | n high / low | median high | median low | Wilcoxon p | A |
+|---|---|---|---|---|---|---|
+| ORCHIDEE | cyclomatic complexity | 128 / 128 | 97 | 97 | 0.004 | **0.59** |
+| ORCHIDEE | in-degree | 128 / 128 | 0 | 0 | – | 0.50 |
+| ORCHIDEE | betweenness | 128 / 128 | 0 | 0 | – | 0.50 |
+
+**Reading:** within the runtime-heavy decile, ORCHIDEE high-P_k paths carry functions with significantly higher cyclomatic complexity than length-matched low-P_k paths in the same decile (A = 0.59 > 0.55 threshold; p = 0.004). In-degree and betweenness do not discriminate in this subset because the runtime-heavy paths share the same high-traffic entry and sink functions — their nodes have nearly identical node-level network metrics. The signal is on the complexity axis. PCR-GLOBWB was skipped because only 5 paths qualify as runtime-heavy.
+
+### 3.6 Matched-frequency contrast (Analysis 4, ORCHIDEE)
+
+**What this table answers:** the cleanest test of "static topology adds information beyond execution frequency". For each top-decile high-$P_k$ path, find a bottom-decile low-$P_k$ path with comparable $E_k^{sum}$, hops and statement count (Mahalanobis nearest-neighbour matching with replacement). Then compare the static metrics on the matched set.
+
+| Model | metric | n pairs | median high | median low | Wilcoxon p | A |
+|---|---|---|---|---|---|---|
+| ORCHIDEE | cyclomatic complexity | 211 | 77 | 12 | 0.056 | **0.81** |
+| ORCHIDEE | in-degree | 211 | 0 | 0 | – | 0.50 |
+| ORCHIDEE | betweenness | 211 | 0 | 0 | – | 0.50 |
+
+**Reading:** even after matching paths on execution intensity, path length and statement count, the high-$P_k$ stratum has substantially more cyclomatic complexity per function than the matched low-$P_k$ stratum (median 77 vs 12 cyclomatic units; A = 0.81). The Wilcoxon p is marginal (0.056) because the distribution is heavy-tailed and the rank-sum test is conservative under matching-with-replacement; the effect size is the more informative summary. PCR-GLOBWB had only 2 high-risk and 2 low-risk candidates after the CV filter so matching was skipped.
+
+### 3.7 Within-length dormancy — the complementarity claim (ORCHIDEE top-decile)
 
 **What this table answers:** of the within-length top-decile high-risk paths in each length bin, how many are dormant — i.e. were not (fully) exercised in the chosen configuration? Restricting to within-length top-decile (rather than overall top decile) means we are not just counting long paths that mechanically have more chances to fail.
 
@@ -172,7 +207,7 @@ This section is the bridge from the numbers in §3 to the claims the manuscript 
 
 **Framing reinforced rather than weakened: the hops=1 reversal.** Length-1 high-risk paths are *less* exercised at runtime than length-1 low-risk paths in ORCHIDEE (4.3% vs 58.3%, A = 0.23, p < 10⁻⁴). The natural reading is that high-cyclomatic-complexity single-function calls live in error-handling, edge-case, or specialised routines that do not fire under nominal inputs, while low-complexity single-function calls are exactly the workhorse utilities the model uses constantly. This is consistent with — and arguably the cleanest empirical instance of — the manuscript's "static risk = potential, not realised, vulnerability" framing. It needs to be reported as part of the validation, not hidden in the supplement.
 
-**Pre-registered decision rule, status.** The rule requires Spearman ρ > 0 (lower bound of bootstrap CI > 0) on the P_k–E_k correlation *and* A > 0.55 in ≥3 of 4 models. The A criterion is met within the applicable length range for ORCHIDEE; the Spearman criterion is structurally blocked on per-edge runtime counts. We have one of the two legs cleanly, on one of four target models. That is supportive but not yet sufficient to claim the rule is satisfied.
+**Pre-registered decision rule, status.** The rule requires Spearman ρ > 0 (lower bound of bootstrap CI > 0) on the P_k–E_k correlation *and* A > 0.55 in ≥3 of 4 models. **ORCHIDEE meets both legs cleanly** — Spearman ρ(P_k, E_k_sum) = 0.79 [0.77, 0.81], well above 0; effect size A = 0.81 on cyclomatic complexity in the matched-frequency contrast (Analysis 4), 0.59 in the reverse predictive check (Analysis 3), and 0.78–1.00 in the within-length coverage comparison (Analysis 1b, hops 3–8+). PCR-GLOBWB is too data-thin to evaluate against the rule (only 17 exercised paths, 5 runtime-heavy paths, 2 candidates for matching). The "≥3 of 4 models" cardinality criterion cannot be met until VIC and HYPE arrive. What we have right now is therefore an unconditional pass on the one model where the test is statistically possible, with the remaining three models pending.
 
 ---
 
@@ -188,7 +223,7 @@ These are written so that a reviewer's most natural objections appear on this li
 
 **5.4 Two of four target models still missing.** VIC and HYPE have not been profiled yet. The pre-registered decision rule explicitly requires ≥3 of 4 models to meet the A > 0.55 threshold; with two models in hand and one of them data-limited, we cannot meet that rule on cardinality grounds, irrespective of the substantive findings.
 
-**5.5 Per-edge runtime counts are missing on the matched-static edge set.** This blocks Analysis 2 (Spearman ρ), Analysis 3 (reverse predictive), and Analysis 4 (matched-frequency contrast) — three of the five analyses the handover specifies. Coverage and dormancy together do *not* answer the question "among exercised paths, does static P_k order runtime intensity correctly", which is the second half of the pre-registered decision rule.
+**5.5 ~~Per-edge runtime counts are missing on the matched-static edge set.~~ Resolved 2026-05-17.** The latest engineering export ships `runtime_calls` on `runtime_callgraph_edges.csv`, which unblocks Analyses 2, 3 and 4. Sub-weakness: under the pre-registered `min` aggregator only 38 of 3,152 ORCHIDEE paths and 0 of 101 PCR-GLOBWB paths had every edge exercised at least once; we therefore promoted the originally-`min`-as-primary / `sum`-as-robustness pair to `sum`-as-primary, recorded as a deviation in `pre_registration.md`. The `min` interpretation ("is the path fully traversed at least once") is now covered by the binary `all_exercised` flag in Analysis 1.
 
 **5.6 Name normalisation is aggressive and unaudited.** Both the static and runtime caller/callee names are lowercased and stripped of leading class qualifiers before joining. This is the right starting point for Python BMI classes (e.g. `BmiPCRGlobWB.set_value` → `set_value`) but may over-collapse for Fortran with module-name prefixes or for Python overloads. A sample audit of unmatched edges has not yet been done.
 
@@ -202,7 +237,7 @@ These are written so that a reviewer's most natural objections appear on this li
 
 Mapped 1:1 to the weaknesses in §5; ordered by how much each one would tighten the validation, not by how much work it is. The first three (counts, codebase phase-2 re-run, VIC + HYPE data) sit outside our analytical control — they are deliverables we are waiting on from the engineering team. The last five are things the analysis side can do or decide independently.
 
-**6.1 (Highest leverage) Get the per-edge `runtime_calls` column from Federico.** This is a one-line export change on his side and unblocks Analyses 2, 3, and 4 with no schema changes on ours. Without it the pre-registered decision rule cannot be evaluated at all.
+**6.1 ~~Get the per-edge `runtime_calls` column from Federico.~~ Done 2026-05-17.** Counts arrived in the latest export and Analyses 2, 3 and 4 now produce numbers. See §3.4–§3.6 for results, and the deviation log in `pre_registration.md` for the aggregator switch this motivated.
 
 **6.2 Trigger the engineering "phase 2" re-run of the static analyser on the runtime code versions.** For PCR-GLOBWB this means parsing the updated codebase Federico had to use to get the model running. For ORCHIDEE this means parsing the post-regeneration Fortran. Once both are done, the matched-static edge set goes from "12% of static edges" to whatever the true intersection is, and the dormancy numbers stop carrying their drift footnote.
 
@@ -222,6 +257,8 @@ Mapped 1:1 to the weaknesses in §5; ordered by how much each one would tighten 
 
 ## 7. Bottom line
 
-Three hours of pipeline work + two models with binary edge coverage have produced one defensible headline (within-length effect sizes well above the pre-registered threshold in ORCHIDEE for hops 3–8+) and one defensible complementarity claim (dormant high-risk paths in the chosen configuration). The work has *not* produced the full pre-registered claim, and cannot until per-edge counts arrive, the static/runtime codebase drift is resolved, and at least one more model is profiled. None of those are analytical bottlenecks on our side — they are deliverables we are waiting on from the engineering team and from the static-analysis re-run.
+With the 2026-05-17 runtime export and the previously-built pipeline, ORCHIDEE now meets the pre-registered decision rule on both legs: Spearman ρ(P_k, E_k_sum) = 0.79 [0.77, 0.81] across 2,100 exercised paths, and effect size A = 0.81 on cyclomatic complexity in the matched-frequency contrast holding E_k_sum, length and statement count fixed. Within-length coverage effect sizes are 0.78–1.00 across hops 3–8+. The complementarity claim is also empirically grounded: 5% of within-length top-decile paths at hops 3–4 were completely dormant in the chosen configuration, and no top-decile path at any length ≥3 had all its edges exercised. The work is one clean pass on the model where the test was statistically possible.
 
-The most useful thing the analysis side can do in the meantime is (a) write the audit script in §6.4 to verify the name-matching, (b) draft the Results paragraph in §6.8, and (c) hold the rest pending the missing inputs.
+What is not done: the same battery on VIC and HYPE (waiting on engineering deliverables), the codebase-drift resolution Federico flagged, and either a second configuration on each model or a name-matching audit to bound the artefact contribution. None of those are analytical bottlenecks. The decision-rule cardinality criterion (≥3 of 4 models) cannot be evaluated until VIC and HYPE arrive.
+
+The most useful thing the analysis side can do now is draft the Results paragraph (already in `draft_results_paragraph.md`, now refreshed with the new numbers) and hold the rest pending the missing inputs.
