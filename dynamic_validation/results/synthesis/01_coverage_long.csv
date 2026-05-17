@@ -1,0 +1,9 @@
+model,stratum,n_paths,definition,frac_exercised
+ORCHIDEE,top_decile,318,looser (any),1
+ORCHIDEE,bottom_decile,316,looser (any),0.123417721518987
+PCR-GLOBWB,top_decile,13,looser (any),0.923076923076923
+PCR-GLOBWB,bottom_decile,15,looser (any),0
+ORCHIDEE,top_decile,318,stricter (all),0
+ORCHIDEE,bottom_decile,316,stricter (all),0.0569620253164557
+PCR-GLOBWB,top_decile,13,stricter (all),0.0769230769230769
+PCR-GLOBWB,bottom_decile,15,stricter (all),0

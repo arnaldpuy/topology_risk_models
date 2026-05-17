@@ -1,0 +1,53 @@
+model,path_id,hops_bin,hops,P_k_q50,CV_k,top_functions,top_files
+ORCHIDEE,155,1,1,0.431157236443982,0.325338878552908,forcesoil |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_driver/forcesoil.f90 | NA
+ORCHIDEE,148,2,2,0.56457616213676,0.311667311875978,forcesoil |  ipslerr_p |  nccheck,./models/13_ORCHIDEE-MAN-2025/src_driver/forcesoil.f90 | NA
+ORCHIDEE,153,2,2,0.463767632629322,0.273407055394499,forcesoil |  control_initialize |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_driver/forcesoil.f90 | NA
+ORCHIDEE,161,2,2,0.434148342883428,0.322152297106106,orchidedriver |  ioipslctrl_history |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_driver/orchideedriver.f90 | NA
+ORCHIDEE,384,2,2,0.433759904872294,0.322736845832649,orchideeoasis |  ioipslctrl_history |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_oasisdriver/orchideeoasis.f90 | NA
+ORCHIDEE,2177,2,2,0.427277096836411,0.353035315032629,orchidedriver |  sechiba_main |  thermosoil_rotation_update,./models/13_ORCHIDEE-MAN-2025/src_driver/orchideedriver.f90 | NA
+ORCHIDEE,2169,2,2,0.426868848343939,0.353688079539824,orchidedriver |  enerbil_fusion |  sechiba_main,./models/13_ORCHIDEE-MAN-2025/src_driver/orchideedriver.f90 | NA
+ORCHIDEE,2178,2,2,0.42684412947113,0.35373228681731,orchideeoasis |  sechiba_main |  thermosoil_rotation_update,./models/13_ORCHIDEE-MAN-2025/src_oasisdriver/orchideeoasis.f90 | NA
+ORCHIDEE,2170,2,2,0.426355431627822,0.354387850575972,orchideeoasis |  enerbil_fusion |  sechiba_main,./models/13_ORCHIDEE-MAN-2025/src_oasisdriver/orchideeoasis.f90 | NA
+ORCHIDEE,2173,2,2,0.42592263325213,0.35499946577333,orchidedriver |  sechiba_get_cmd |  sechiba_main,./models/13_ORCHIDEE-MAN-2025/src_driver/orchideedriver.f90 | NA
+ORCHIDEE,2174,2,2,0.425535844262583,0.355704861307921,orchideeoasis |  sechiba_get_cmd |  sechiba_main,./models/13_ORCHIDEE-MAN-2025/src_oasisdriver/orchideeoasis.f90 | NA
+ORCHIDEE,2165,2,2,0.424244618248146,0.358312262715879,orchidedriver |  sechiba_main |  sechiba_var_init,./models/13_ORCHIDEE-MAN-2025/src_driver/orchideedriver.f90 | NA
+ORCHIDEE,2181,2,2,0.424244618248146,0.358312262715879,orchidedriver |  sechiba_end |  sechiba_main,./models/13_ORCHIDEE-MAN-2025/src_driver/orchideedriver.f90 | NA
+ORCHIDEE,2166,2,2,0.423732928303033,0.359031872414035,orchideeoasis |  sechiba_main |  sechiba_var_init,./models/13_ORCHIDEE-MAN-2025/src_oasisdriver/orchideeoasis.f90 | NA
+ORCHIDEE,2182,2,2,0.423732928303033,0.359031872414035,orchideeoasis |  sechiba_end |  sechiba_main,./models/13_ORCHIDEE-MAN-2025/src_oasisdriver/orchideeoasis.f90 | NA
+ORCHIDEE,361,2,2,0.413297864503214,0.336820804088461,teststomate |  ipslerr_p |  slowproc_initialize,./models/13_ORCHIDEE-MAN-2025/src_driver/teststomate.f90 | NA
+ORCHIDEE,512,2,2,0.413032346272499,0.347987516121042,chemistry_initialize |  interpweight_2Dcont |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_sechiba/chemistry.f90 | NA
+ORCHIDEE,2179,2,2,0.411172554681915,0.381165952363039,intersurf_main_gathered |  sechiba_main |  thermosoil_rotation_update,./models/13_ORCHIDEE-MAN-2025/src_sechiba/intersurf.f90 | NA
+ORCHIDEE,2171,2,2,0.410799713226299,0.381931941689557,intersurf_main_gathered |  enerbil_fusion |  sechiba_main,./models/13_ORCHIDEE-MAN-2025/src_sechiba/intersurf.f90 | NA
+ORCHIDEE,2175,2,2,0.410017222911388,0.383470855788996,intersurf_main_gathered |  sechiba_get_cmd |  sechiba_main,./models/13_ORCHIDEE-MAN-2025/src_sechiba/intersurf.f90 | NA
+ORCHIDEE,2167,2,2,0.40793430175285,0.387358819210204,intersurf_main_gathered |  sechiba_main |  sechiba_var_init,./models/13_ORCHIDEE-MAN-2025/src_sechiba/intersurf.f90 | NA
+ORCHIDEE,2183,2,2,0.40793430175285,0.387358819210204,intersurf_main_gathered |  sechiba_end |  sechiba_main,./models/13_ORCHIDEE-MAN-2025/src_sechiba/intersurf.f90 | NA
+ORCHIDEE,160,2,2,0.404482400773084,0.361700669263069,orchidedriver |  control_initialize |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_driver/orchideedriver.f90 | NA
+ORCHIDEE,383,2,2,0.404113268151653,0.362553243178659,orchideeoasis |  control_initialize |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_oasisdriver/orchideeoasis.f90 | NA
+ORCHIDEE,89,2,2,0.402906156627436,0.35880679521834,driver |  intersurf_initialize_2d |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_driver/dim2_driver.f90 | NA
+ORCHIDEE,651,2,2,0.395169183678583,0.383336630639374,routing_basins |  ipslerr_p |  routing_linkup,./models/13_ORCHIDEE-MAN-2025/src_sechiba/routing.f90 | NA
+ORCHIDEE,653,2,2,0.393665111456338,0.386338456283121,routing_basins |  ipslerr_p |  routing_truncate,./models/13_ORCHIDEE-MAN-2025/src_sechiba/routing.f90 | NA
+ORCHIDEE,15,2,2,0.392767687323453,0.386043591233722,driver |  forcing_info |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_driver/dim2_driver.f90 | NA
+ORCHIDEE,587,2,2,0.386617152875248,0.393989843964696,intersurf_main_gathered |  intersurf_initialize_gathered |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_sechiba/intersurf.f90 | NA
+ORCHIDEE,16,2,2,0.384578409958933,0.406121860568768,driver |  forcing_grid |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_driver/dim2_driver.f90 | NA
+ORCHIDEE,657,2,2,0.383415046701793,0.407782387479383,routing_basins |  ipslerr_p |  routing_findbasins,./models/13_ORCHIDEE-MAN-2025/src_sechiba/routing.f90 | NA
+ORCHIDEE,366,2,2,0.381764756528749,0.415899944944059,interpweight_4Dcont |  interpweight_masking_input4D |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_global/interpweight.f90 | NA
+ORCHIDEE,367,2,2,0.381104385192726,0.41683759766525,interpweight_4Dcont |  interpweight_masking_input2D |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_global/interpweight.f90 | NA
+ORCHIDEE,368,2,2,0.38068364717008,0.417778301726108,interpweight_4Dcont |  interpweight_masking_input3D |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_global/interpweight.f90 | NA
+ORCHIDEE,301,2,2,0.377278317951818,0.422597363933436,teststomate |  config_pft_parameters |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_driver/teststomate.f90 | NA
+ORCHIDEE,295,2,2,0.377036709581353,0.423336618339107,testrouting |  control_initialize |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_driver/testrouting.f90 | NA
+ORCHIDEE,369,2,2,0.375693859901431,0.423491508571001,interpweight_4Dcont |  interpweight_provide_interpolation4D |  ipslerr_p,./models/13_ORCHIDEE-MAN-2025/src_global/interpweight.f90 | NA
+ORCHIDEE,362,2,2,0.372931523210268,0.429993380818534,teststomate |  ipslerr_p |  stomate_forcing_read,./models/13_ORCHIDEE-MAN-2025/src_driver/teststomate.f90 | NA
+ORCHIDEE,659,2,2,0.372127819339197,0.432179729002749,routing_basins |  ipslerr_p |  routing_globalize,./models/13_ORCHIDEE-MAN-2025/src_sechiba/routing.f90 | NA
+ORCHIDEE,2227,2,2,0.36426436485634,0.341109492749928,teststomate |  slowproc_derivvar |  slowproc_main,./models/13_ORCHIDEE-MAN-2025/src_driver/teststomate.f90 | NA
+ORCHIDEE,186,3-4,4,0.700438474529264,0.067079714361171,orchidedriver |  ipslerr_p |  routing_flow,./models/13_ORCHIDEE-MAN-2025/src_driver/orchideedriver.f90 | NA
+ORCHIDEE,409,3-4,4,0.700235341348175,0.0672674194398418,orchideeoasis |  ipslerr_p |  routing_flow,./models/13_ORCHIDEE-MAN-2025/src_oasisdriver/orchideeoasis.f90 | NA
+ORCHIDEE,612,3-4,4,0.692761265948575,0.0744420434359895,intersurf_main_gathered |  ipslerr_p |  routing_flow,./models/13_ORCHIDEE-MAN-2025/src_sechiba/intersurf.f90 | NA
+ORCHIDEE,184,3-4,4,0.664802461686071,0.118343070651958,orchidedriver |  explicitsnow_main |  hydrolc_main,./models/13_ORCHIDEE-MAN-2025/src_driver/orchideedriver.f90 | NA
+ORCHIDEE,407,3-4,4,0.664591035159998,0.118670426167678,orchideeoasis |  explicitsnow_main |  hydrolc_main,./models/13_ORCHIDEE-MAN-2025/src_oasisdriver/orchideeoasis.f90 | NA
+PCR-GLOBWB,32,1,1,0.49199915883233,0.258386693362199,singleTryNetcdf2PCRobjClone_version_until_2020_07_14 |  regridData2FinerGrid,./models/14_PCR-GLOBWB_model/model/virtualOS.py | NA
+PCR-GLOBWB,9,1,1,0.471059132832848,0.257713179848059,mergeNetCDF |  getMin,./models/14_PCR-GLOBWB_model/model/merge_netcdf.py | NA
+PCR-GLOBWB,11,1,1,0.471059132832848,0.257713179848059,mergeNetCDF |  getMax,./models/14_PCR-GLOBWB_model/model/merge_netcdf.py | NA
+PCR-GLOBWB,14,1,1,0.460153984063673,0.282725350881377,singleTryNetcdf2PCRobjClone_version_until_2020_07_14 |  getMapAttributesALL,./models/14_PCR-GLOBWB_model/model/virtualOS.py | NA
+PCR-GLOBWB,33,1,1,0.439045606043115,0.246037609048614,netcdf2PCRobjCloneBeforeRensCorrection |  regridData2FinerGrid,./models/14_PCR-GLOBWB_model/model/virtualOS.py | NA
+PCR-GLOBWB,15,1,1,0.406871221347087,0.261581659733492,netcdf2PCRobjCloneBeforeRensCorrection |  getMapAttributesALL,./models/14_PCR-GLOBWB_model/model/virtualOS.py | NA
+PCR-GLOBWB,34,1,1,0.390400234908582,0.247700981486101,netcdf2PCRobjCloneJOYCE |  regridData2FinerGrid,./models/14_PCR-GLOBWB_model/model/virtualOS.py | NA
