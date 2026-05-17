@@ -18,6 +18,10 @@
 !code_scalability_test.R
 !code_scalability_test.pdf
 
+!code_dynamic_validation.Rmd
+!code_dynamic_validation.R
+!code_dynamic_validation.pdf
+
 
 !README.md
 
