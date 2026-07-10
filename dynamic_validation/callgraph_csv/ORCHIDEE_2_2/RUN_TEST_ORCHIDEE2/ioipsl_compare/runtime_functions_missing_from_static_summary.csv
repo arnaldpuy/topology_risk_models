@@ -1,0 +1,10 @@
+model,metric,value
+13_ORCHIDEE-MAN-2025-IOIPSL,runtime_unique_symbols,379
+13_ORCHIDEE-MAN-2025-IOIPSL,missing_runtime_symbols,89
+13_ORCHIDEE-MAN-2025-IOIPSL,missing_runtime_symbols_pct,23.48
+13_ORCHIDEE-MAN-2025-IOIPSL,runtime_edge_rows,767
+13_ORCHIDEE-MAN-2025-IOIPSL,runtime_call_volume,6621408
+13_ORCHIDEE-MAN-2025-IOIPSL,missing_symbol_outgoing_call_volume,1452667
+13_ORCHIDEE-MAN-2025-IOIPSL,missing_symbol_outgoing_call_volume_pct,21.94
+13_ORCHIDEE-MAN-2025-IOIPSL,missing_symbol_touched_edges,425
+13_ORCHIDEE-MAN-2025-IOIPSL,missing_symbol_touched_edges_pct,55.41

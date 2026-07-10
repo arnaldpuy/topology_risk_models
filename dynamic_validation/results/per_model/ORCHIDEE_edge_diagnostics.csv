@@ -1,2 +1,0 @@
-model,lang,static_edges,runtime_edges,matched_edges,runtime_coverage_pct,has_runtime_counts
-ORCHIDEE,fortran,1368,767,168,12.280701754386,FALSE

@@ -1,0 +1,6 @@
+cause,count,example_caller,example_callee,example_runtime_calls
+both_symbols_missing_in_static,230,bcast_c,bcast_mpi_c,23
+callee_missing_in_static,275,activate_sub_models,getin_p_l,8
+caller_missing_in_static,44,bcast_c,bcast_omp_c,23
+edge_not_in_static_but_symbols_present,51,condveg_initialize,get_printlev,1
+matched,167,aggregate_2d_p,aggregate_2d,7

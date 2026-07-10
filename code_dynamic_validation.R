@@ -1,7 +1,5 @@
-## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
-## ----packages, warning=FALSE, message=FALSE, results = "hide", cache = FALSE----
 
 # PRELIMINARY FUNCTIONS ########################################################
 ################################################################################
@@ -17,853 +15,445 @@ sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales",
 seed <- 123
 set.seed(seed)
 
-## ----helpers------------------------------------------------------------------
 
-# MODEL REGISTRY ###############################################################
-# Append rows here when VIC and HYPE arrive. `model` matches keys in
-# full_paths_df.xlsx / full_node_df.xlsx; `raw_subdir` is the folder under
-# dynamic_validation/.
-
-model_registry <- data.table(
-  model      = c("ORCHIDEE", "PCR-GLOBWB"),
-  raw_subdir = c("ORCHIDEE", "PCR"),
-  lang       = c("fortran",  "python")
-)
+# PATHS ########################################################################
 
 repo_root <- getwd()
-dv_dir    <- file.path(repo_root, "dynamic_validation")
-raw_dir   <- function(model) file.path(dv_dir, model)
-out_dir   <- file.path(dv_dir, "results", "per_model")
-syn_dir   <- file.path(dv_dir, "results", "synthesis")
+cg_dir    <- file.path(repo_root, "dynamic_validation", "callgraph_csv", "Callgraphs")
+out_dir   <- file.path(repo_root, "dynamic_validation", "results", "per_model")
+syn_dir   <- file.path(repo_root, "dynamic_validation", "results", "synthesis")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(syn_dir, recursive = TRUE, showWarnings = FALSE)
 
+# MODEL REGISTRY ###############################################################
+# static  = drift-corrected static call graph (callgraph_edges.csv)
+# runtime = matched runtime trace with per-edge runtime_calls
+# cc      = model key in datasets/cyclomatic_complexity_functions.csv
+# role    = "primary" | "robustness"
+
+model_registry <- data.table(
+  model   = c("ORCHIDEE", "ORCHIDEE+IOIPSL", "PCR-GLOBWB"),
+  static  = c(file.path(cg_dir, "13_ORCHIDEE-MAN-2025_ORIGINAL", "callgraph_edges.csv"),
+              file.path(cg_dir, "13_ORCHIDEE-MAN-2025-AND IOIPSL", "callgraph_edges.csv"),
+              file.path(cg_dir, "14_PCR-GLOBWB_model", "callgraph_edges.csv")),
+  runtime = c(file.path(cg_dir, "13_ORCHIDEE-MAN-2025-AND IOIPSL", "runtime_callgraph_edges.csv"),
+              file.path(cg_dir, "13_ORCHIDEE-MAN-2025-AND IOIPSL", "runtime_callgraph_edges.csv"),
+              file.path(cg_dir, "14_PCR-GLOBWB_model", "runtime_callgraph_edges.csv")),
+  cc      = c("ORCHIDEE", "ORCHIDEE", "PCR-GLOBWB"),
+  role    = c("primary", "robustness", "primary")
+)
+
 available_models <- function() {
   reg <- copy(model_registry)
-  reg[, available := vapply(raw_subdir, function(s) {
-    file.exists(file.path(raw_dir(s), "runtime_callgraph_edges.csv"))
-  }, logical(1))]
+  reg[, available := file.exists(static) & file.exists(runtime)]
   reg[available == TRUE]
 }
 
 # NAME NORMALISATION ###########################################################
-# Both static and runtime caller / callee names are lowercased and stripped of
-# a leading class qualifier. Adjust here if model-specific quirks emerge
-# (Fortran name mangling, Python decorators, etc.).
+# Lowercase and strip a leading class qualifier (e.g. BmiPCRGlobWB.set_value ->
+# set_value) so static and runtime symbols and the cyclomatic-complexity table
+# join on a common key.
 
 norm_fun_name <- function(x) {
   out <- tolower(trimws(as.character(x)))
-  out <- sub(".*\\.", "", out)
-  out
+  sub(".*\\.", "", out)
 }
 
-# STATIC SIDE LOADERS ##########################################################
-# Read the canonical outputs of code_hydrological_models.R.
-
-load_full_paths_df <- function() {
-  f <- file.path(repo_root, "full_paths_df.xlsx")
-  if (!file.exists(f)) stop("Missing ", f,
-    " - run code_hydrological_models.R first.")
-  as.data.table(read.xlsx(f))
-}
-
-load_full_nodes_df <- function() {
-  f <- file.path(repo_root, "full_nodes_df.xlsx")
-  if (!file.exists(f)) stop("Missing ", f,
-    " - run code_hydrological_models.R first.")
-  as.data.table(read.xlsx(f))
-}
-
-load_full_node_df <- function() {
-  f <- file.path(repo_root, "full_node_df.xlsx")
-  if (!file.exists(f)) stop("Missing ", f,
-    " - run code_hydrological_models.R first.")
-  as.data.table(read.xlsx(f))
-}
-
-# Per-path uncertainty summary - prefers the slim full_ua_summary.csv
-# (produced by dynamic_validation/analysis/00b_extract_ua_summary.R; ~8.7 MB)
-# and falls back to the raw 1.78 GB full_ua_df.csv with an sd approximated
-# from quantiles.
-
-load_uncertainty_summary <- function(models = NULL) {
-  slim <- file.path(repo_root, "full_ua_summary.csv")
-  raw  <- file.path(repo_root, "full_ua_df.csv")
-  if (file.exists(slim)) {
-    ua <- fread(slim)
-  } else if (file.exists(raw)) {
-    cols <- c("model", "path_id", "path_nodes", "path_str", "hops",
-              "P_k_min", "P_k_mean", "P_k_max",
-              "P_k_q025", "P_k_q50", "P_k_q975")
-    ua <- fread(raw, select = cols)
-    ua[, P_k_sd := (P_k_q975 - P_k_q025) / (2 * 1.96)]
-    ua[, CV_k   := P_k_sd / pmax(P_k_mean, 1e-12)]
-  } else {
-    stop("Missing both ", slim, " and ", raw,
-         " - run code_hydrological_models.R UA section, then ",
-         "dynamic_validation/analysis/00b_extract_ua_summary.R.")
-  }
-  if (!is.null(models)) ua <- ua[model %in% models]
-  if (!"risk_form" %in% names(ua)) ua[, risk_form := "additive"]
-  ua[]
-}
-
-load_static_edges <- function(model_label, lang) {
-  fn <- sprintf("call_metrics_%s_%s.csv", lang, model_label)
-  f  <- file.path(repo_root, "datasets", "call_metrics", fn)
-  if (!file.exists(f)) stop("Missing ", f)
-  dt <- fread(f)
-  setnames(dt, c("function", "call"), c("caller", "callee"), skip_absent = TRUE)
-  dt[, `:=`(
-    caller_norm = norm_fun_name(caller),
-    callee_norm = norm_fun_name(callee),
-    model       = model_label,
-    lang        = lang
-  )]
-  unique(dt[, .(caller_norm, callee_norm, model, lang)])
-}
-
-# DYNAMIC SIDE LOADER ##########################################################
-# runtime_callgraph_edges.csv schema (as of 2026-05-17): model, lang, caller,
-# callee, caller_file, caller_line, callee_file_hint, callee_kind,
-# runtime_calls. Name normalisation can collapse multiple raw edges into the
-# same (caller_norm, callee_norm); sum the runtime_calls to preserve intensity.
-
-load_runtime_edges <- function(model_label, raw_subdir) {
-  f <- file.path(raw_dir(raw_subdir), "runtime_callgraph_edges.csv")
-  if (!file.exists(f)) stop("Missing ", f)
-  dt <- fread(f)
-  dt[, `:=`(
-    caller_norm = norm_fun_name(caller),
-    callee_norm = norm_fun_name(callee)
-  )]
-  if (!"runtime_calls" %in% names(dt)) dt[, runtime_calls := NA_integer_]
-  dt[, .(runtime_calls = sum(runtime_calls, na.rm = TRUE)),
-     by = .(caller_norm, callee_norm)]
-}
-
-# PER-PATH HELPERS #############################################################
-# path_nodes in full_paths_df is a delimited string after the xlsx round-trip.
-# split_path_nodes returns the ordered node sequence; path_to_edges turns it
-# into a per-edge table; aggregate_Ek collapses runtime counts along a path.
-
-split_path_nodes <- function(path_nodes_str) {
-  for (sep in c(" -> ", ",", "|")) {
-    if (any(grepl(sep, path_nodes_str, fixed = TRUE))) {
-      return(strsplit(path_nodes_str, sep, fixed = TRUE))
-    }
-  }
-  strsplit(path_nodes_str, "\\s+")
-}
-
-path_to_edges <- function(node_seq) {
-  if (length(node_seq) < 2L) {
-    return(data.table(caller_norm = character(), callee_norm = character()))
-  }
-  data.table(
-    caller_norm = norm_fun_name(node_seq[-length(node_seq)]),
-    callee_norm = norm_fun_name(node_seq[-1L])
-  )
-}
-
-aggregate_Ek <- function(edge_dt) {
-  rc <- edge_dt$runtime_calls
-  rc[is.na(rc)] <- 0
-  if (length(rc) == 0L) return(list(Ek_min = NA_real_, Ek_sum = NA_real_))
-  list(Ek_min = min(rc), Ek_sum = sum(rc))
-}
-
-# Expand each static path into one row per (path_id, position, node) for a
-# given (model, risk_form), with node-level attributes (cyclomatic_complexity,
-# indeg, btw, risk_score, file) attached. Used by Analyses 3, 4, 5.
-
-expand_paths_to_nodes <- function(model_label,
-                                  risk_form_label = "additive",
-                                  paths_df = NULL,
-                                  node_df  = NULL) {
-  if (is.null(paths_df)) paths_df <- load_full_paths_df()
-  if (is.null(node_df))  node_df  <- load_full_node_df()
-
-  fp <- paths_df[model == model_label & risk_form == risk_form_label]
-  fn <- node_df[model == model_label,
-                .(model, name, file, cyclomatic_complexity, indeg, btw,
-                  risk_score)]
-  if (!nrow(fp)) return(data.table())
-
-  per_path <- rbindlist(lapply(seq_len(nrow(fp)), function(i) {
-    nodes <- split_path_nodes(fp$path_nodes[i])[[1]]
-    if (!length(nodes)) return(NULL)
-    data.table(model = model_label, path_id = fp$path_id[i],
-               pos = seq_along(nodes), name = nodes)
-  }), use.names = TRUE, fill = TRUE)
-
-  merge(per_path, fn, by = c("model", "name"), all.x = TRUE)
-}
-
-cat("[setup] models with runtime data:\n")
-print(available_models())
-
-## ----preregistration----------------------------------------------------------
-
-# Decision parameters used throughout - all locked in pre_registration.md.
 
 TOP_DECILE        <- 0.90
 BOTTOM_DECILE     <- 0.10
-RISK_FORM_PRIMARY <- "additive"
-EK_PRIMARY        <- "Ek_sum"   # see deviation log 2026-05-17
+EK_PRIMARY        <- "Ek_sum"   # see deviation log in pre_registration.md
 EK_ROBUSTNESS     <- "Ek_min"
 N_BOOT            <- 1000L
 A_THRESHOLD       <- 0.55
-P_THRESHOLD       <- 0.05
-TOP_K_FUNCTIONS   <- 3L
-MIN_PATHS_PER_BIN <- 20L  # within-length deciles require at least this many
+MIN_PATHS_PER_BIN <- 20L
+METRICS           <- c("pm_cc", "pm_indeg", "pm_btw")  # path-mean C / indeg / btw
+
+# alpha/beta/gamma are the manuscript's node-risk weights.
+ALPHA <- 0.6; BETA <- 0.3; GAMMA <- 0.1
 
 color_strata <- c("top_decile" = "#C65D09", "bottom_decile" = "#3B5B92")
 
-## ----join_static_dynamic, results="hold"--------------------------------------
 
-# JOIN STATIC + DYNAMIC ########################################################
+# BUILD STATIC P_k #############################################################
 ################################################################################
 
-ua_summary  <- load_uncertainty_summary(models = available_models()$model)
-paths_df    <- load_full_paths_df()
-node_df     <- load_full_node_df()
-nodes_df    <- load_full_nodes_df()
+build_static <- function(edge_file, cc_model) {
+  d  <- fread(edge_file)
+  el <- unique(data.table(from = norm_fun_name(d$caller),
+                          to   = norm_fun_name(d$callee)))
+  el <- el[from != "" & to != "" & !is.na(from) & !is.na(to)]
 
-join_one_model <- function(model_label, raw_subdir, lang) {
+  cc <- fread(file.path(repo_root, "datasets",
+                        "cyclomatic_complexity_functions.csv"))[model == cc_model]
+  cc[, name_norm := norm_fun_name(name)]
+  cc_u    <- cc[, .(cyclomatic_complexity = max(cyclomatic_complexity, na.rm = TRUE)),
+                by = name_norm]
+  mean_cc <- mean(cc_u$cyclomatic_complexity, na.rm = TRUE)
 
-  static_edges  <- load_static_edges(model_label, lang)
-  runtime_edges <- load_runtime_edges(model_label, raw_subdir)
+  g   <- as_tbl_graph(el, directed = TRUE)
+  nm  <- igraph::V(as.igraph(g))$name
+  ccm <- cc_u[match(nm, name_norm), cyclomatic_complexity]
+  ccm[is.na(ccm)] <- mean_cc
+  g <- g |> activate(nodes) |> mutate(cyclomatic_complexity = ccm)
 
-  matched_edges <- merge(static_edges, runtime_edges,
-                         by = c("caller_norm", "callee_norm"),
-                         all.x = TRUE)
-  matched_edges[, exercised := !is.na(runtime_calls)]
-  setkey(matched_edges, caller_norm, callee_norm)
+  out <- all_paths_fun(graph = g, alpha = ALPHA, beta = BETA, gamma = GAMMA,
+                       p = 1, complexity_col = "cyclomatic_complexity")
+  ua  <- uncertainty_fun(all_paths_out = out, N = 2^10, order = "first")
 
-  paths <- ua_summary[model == model_label]
+  paths <- as.data.table(out$paths)
+  uap   <- as.data.table(ua$paths)
+  uap[, P_k_q50  := vapply(uncertainty_analysis, median, numeric(1), na.rm = TRUE)]
+  uap[, P_k_mean := vapply(uncertainty_analysis, mean,   numeric(1), na.rm = TRUE)]
+  uap[, P_k_sd   := vapply(uncertainty_analysis, sd,     numeric(1), na.rm = TRUE)]
+  uap[, CV_k     := P_k_sd / pmax(P_k_mean, 1e-12)]
+  paths <- merge(paths, uap[, .(path_id, P_k_q50, P_k_mean, P_k_sd, CV_k)],
+                 by = "path_id")
 
-  per_path <- paths[, {
-    node_seq <- split_path_nodes(path_nodes)[[1]]
-    edges    <- path_to_edges(node_seq)
-    if (nrow(edges) == 0L) {
-      list(n_edges = 0L, n_edges_static = 0L, n_edges_exercised = 0L,
-           frac_exercised = NA_real_, any_exercised = NA, all_exercised = NA,
-           Ek_min = NA_real_, Ek_sum = NA_real_)
-    } else {
-      joined <- matched_edges[edges, on = c("caller_norm", "callee_norm")]
-      ex     <- !is.na(joined$exercised) & joined$exercised
-      Ek     <- aggregate_Ek(joined)
-      list(n_edges = nrow(edges),
-           n_edges_static = sum(!is.na(joined$model)),
-           n_edges_exercised = sum(ex),
-           frac_exercised = sum(ex) / nrow(edges),
-           any_exercised = any(ex),
-           all_exercised = all(ex),
-           Ek_min = Ek$Ek_min,
-           Ek_sum = Ek$Ek_sum)
-    }
-  }, by = .(model, path_id, risk_form, hops,
-            P_k_min, P_k_mean, P_k_max, P_k_q025, P_k_q50, P_k_q975, CV_k)]
-
-  out_f <- file.path(out_dir, paste0(model_label, "_paths_joined.csv"))
-  fwrite(per_path, out_f)
-
-  diag <- data.table(
-    model            = model_label,
-    lang             = lang,
-    static_edges     = nrow(static_edges),
-    runtime_edges    = nrow(runtime_edges),
-    matched_edges    = sum(matched_edges$exercised),
-    runtime_coverage_pct =
-      100 * sum(matched_edges$exercised) / nrow(static_edges)
-  )
-  fwrite(diag, file.path(out_dir, paste0(model_label, "_edge_diagnostics.csv")))
-  list(paths = per_path, diag = diag)
+  list(paths = paths, nodes = as.data.table(out$nodes))
 }
 
-reg <- available_models()
-join_results <- lapply(seq_len(nrow(reg)), function(i) {
-  join_one_model(reg$model[i], reg$raw_subdir[i], reg$lang[i])
-})
-names(join_results) <- reg$model
 
-# Pool joined tables for downstream analysis
-all_joined <- rbindlist(lapply(join_results, `[[`, "paths"))
-
-# Edge-level coverage diagnostics
-edge_diag <- rbindlist(lapply(join_results, `[[`, "diag"))
-print(edge_diag)
-
-## ----analysis1_unstratified---------------------------------------------------
-
-# ANALYSIS 1 - PATH COVERAGE (UNSTRATIFIED) ####################################
+# JOIN RUNTIME E_k #############################################################
 ################################################################################
 
-coverage_dt <- all_joined[
-  risk_form == RISK_FORM_PRIMARY & !is.na(P_k_q50),
-  {
-    qhi    <- quantile(P_k_q50, TOP_DECILE,    na.rm = TRUE)
-    qlo    <- quantile(P_k_q50, BOTTOM_DECILE, na.rm = TRUE)
-    cv_med <- median(CV_k, na.rm = TRUE)
-    hi_idx <- P_k_q50 >= qhi & CV_k < cv_med
-    lo_idx <- P_k_q50 <= qlo
-    rbind(
-      data.table(stratum = "top_decile",
-                 n_paths = sum(hi_idx),
-                 frac_any = mean(any_exercised[hi_idx], na.rm = TRUE),
-                 frac_all = mean(all_exercised[hi_idx], na.rm = TRUE),
-                 frac_edge = mean(frac_exercised[hi_idx], na.rm = TRUE),
-                 median_hops = as.numeric(median(hops[hi_idx], na.rm = TRUE))),
-      data.table(stratum = "bottom_decile",
-                 n_paths = sum(lo_idx),
-                 frac_any = mean(any_exercised[lo_idx], na.rm = TRUE),
-                 frac_all = mean(all_exercised[lo_idx], na.rm = TRUE),
-                 frac_edge = mean(frac_exercised[lo_idx], na.rm = TRUE),
-                 median_hops = as.numeric(median(hops[lo_idx], na.rm = TRUE)))
-    )
-  },
-  by = .(model, risk_form)
-]
+load_runtime <- function(runtime_file) {
+  rt <- fread(runtime_file)
+  rt[, `:=`(cn = norm_fun_name(caller), ce = norm_fun_name(callee))]
+  if (!"runtime_calls" %in% names(rt)) rt[, runtime_calls := NA_integer_]
+  rt <- rt[, .(runtime_calls = sum(runtime_calls, na.rm = TRUE)), by = .(cn, ce)]
+  setkey(rt, cn, ce)
+  rt
+}
 
+join_runtime <- function(static, runtime_file) {
+  paths <- copy(static$paths); nodes <- static$nodes
+  rt <- load_runtime(runtime_file)
+
+  res <- paths[, {
+    ns <- unlist(path_nodes)
+    if (length(ns) < 2L) {
+      list(n_edges = 0L, n_ex = 0L, frac_exercised = NA_real_,
+           any_exercised = NA, all_exercised = NA,
+           Ek_min = NA_real_, Ek_sum = NA_real_)
+    } else {
+      ed <- data.table(cn = norm_fun_name(ns[-length(ns)]),
+                       ce = norm_fun_name(ns[-1L]))
+      j  <- rt[ed, on = c("cn", "ce")]
+      rc <- j$runtime_calls; ex <- !is.na(rc); rc[is.na(rc)] <- 0
+      list(n_edges = nrow(ed), n_ex = sum(ex), frac_exercised = sum(ex) / nrow(ed),
+           any_exercised = any(ex), all_exercised = all(ex),
+           Ek_min = min(rc), Ek_sum = sum(rc))
+    }
+  }, by = .(path_id)]
+  paths <- merge(paths, res, by = "path_id")
+
+  pm <- paths[, {
+    ns  <- norm_fun_name(unlist(path_nodes))
+    sub <- nodes[name %in% ns]
+    list(pm_cc    = mean(sub$cyclomatic_complexity, na.rm = TRUE),
+         pm_indeg = mean(sub$indeg, na.rm = TRUE),
+         pm_btw   = mean(sub$btw,   na.rm = TRUE))
+  }, by = .(path_id)]
+  merge(paths, pm, by = "path_id")
+}
+
+# Build + join for every available model.
+reg <- available_models()
+joined <- lapply(seq_len(nrow(reg)), function(i) {
+  st <- build_static(reg$static[i], reg$cc[i])
+  jn <- join_runtime(st, reg$runtime[i])
+  jn[, model := reg$model[i]]
+  fwrite(jn[, .(model, path_id, hops, P_k_q50, CV_k, n_edges, n_ex,
+               frac_exercised, any_exercised, all_exercised, Ek_min, Ek_sum,
+               pm_cc, pm_indeg, pm_btw)],
+         file.path(out_dir, paste0(gsub("[^A-Za-z0-9]", "_", reg$model[i]),
+                                   "_paths_joined.csv")))
+  jn
+})
+names(joined) <- reg$model
+
+edge_diag <- rbindlist(lapply(seq_len(nrow(reg)), function(i) {
+  jn <- joined[[i]]
+  data.table(model = reg$model[i], role = reg$role[i],
+             paths = nrow(jn), exercised = sum(jn$any_exercised, na.rm = TRUE),
+             median_hops = median(jn$hops, na.rm = TRUE))
+}))
+print(edge_diag)
+
+
+# ANALYSIS 1 - PATH COVERAGE ###################################################
+################################################################################
+
+coverage_one <- function(dt, model) {
+  dt <- dt[!is.na(P_k_q50)]
+  qhi <- quantile(dt$P_k_q50, TOP_DECILE,    na.rm = TRUE)
+  qlo <- quantile(dt$P_k_q50, BOTTOM_DECILE, na.rm = TRUE)
+  cvm <- median(dt$CV_k, na.rm = TRUE)
+  hi  <- dt$P_k_q50 >= qhi & dt$CV_k < cvm
+  lo  <- dt$P_k_q50 <= qlo
+  rbind(
+    data.table(model = model, stratum = "top_decile", n = sum(hi),
+               frac_any  = mean(dt$any_exercised[hi],  na.rm = TRUE),
+               frac_edge = mean(dt$frac_exercised[hi], na.rm = TRUE),
+               frac_all  = mean(dt$all_exercised[hi],  na.rm = TRUE),
+               median_hops = as.numeric(median(dt$hops[hi], na.rm = TRUE))),
+    data.table(model = model, stratum = "bottom_decile", n = sum(lo),
+               frac_any  = mean(dt$any_exercised[lo],  na.rm = TRUE),
+               frac_edge = mean(dt$frac_exercised[lo], na.rm = TRUE),
+               frac_all  = mean(dt$all_exercised[lo],  na.rm = TRUE),
+               median_hops = as.numeric(median(dt$hops[lo], na.rm = TRUE)))
+  )
+}
+
+coverage_dt <- rbindlist(lapply(reg$model, function(m) coverage_one(joined[[m]], m)))
 fwrite(coverage_dt, file.path(syn_dir, "01_coverage_table.csv"))
 print(coverage_dt)
 
-## ----analysis1_unstratified_plot, fig.width=8, fig.height=4.5, fig.cap="Analysis 1 unstratified: fraction of paths exercised at runtime by static-risk stratum, under three coverage metrics. Note the median-hops column in the table - top-decile paths are substantially longer than bottom-decile paths, which inflates the `any` contrast."----
 
-coverage_long <- melt(
-  coverage_dt,
-  id.vars       = c("model", "risk_form", "stratum", "n_paths", "median_hops"),
-  measure.vars  = c("frac_any", "frac_edge", "frac_all"),
-  variable.name = "metric",
-  value.name    = "value"
-)
+coverage_long <- melt(coverage_dt,
+  id.vars = c("model", "stratum", "n", "median_hops"),
+  measure.vars = c("frac_any", "frac_edge", "frac_all"),
+  variable.name = "metric", value.name = "value")
 coverage_long[, metric := factor(metric,
   levels = c("frac_any", "frac_edge", "frac_all"),
   labels = c("any edge", "mean fraction of edges", "all edges"))]
 
-ggplot(coverage_long,
-       aes(x = model, y = value, fill = stratum)) +
+ggplot(coverage_long, aes(x = model, y = value, fill = stratum)) +
   geom_col(position = position_dodge(0.7), width = 0.6) +
   facet_wrap(~ metric) +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
-                     limits = c(0, 1)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0, 1)) +
   scale_fill_manual(values = color_strata,
-                    labels = c("bottom decile P_k", "top decile P_k")) +
+                    labels = c("bottom decile", "top decile")) +
   labs(x = NULL, y = "coverage", fill = NULL) +
-  theme_minimal(base_size = 11) +
-  theme(legend.position = "bottom")
+  theme_minimal(base_size = 10) +
+  theme(legend.position = "bottom", axis.text.x = element_text(angle = 20, hjust = 1))
 
-## ----analysis1b_within_length-------------------------------------------------
 
-# ANALYSIS 1b - WITHIN-LENGTH DECILES + WILCOXON ###############################
+# ANALYSIS 1b - WITHIN-LENGTH DECILES ##########################################
 ################################################################################
 
-within_length_dt <- all_joined[risk_form == RISK_FORM_PRIMARY & !is.na(P_k_q50)]
-within_length_dt[, hops_bin := cut(hops,
-                                   breaks = c(0, 1, 2, 4, 7, Inf),
-                                   labels = c("1", "2", "3-4", "5-7", "8+"),
-                                   right  = TRUE)]
-
-within_decile_dt <- within_length_dt[
-  ,
-  {
-    if (.N < MIN_PATHS_PER_BIN || length(unique(P_k_q50)) < 2L) {
-      data.table()
-    } else {
-      qhi <- quantile(P_k_q50, TOP_DECILE,    na.rm = TRUE)
-      qlo <- quantile(P_k_q50, BOTTOM_DECILE, na.rm = TRUE)
-      top <- P_k_q50 >= qhi
-      bot <- P_k_q50 <= qlo
-      rbind(
-        data.table(stratum = "top_decile",
-                   n_paths = sum(top),
-                   frac_any  = mean(any_exercised[top],  na.rm = TRUE),
-                   frac_edge = mean(frac_exercised[top], na.rm = TRUE),
-                   frac_all  = mean(all_exercised[top],  na.rm = TRUE)),
-        data.table(stratum = "bottom_decile",
-                   n_paths = sum(bot),
-                   frac_any  = mean(any_exercised[bot],  na.rm = TRUE),
-                   frac_edge = mean(frac_exercised[bot], na.rm = TRUE),
-                   frac_all  = mean(all_exercised[bot],  na.rm = TRUE))
-      )
-    }
-  },
-  by = .(model, risk_form, hops_bin)
-]
-
-within_test_dt <- within_length_dt[
-  ,
-  {
-    if (.N < MIN_PATHS_PER_BIN || length(unique(P_k_q50)) < 2L) {
-      data.table()
-    } else {
-      qhi <- quantile(P_k_q50, TOP_DECILE,    na.rm = TRUE)
-      qlo <- quantile(P_k_q50, BOTTOM_DECILE, na.rm = TRUE)
-      x_top <- frac_exercised[P_k_q50 >= qhi]
-      x_bot <- frac_exercised[P_k_q50 <= qlo]
-      if (length(x_top) < 3L || length(x_bot) < 3L) {
-        data.table()
-      } else {
-        w <- suppressWarnings(wilcox.test(x_top, x_bot))
-        A <- tryCatch(effsize::VD.A(x_top, x_bot)$estimate,
-                      error = function(e) NA_real_)
-        data.table(n_top = length(x_top), n_bot = length(x_bot),
-                   median_top = median(x_top, na.rm = TRUE),
-                   median_bot = median(x_bot, na.rm = TRUE),
-                   wilcox_p = w$p.value, effect_A = A)
-      }
-    }
-  },
-  by = .(model, risk_form, hops_bin)
-]
-within_test_dt[, signif := fcase(
-  is.na(wilcox_p), "",
-  wilcox_p < 0.001, "***",
-  wilcox_p < 0.01,  "**",
-  wilcox_p < 0.05,  "*",
-  default = "ns"
-)]
-
-fwrite(within_decile_dt, file.path(syn_dir, "01b_within_length_deciles.csv"))
-fwrite(within_test_dt,   file.path(syn_dir, "01b_within_length_tests.csv"))
-
-print(within_decile_dt)
-print(within_test_dt)
-
-## ----analysis1b_plot, fig.width=8, fig.height=5, fig.cap="Analysis 1b: mean fraction of edges exercised per path, by hops bin and static-risk stratum. The decile cuts are taken WITHIN each hops bin so the top-vs-bottom comparison is length-controlled. For paths of 3 or more hops the framework discriminates strongly; for hops 1 the relationship reverses, consistent with the framework's design as a path-level integrator over multi-node chains."----
-
-if (nrow(within_decile_dt)) {
-  ggplot(within_decile_dt,
-         aes(x = hops_bin, y = frac_edge, fill = stratum)) +
-    geom_col(position = position_dodge(0.7), width = 0.6) +
-    facet_grid(risk_form ~ model) +
-    scale_y_continuous(labels = scales::percent_format(accuracy = 1),
-                       limits = c(0, 1)) +
-    scale_fill_manual(values = color_strata,
-                      labels = c("bottom decile", "top decile")) +
-    labs(x = "path length (hops)", y = "mean fraction of edges exercised",
-         fill = NULL) +
-    theme_minimal(base_size = 11) +
-    theme(legend.position = "bottom")
+within_length_one <- function(dt, model) {
+  # Plain per-bin split-apply (avoids data.table by-group row recycling).
+  x <- data.table(hops = dt$hops, P_k_q50 = dt$P_k_q50,
+                  frac_exercised = dt$frac_exercised)[!is.na(P_k_q50)]
+  x[, hb := cut(hops, c(0, 1, 2, 4, 7, Inf), labels = c("1", "2", "3-4", "5-7", "8+"))]
+  rbindlist(lapply(levels(x$hb), function(b) {
+    sub <- x[hb == b]
+    if (nrow(sub) < MIN_PATHS_PER_BIN || length(unique(sub$P_k_q50)) < 2) return(NULL)
+    q1 <- quantile(sub$P_k_q50, TOP_DECILE); q0 <- quantile(sub$P_k_q50, BOTTOM_DECILE)
+    xt <- sub$frac_exercised[sub$P_k_q50 >= q1]; xb <- sub$frac_exercised[sub$P_k_q50 <= q0]
+    if (length(xt) < 3 || length(xb) < 3) return(NULL)
+    data.table(model = model, hb = b, n_top = length(xt), n_bot = length(xb),
+      med_top = median(xt, na.rm = TRUE), med_bot = median(xb, na.rm = TRUE),
+      wilcox_p = suppressWarnings(wilcox.test(xt, xb)$p.value),
+      A = tryCatch(effsize::VD.A(xt, xb)$estimate, error = function(e) NA_real_))
+  }))
 }
 
-## ----analysis2_rank_correlation-----------------------------------------------
+within_dt <- rbindlist(lapply(reg$model, function(m) within_length_one(joined[[m]], m)),
+                       fill = TRUE)
+fwrite(within_dt, file.path(syn_dir, "01b_within_length.csv"))
+print(within_dt)
 
-# ANALYSIS 2 - RANK CORRELATION P_k vs E_k #####################################
+
+wl_plot <- within_dt[!is.na(A)]
+if (nrow(wl_plot)) {
+  ggplot(wl_plot, aes(x = hb, y = A, fill = model)) +
+    geom_col(position = position_dodge(0.7), width = 0.6) +
+    geom_hline(yintercept = A_THRESHOLD, linetype = "dashed") +
+    geom_hline(yintercept = 0.5, linetype = "dotted", colour = "grey60") +
+    coord_cartesian(ylim = c(0, 1)) +
+    labs(x = "path length (hops)", y = "effect size A (top vs bottom decile)",
+         fill = NULL,
+         caption = "dashed = A 0.55 threshold; dotted = A 0.5 (no discrimination)") +
+    theme_minimal(base_size = 10) + theme(legend.position = "bottom")
+}
+
+
+# ANALYSIS 2 - RANK CORRELATION ################################################
 ################################################################################
 
-corr_results <- rbindlist(lapply(reg$model, function(m) {
-  dt <- all_joined[model == m & risk_form == RISK_FORM_PRIMARY &
-                   any_exercised == TRUE &
-                   !is.na(P_k_q50) & !is.na(get(EK_PRIMARY))]
-  if (!nrow(dt) || all(is.na(dt[[EK_PRIMARY]]))) return(NULL)
+rank_corr_one <- function(dt, model) {
+  ex <- dt[any_exercised == TRUE & !is.na(get(EK_PRIMARY)) & !is.na(P_k_q50)]
+  if (nrow(ex) < 10) return(NULL)
+  rho  <- suppressWarnings(cor(ex$P_k_q50, ex[[EK_PRIMARY]],    method = "spearman"))
+  tau  <- suppressWarnings(cor(ex$P_k_q50, ex[[EK_PRIMARY]],    method = "kendall"))
+  rmin <- suppressWarnings(cor(ex$P_k_q50, ex[[EK_ROBUSTNESS]], method = "spearman"))
+  bo <- boot::boot(ex, function(d, i)
+    suppressWarnings(cor(d$P_k_q50[i], d[[EK_PRIMARY]][i], method = "spearman")),
+    R = N_BOOT)
+  ci <- tryCatch(boot::boot.ci(bo, type = "perc")$percent[1, c(4, 5)],
+                 error = function(e) c(NA_real_, NA_real_))
+  data.table(model = model, n_exercised = nrow(ex),
+             spearman_sum = rho, ci_lo = ci[1], ci_hi = ci[2],
+             kendall_sum = tau, spearman_min = rmin)
+}
 
-  rho <- suppressWarnings(cor(dt$P_k_q50, dt[[EK_PRIMARY]], method = "spearman"))
-  tau <- suppressWarnings(cor(dt$P_k_q50, dt[[EK_PRIMARY]], method = "kendall"))
-  rho_robust <- suppressWarnings(
-    cor(dt$P_k_q50, dt[[EK_ROBUSTNESS]], method = "spearman"))
+corr_dt <- rbindlist(lapply(reg$model, function(m) rank_corr_one(joined[[m]], m)),
+                     fill = TRUE)
+fwrite(corr_dt, file.path(syn_dir, "02_rank_correlation.csv"))
+print(corr_dt)
 
-  boot_rho <- boot::boot(
-    data      = dt,
-    statistic = function(d, i) suppressWarnings(
-      cor(d$P_k_q50[i], d[[EK_PRIMARY]][i], method = "spearman")),
-    R = N_BOOT
-  )
-  ci <- tryCatch(
-    boot::boot.ci(boot_rho, type = "perc")$percent[1, c(4, 5)],
-    error = function(e) c(NA_real_, NA_real_)
-  )
-
-  data.table(model = m, n_paths = nrow(dt),
-             spearman_sum = rho, kendall_sum = tau,
-             rho_sum_ci_lo = ci[1], rho_sum_ci_hi = ci[2],
-             spearman_min = rho_robust)
-}), fill = TRUE)
-
-fwrite(corr_results, file.path(syn_dir, "02_rank_correlation.csv"))
-print(corr_results)
-
-## ----analysis2_scatters, fig.width=8, fig.height=4, fig.cap="Analysis 2: P_k against log10(E_k^sum + 1) for exercised paths in each model. Spearman rho is annotated per panel; loess in orange."----
 
 scatter_panels <- lapply(reg$model, function(m) {
-  dt <- all_joined[model == m & risk_form == RISK_FORM_PRIMARY &
-                   any_exercised == TRUE & !is.na(get(EK_PRIMARY))]
-  if (!nrow(dt)) return(NULL)
-  rho_row <- corr_results[model == m]
-  ggplot(dt, aes(x = P_k_q50, y = log10(get(EK_PRIMARY) + 1))) +
-    geom_point(alpha = 0.4, size = 0.8) +
+  ex <- joined[[m]][any_exercised == TRUE & !is.na(get(EK_PRIMARY))]
+  if (!nrow(ex)) return(NULL)
+  r <- corr_dt[model == m]
+  ggplot(ex, aes(x = P_k_q50, y = log10(get(EK_PRIMARY) + 1))) +
+    geom_point(alpha = 0.3, size = 0.7) +
     geom_smooth(method = "loess", se = FALSE, colour = "#C65D09") +
-    labs(title = sprintf("%s (rho_sum = %.2f [%.2f, %.2f], n = %d)",
-                         m, rho_row$spearman_sum,
-                         rho_row$rho_sum_ci_lo, rho_row$rho_sum_ci_hi,
-                         rho_row$n_paths),
-         x = expression(P[k]~"(median across ensemble)"),
-         y = expression(log[10]*"("*E[k]^{sum}+1*")")) +
-    theme_minimal(base_size = 10)
+    labs(title = sprintf("%s (rho=%.2f [%.2f,%.2f], n=%d)",
+                         m, r$spearman_sum, r$ci_lo, r$ci_hi, r$n_exercised),
+         x = expression(P[k]), y = expression(log[10]*"("*E[k]^{sum}+1*")")) +
+    theme_minimal(base_size = 9)
 })
 scatter_panels <- scatter_panels[!vapply(scatter_panels, is.null, logical(1))]
-if (length(scatter_panels)) {
-  cowplot::plot_grid(plotlist = scatter_panels, nrow = 1)
-}
+if (length(scatter_panels)) cowplot::plot_grid(plotlist = scatter_panels, nrow = 1)
 
-## ----analysis3_reverse_predictive---------------------------------------------
 
 # ANALYSIS 3 - REVERSE PREDICTIVE CHECK ########################################
 ################################################################################
 
-TOP_RUNTIME_Q <- 0.90
-TOP_P_Q       <- 0.50  # split high vs low P_k at the median, within the
-                       # runtime-heavy subset
-METRICS       <- c("cyclomatic_complexity", "indeg", "btw")
-
-reverse_results <- list()
-reverse_plots   <- list()
-
-for (m in reg$model) {
-
-  dt <- all_joined[model == m & risk_form == RISK_FORM_PRIMARY &
-                   any_exercised == TRUE & !is.na(get(EK_PRIMARY))]
-  if (!nrow(dt) || all(is.na(dt[[EK_PRIMARY]]))) next
-
-  q_runtime <- quantile(dt[[EK_PRIMARY]], TOP_RUNTIME_Q, na.rm = TRUE)
-  hot_paths <- dt[get(EK_PRIMARY) >= q_runtime, .(model, path_id, P_k_q50)]
-  if (nrow(hot_paths) < 8L) next
-
-  per_path_nodes <- expand_paths_to_nodes(m, RISK_FORM_PRIMARY,
-                                          paths_df = paths_df,
-                                          node_df  = node_df)
-  per_path_metrics <- per_path_nodes[
-    path_id %in% hot_paths$path_id,
-    lapply(.SD, mean, na.rm = TRUE),
-    by = .(model, path_id),
-    .SDcols = METRICS
-  ]
-  merged <- merge(hot_paths, per_path_metrics, by = c("model", "path_id"))
-  if (nrow(merged) < 8L) next
-
-  q_pk <- quantile(merged$P_k_q50, TOP_P_Q)
-  merged[, stratum := ifelse(P_k_q50 >= q_pk, "high_Pk", "low_Pk")]
-
-  per_metric <- lapply(METRICS, function(mt) {
-    a <- merged[stratum == "high_Pk", get(mt)]
-    b <- merged[stratum == "low_Pk",  get(mt)]
-    if (!length(a) || !length(b)) return(NULL)
-    w <- suppressWarnings(wilcox.test(a, b))
-    A <- tryCatch(effsize::VD.A(a, b)$estimate, error = function(e) NA_real_)
-    data.table(model = m, metric = mt,
-               n_high = length(a), n_low = length(b),
-               median_high = median(a, na.rm = TRUE),
-               median_low  = median(b, na.rm = TRUE),
-               wilcox_p = w$p.value, effect_A = A)
-  })
-  reverse_results[[m]] <- rbindlist(per_metric, fill = TRUE)
-
-  plot_dt <- melt(merged, id.vars = c("model", "path_id", "stratum"),
-                  measure.vars = METRICS,
-                  variable.name = "metric", value.name = "path_mean")
-  reverse_plots[[m]] <- ggplot(plot_dt,
-    aes(x = stratum, y = path_mean, fill = stratum)) +
-    geom_boxplot(alpha = 0.7, outlier.size = 0.5) +
-    facet_wrap(~ metric, scales = "free_y", nrow = 1) +
-    scale_fill_manual(values = c("high_Pk" = "#C65D09", "low_Pk" = "#3B5B92")) +
-    labs(title = m, x = NULL, y = "path-mean") +
-    theme_minimal(base_size = 10) + theme(legend.position = "none")
+reverse_one <- function(dt, model) {
+  ex <- dt[any_exercised == TRUE & !is.na(get(EK_PRIMARY))]
+  if (nrow(ex) < 16) return(NULL)
+  qr  <- quantile(ex[[EK_PRIMARY]], TOP_DECILE, na.rm = TRUE)
+  hot <- ex[get(EK_PRIMARY) >= qr]
+  if (nrow(hot) < 8) return(NULL)
+  qp <- quantile(hot$P_k_q50, 0.5)
+  hot[, st := ifelse(P_k_q50 >= qp, "hi", "lo")]
+  rbindlist(lapply(METRICS, function(mt) {
+    a <- hot[st == "hi", get(mt)]; b <- hot[st == "lo", get(mt)]
+    data.table(model = model, metric = mt, n_hi = length(a), n_lo = length(b),
+               median_hi = median(a, na.rm = TRUE), median_lo = median(b, na.rm = TRUE),
+               wilcox_p = suppressWarnings(wilcox.test(a, b)$p.value),
+               A = tryCatch(effsize::VD.A(a, b)$estimate, error = function(e) NA_real_))
+  }))
 }
 
-if (length(reverse_results)) {
-  reverse_tbl <- rbindlist(reverse_results, fill = TRUE)
-  fwrite(reverse_tbl, file.path(syn_dir, "03_reverse_predictive.csv"))
-  print(reverse_tbl)
-}
+reverse_dt <- rbindlist(lapply(reg$model, function(m) reverse_one(joined[[m]], m)),
+                        fill = TRUE)
+reverse_dt[, metric := factor(metric, levels = METRICS,
+                              labels = c("cyclomatic", "in-degree", "betweenness"))]
+fwrite(reverse_dt, file.path(syn_dir, "03_reverse_predictive.csv"))
+print(reverse_dt)
 
-## ----analysis3_plot, fig.width=8, fig.height=3.5, fig.cap="Analysis 3: distribution of path-mean static metrics (cyclomatic complexity, in-degree, betweenness) between high-Pk and low-Pk strata within the runtime-heavy decile, per model."----
-
-if (length(reverse_plots)) {
-  cowplot::plot_grid(plotlist = reverse_plots, ncol = 1, align = "v")
-}
-
-## ----analysis4_matched_contrast-----------------------------------------------
 
 # ANALYSIS 4 - MATCHED-FREQUENCY CONTRAST ######################################
 ################################################################################
 
-EXPLORATORY_THRESHOLD <- 15L
-matched_results <- list()
-diag_smd        <- list()
-
-for (m in reg$model) {
-
-  dt <- all_joined[model == m & risk_form == RISK_FORM_PRIMARY &
-                   any_exercised == TRUE & !is.na(get(EK_PRIMARY))]
-  if (!nrow(dt) || all(is.na(dt[[EK_PRIMARY]]))) next
-
-  qhi    <- quantile(dt$P_k_q50, TOP_DECILE,    na.rm = TRUE)
-  qlo    <- quantile(dt$P_k_q50, BOTTOM_DECILE, na.rm = TRUE)
-  cv_med <- median(dt$CV_k, na.rm = TRUE)
-
-  dt[, group := fifelse(P_k_q50 >= qhi & CV_k < cv_med, 1L,
-                fifelse(P_k_q50 <= qlo,                 0L, NA_integer_))]
-  dt_match <- dt[!is.na(group)]
-
-  if (sum(dt_match$group == 1L) < 5L || sum(dt_match$group == 0L) < 5L) next
-
-  per_path_nodes <- expand_paths_to_nodes(m, RISK_FORM_PRIMARY,
-                                          paths_df = paths_df,
-                                          node_df  = node_df)
-  metric_dt <- per_path_nodes[
-    path_id %in% dt_match$path_id,
-    lapply(.SD, mean, na.rm = TRUE),
-    by = .(path_id),
-    .SDcols = METRICS
-  ]
-  dt_match <- merge(dt_match, metric_dt, by = "path_id", all.x = TRUE)
-  dt_match[, statement_proxy := cyclomatic_complexity * hops]
-
-  mout <- tryCatch(
-    MatchIt::matchit(
-      group ~ get(EK_PRIMARY) + hops + statement_proxy,
-      data    = dt_match,
-      method  = "nearest",
-      distance = "mahalanobis",
-      replace  = TRUE
-    ),
-    error = function(e) { warning(e$message); NULL }
-  )
-  if (is.null(mout)) next
-
-  matched <- MatchIt::match.data(mout)
-  n_pairs <- sum(matched$group == 1L)
-
-  smd_pre  <- summary(mout)$sum.all[, "Std. Mean Diff."]
-  smd_post <- summary(mout)$sum.matched[, "Std. Mean Diff."]
-  diag_smd[[m]] <- data.table(
-    model     = m,
-    covariate = names(smd_post),
-    smd_pre   = smd_pre[names(smd_post)],
-    smd_post  = smd_post
-  )
-
-  per_metric <- lapply(METRICS, function(mt) {
-    a <- matched[[mt]][matched$group == 1L]
-    b <- matched[[mt]][matched$group == 0L]
-    if (!length(a) || !length(b)) return(NULL)
-    w <- suppressWarnings(wilcox.test(a, b))
-    A <- tryCatch(effsize::VD.A(a, b)$estimate, error = function(e) NA_real_)
-    data.table(model = m, metric = mt, n_pairs = n_pairs,
-               median_high = median(a, na.rm = TRUE),
-               median_low  = median(b, na.rm = TRUE),
-               wilcox_p = w$p.value, effect_A = A,
-               exploratory = n_pairs < EXPLORATORY_THRESHOLD)
-  })
-  matched_results[[m]] <- rbindlist(per_metric, fill = TRUE)
+matched_one <- function(dt, model) {
+  dt <- dt[!is.na(P_k_q50)]
+  qhi <- quantile(dt$P_k_q50, TOP_DECILE,    na.rm = TRUE)
+  qlo <- quantile(dt$P_k_q50, BOTTOM_DECILE, na.rm = TRUE)
+  cvm <- median(dt$CV_k, na.rm = TRUE)
+  dm  <- dt[any_exercised == TRUE & !is.na(get(EK_PRIMARY))]
+  dm[, grp := fifelse(P_k_q50 >= qhi & CV_k < cvm, 1L,
+              fifelse(P_k_q50 <= qlo,              0L, NA_integer_))]
+  dm <- dm[!is.na(grp)]
+  if (sum(dm$grp == 1) < 5 || sum(dm$grp == 0) < 5) return(NULL)
+  dm[, stmt := pm_cc * hops]
+  mo <- tryCatch(MatchIt::matchit(grp ~ Ek_sum + hops + stmt, data = dm,
+                 method = "nearest", distance = "mahalanobis", replace = TRUE),
+                 error = function(e) NULL)
+  if (is.null(mo)) return(NULL)
+  md <- MatchIt::match.data(mo); np <- sum(md$grp == 1)
+  rbindlist(lapply(METRICS, function(mt) {
+    a <- md[[mt]][md$grp == 1]; b <- md[[mt]][md$grp == 0]
+    data.table(model = model, metric = mt, n_pairs = np,
+               median_hi = median(a, na.rm = TRUE), median_lo = median(b, na.rm = TRUE),
+               wilcox_p = suppressWarnings(wilcox.test(a, b)$p.value),
+               A = tryCatch(effsize::VD.A(a, b)$estimate, error = function(e) NA_real_),
+               exploratory = np < 15L)
+  }))
 }
 
-if (length(matched_results)) {
-  matched_tbl <- rbindlist(matched_results, fill = TRUE)
-  fwrite(matched_tbl, file.path(syn_dir, "04_matched_contrast.csv"))
-  fwrite(rbindlist(diag_smd, fill = TRUE),
-         file.path(syn_dir, "04_matched_smd_diagnostics.csv"))
-  print(matched_tbl)
-}
+matched_dt <- rbindlist(lapply(reg$model, function(m) matched_one(joined[[m]], m)),
+                        fill = TRUE)
+matched_dt[, metric := factor(metric, levels = METRICS,
+                              labels = c("cyclomatic", "in-degree", "betweenness"))]
+fwrite(matched_dt, file.path(syn_dir, "04_matched_contrast.csv"))
+print(matched_dt)
 
-## ----analysis5_dormant_paths--------------------------------------------------
 
 # ANALYSIS 5 - DORMANT HIGH-RISK PATHS #########################################
 ################################################################################
 
-dormant_summary   <- list()
-dormant_paths_out <- list()
-
-for (m in reg$model) {
-
-  dt <- all_joined[model == m & risk_form == RISK_FORM_PRIMARY & !is.na(P_k_q50)]
-  if (!nrow(dt)) next
-  dt[, hops_bin := cut(hops,
-                       breaks = c(0, 1, 2, 4, 7, Inf),
-                       labels = c("1", "2", "3-4", "5-7", "8+"),
-                       right  = TRUE)]
-
-  hi <- dt[
-    ,
-    {
-      if (.N < MIN_PATHS_PER_BIN || length(unique(P_k_q50)) < 2L) {
-        data.table()
-      } else {
-        qhi    <- quantile(P_k_q50, TOP_DECILE, na.rm = TRUE)
-        cv_med <- median(CV_k, na.rm = TRUE)
-        .SD[P_k_q50 >= qhi & CV_k < cv_med]
-      }
-    },
-    by = .(model, hops_bin)
-  ]
-  if (!nrow(hi)) next
-
-  dormant_loose  <- hi[any_exercised == FALSE | is.na(any_exercised)]
-  dormant_strict <- hi[all_exercised == FALSE | is.na(all_exercised)]
-
-  dormant_summary[[m]] <- hi[
-    , .(n_top_decile_in_bin = .N), by = .(model, hops_bin)
-  ][
-    merge(dormant_loose[, .N, by = .(model, hops_bin)],
-          dormant_strict[, .N, by = .(model, hops_bin)],
-          by = c("model", "hops_bin"), all = TRUE,
-          suffixes = c("_loose", "_strict")),
-    on = c("model", "hops_bin"), nomatch = NA
-  ][
-    , .(model, hops_bin,
-        n_top_decile = n_top_decile_in_bin,
-        n_dormant_loose  = fcoalesce(N_loose,  0L),
-        n_dormant_strict = fcoalesce(N_strict, 0L))
-  ][
-    , `:=`(frac_dormant_loose  = n_dormant_loose  / n_top_decile,
-           frac_dormant_strict = n_dormant_strict / n_top_decile)
-  ]
-
-  if (!nrow(dormant_loose)) next
-
-  per_path_nodes <- expand_paths_to_nodes(m, RISK_FORM_PRIMARY,
-                                          paths_df = paths_df,
-                                          node_df  = node_df)
-  per_path_nodes <- per_path_nodes[path_id %in% dormant_loose$path_id]
-  topk <- per_path_nodes[order(-risk_score),
-                         head(.SD, TOP_K_FUNCTIONS),
-                         by = .(model, path_id)]
-  topk_collapsed <- topk[, .(
-    top_functions = paste(name, collapse = " | "),
-    top_files     = paste(unique(file), collapse = " | ")
-  ), by = .(model, path_id)]
-  out <- merge(dormant_loose[, .(model, path_id, hops_bin, hops, P_k_q50, CV_k)],
-               topk_collapsed, by = c("model", "path_id"), all.x = TRUE)
-  dormant_paths_out[[m]] <- out[order(hops_bin, -P_k_q50)]
+dormant_one <- function(dt, model) {
+  x <- data.table(hops = dt$hops, P_k_q50 = dt$P_k_q50, CV_k = dt$CV_k,
+                  any_exercised = dt$any_exercised,
+                  all_exercised = dt$all_exercised)[!is.na(P_k_q50)]
+  x[, hb := cut(hops, c(0, 1, 2, 4, 7, Inf), labels = c("1", "2", "3-4", "5-7", "8+"))]
+  rbindlist(lapply(levels(x$hb), function(b) {
+    sub <- x[hb == b]
+    if (nrow(sub) < MIN_PATHS_PER_BIN || length(unique(sub$P_k_q50)) < 2) return(NULL)
+    q1 <- quantile(sub$P_k_q50, TOP_DECILE); cm <- median(sub$CV_k, na.rm = TRUE)
+    h  <- sub[P_k_q50 >= q1 & CV_k < cm]
+    data.table(model = model, hb = b, n_top = nrow(h),
+               dormant_loose  = sum(h$any_exercised == FALSE | is.na(h$any_exercised)),
+               dormant_strict = sum(h$all_exercised == FALSE | is.na(h$all_exercised)))
+  }))
 }
 
-if (length(dormant_summary)) {
-  dormant_tbl <- rbindlist(dormant_summary, fill = TRUE)
-  fwrite(dormant_tbl, file.path(syn_dir, "05_dormant_summary.csv"))
-  fwrite(rbindlist(dormant_paths_out, fill = TRUE),
-         file.path(syn_dir, "05_dormant_paths_table.csv"))
-  print(dormant_tbl)
-}
+dormant_dt <- rbindlist(lapply(reg$model, function(m) dormant_one(joined[[m]], m)),
+                        fill = TRUE)
+dormant_dt[, `:=`(frac_loose  = dormant_loose  / n_top,
+                  frac_strict = dormant_strict / n_top)]
+fwrite(dormant_dt, file.path(syn_dir, "05_dormancy.csv"))
+print(dormant_dt)
 
-## ----synthesis----------------------------------------------------------------
 
 # CROSS-MODEL SYNTHESIS ########################################################
 ################################################################################
 
-headline <- data.table(model = reg$model)
+# Headline effect sizes on cyclomatic complexity from the two harder tests.
+rev_cc <- reverse_dt[metric == "cyclomatic", .(model, A_reverse_cc = A)]
+mat_cc <- matched_dt[metric == "cyclomatic", .(model, A_matched_cc = A, n_pairs)]
+mat_btw <- matched_dt[metric == "betweenness", .(model, A_matched_btw = A)]
 
-# Coverage
-cov_wide <- dcast(coverage_dt, model ~ stratum,
-                  value.var = c("frac_any", "frac_all", "frac_edge"))
-headline <- merge(headline, cov_wide, by = "model", all.x = TRUE)
-
-# Rank correlation
-if (exists("corr_results")) {
-  headline <- merge(headline,
-                    corr_results[, .(model,
-                                     spearman_Pk_Eksum = spearman_sum,
-                                     spearman_ci_lo    = rho_sum_ci_lo,
-                                     spearman_ci_hi    = rho_sum_ci_hi)],
-                    by = "model", all.x = TRUE)
-}
-
-# Reverse predictive (cyclomatic complexity only - the discriminating metric)
-if (length(reverse_results)) {
-  rev_cc <- rbindlist(reverse_results, fill = TRUE)[metric == "cyclomatic_complexity",
-                                                    .(model, A_reverse_cc = effect_A)]
-  headline <- merge(headline, rev_cc, by = "model", all.x = TRUE)
-}
-
-# Matched contrast (cyclomatic complexity only)
-if (length(matched_results)) {
-  m_cc <- rbindlist(matched_results, fill = TRUE)[metric == "cyclomatic_complexity",
-                                                  .(model, A_matched_cc = effect_A,
-                                                    n_matched_pairs = n_pairs)]
-  headline <- merge(headline, m_cc, by = "model", all.x = TRUE)
-}
-
-# Dormancy (one row per model summarising the hops 3-4 bin)
-if (length(dormant_summary)) {
-  d_one <- rbindlist(dormant_summary, fill = TRUE)[hops_bin == "3-4",
-                                                   .(model,
-                                                     dormant_loose_3_4 = frac_dormant_loose)]
-  headline <- merge(headline, d_one, by = "model", all.x = TRUE)
-}
-
+headline <- Reduce(function(a, b) merge(a, b, by = "model", all = TRUE),
+                   list(corr_dt[, .(model, spearman_sum, ci_lo, ci_hi, n_exercised)],
+                        rev_cc, mat_cc, mat_btw))
 fwrite(headline, file.path(syn_dir, "06_cross_model_headline.csv"))
 print(headline)
 
-# Pre-registered decision rule per model
-if (exists("corr_results") && length(reverse_results) && length(matched_results)) {
-  cor_ok <- corr_results[, .(model,
-                             spearman_pos = spearman_sum > 0 & rho_sum_ci_lo > 0)]
-  rev_ok <- rbindlist(reverse_results, fill = TRUE)[,
-    .(any_A_above_reverse = any(effect_A > A_THRESHOLD, na.rm = TRUE)),
-    by = model]
-  mat_ok <- rbindlist(matched_results, fill = TRUE)[,
-    .(any_A_above_matched = any(effect_A > A_THRESHOLD, na.rm = TRUE)),
-    by = model]
-  decision <- merge(cor_ok, rev_ok, by = "model", all = TRUE)
-  decision <- merge(decision, mat_ok, by = "model", all = TRUE)
-  decision[, supports_framework :=
-             spearman_pos & (any_A_above_reverse | any_A_above_matched)]
-  fwrite(decision, file.path(syn_dir, "06_decision_rule.csv"))
-  print(decision)
-  n_support <- sum(decision$supports_framework, na.rm = TRUE)
-  cat(sprintf("\n[decision rule] %d of %d available models meet the joint criterion. ",
-              n_support, nrow(decision)))
-  cat("Full pre-registered claim requires >= 3 of 4 target models.\n")
-}
+# Pre-registered decision rule: Spearman rho > 0 with CI_lo > 0, AND A > 0.55
+# in at least one of the harder tests (reverse predictive or matched contrast).
+decision <- headline[, .(model,
+  spearman_pos = spearman_sum > 0 & ci_lo > 0,
+  harder_A_pass = (A_reverse_cc > A_THRESHOLD) | (A_matched_cc > A_THRESHOLD))]
+decision[, passes := spearman_pos & harder_A_pass]
+fwrite(decision, file.path(syn_dir, "06_decision_rule.csv"))
+print(decision)
 
-## ----synthesis_figure, fig.width=8, fig.height=8, fig.cap="Cross-model synthesis: coverage gap (top vs bottom decile, mean fraction of edges exercised), Spearman rho(P_k, E_k^sum) with bootstrap CI, and effect size A on cyclomatic complexity from Analyses 3 and 4. Dashed line at A = 0.55 is the pre-registered threshold."----
+n_primary <- reg[role == "primary", model]
+cat(sprintf("\n[decision rule] %d of %d primary models pass both legs (%s).\n",
+            sum(decision[model %in% n_primary, passes], na.rm = TRUE),
+            length(n_primary), paste(n_primary, collapse = ", ")))
+cat("Full pre-registered claim requires >= 3 of 4 target models (VIC + HYPE pending).\n")
 
-panels <- list()
 
-p_cov <- ggplot(coverage_dt,
-                aes(x = model, y = frac_edge, fill = stratum)) +
+p_rho <- ggplot(corr_dt, aes(x = model, y = spearman_sum)) +
+  geom_pointrange(aes(ymin = ci_lo, ymax = ci_hi)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = expression("Spearman " ~ rho ~ "(P"[k]*", E"[k]^{sum}*")"),
+       x = NULL, y = NULL) +
+  theme_minimal(base_size = 9) + theme(axis.text.x = element_text(angle = 20, hjust = 1))
+
+effect_dt <- rbind(
+  reverse_dt[metric == "cyclomatic", .(model, test = "reverse predictive", A)],
+  matched_dt[metric == "cyclomatic", .(model, test = "matched contrast", A)])
+p_A <- ggplot(effect_dt, aes(x = model, y = A, fill = test)) +
   geom_col(position = position_dodge(0.7), width = 0.6) +
-  scale_y_continuous(labels = scales::percent) +
-  scale_fill_manual(values = color_strata,
-                    labels = c("bottom decile", "top decile")) +
-  labs(title = "Coverage gap (mean frac. of edges exercised)",
-       x = NULL, y = NULL, fill = NULL) +
-  theme_minimal(base_size = 10) + theme(legend.position = "bottom")
-panels <- c(panels, list(p_cov))
+  geom_hline(yintercept = A_THRESHOLD, linetype = "dashed") +
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "Effect size A on cyclomatic complexity", x = NULL, y = NULL, fill = NULL) +
+  theme_minimal(base_size = 9) +
+  theme(legend.position = "bottom", axis.text.x = element_text(angle = 20, hjust = 1))
 
-if (exists("corr_results") && nrow(corr_results)) {
-  p_corr <- ggplot(corr_results, aes(x = model, y = spearman_sum)) +
-    geom_pointrange(aes(ymin = rho_sum_ci_lo, ymax = rho_sum_ci_hi)) +
-    geom_hline(yintercept = 0, linetype = "dashed") +
-    labs(title = expression("Spearman " ~ rho ~ "(P"[k] ~ ", E"[k]^{sum} ~ ")"),
-         x = NULL, y = NULL) +
-    theme_minimal(base_size = 10)
-  panels <- c(panels, list(p_corr))
-}
+cowplot::plot_grid(p_rho, p_A, ncol = 2, rel_widths = c(0.45, 0.55))
 
-if (length(reverse_results) || length(matched_results)) {
-  effect_dt <- rbind(
-    if (length(reverse_results))
-      rbindlist(reverse_results, fill = TRUE)[metric == "cyclomatic_complexity",
-        .(model, analysis = "Analysis 3 (reverse)", A = effect_A)],
-    if (length(matched_results))
-      rbindlist(matched_results, fill = TRUE)[metric == "cyclomatic_complexity",
-        .(model, analysis = "Analysis 4 (matched)", A = effect_A)],
-    fill = TRUE
-  )
-  p_A <- ggplot(effect_dt, aes(x = model, y = A, fill = analysis)) +
-    geom_col(position = position_dodge(0.7), width = 0.6) +
-    geom_hline(yintercept = A_THRESHOLD, linetype = "dashed") +
-    coord_cartesian(ylim = c(0, 1)) +
-    labs(title = "Effect size A on cyclomatic complexity",
-         x = NULL, y = NULL, fill = NULL) +
-    theme_minimal(base_size = 10) + theme(legend.position = "bottom")
-  panels <- c(panels, list(p_A))
-}
-
-cowplot::plot_grid(plotlist = panels, ncol = 1, align = "v")
-
-## ----session_information, cache=FALSE-----------------------------------------
 
 # SESSION INFORMATION ##########################################################
 ################################################################################
@@ -873,4 +463,3 @@ sessionInfo()
 cat("Machine:     "); print(get_cpu()$model_name)
 cat("Num cores:   "); print(detectCores(logical = FALSE))
 cat("Num threads: "); print(detectCores(logical = TRUE))
-

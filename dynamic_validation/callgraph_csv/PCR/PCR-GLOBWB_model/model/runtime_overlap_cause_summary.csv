@@ -1,0 +1,7 @@
+cause,count,example_caller,example_callee,example_runtime_calls
+both_symbols_missing_in_static,14,_log,handle,51335
+callee_missing_in_static,56,__init__,_execute_child,4278
+caller_missing_in_static,1,_rundynamic,dynamic,366
+edge_not_in_static_but_symbols_present,8,dynamic,read_forcings,366
+external_or_builtin_call,20,_execute_child,<built-in method _posixsubprocess.fork_exec>,4278
+matched,45,__init__,__init__,1

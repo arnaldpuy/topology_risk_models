@@ -1,7 +1,0 @@
-model,risk_form,hops_bin,n_top,n_bot,median_top,median_bot,wilcox_p,effect_A,signif
-ORCHIDEE,additive,1,23,24,0,1,9.10362926243086e-05,0.230072463768116,***
-ORCHIDEE,additive,2,45,45,0,0,1,0.5,ns
-ORCHIDEE,additive,3-4,100,100,0.5,0,2.84952144656124e-12,0.7762,***
-ORCHIDEE,additive,5-7,133,133,0.428571428571429,0.2,3.14305443654019e-36,0.931115382441065,***
-ORCHIDEE,additive,8+,16,16,0.444444444444444,0.25,7.33443958364597e-07,1,***
-PCR-GLOBWB,additive,1,7,15,0,0,,0.5,""

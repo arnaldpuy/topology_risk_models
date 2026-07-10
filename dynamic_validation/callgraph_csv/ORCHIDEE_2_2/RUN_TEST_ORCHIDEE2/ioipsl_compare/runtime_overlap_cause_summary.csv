@@ -1,0 +1,6 @@
+cause,count,example_caller,example_callee,example_runtime_calls
+both_symbols_missing_in_static,60,bcast_c,bcast_mpi_c,23
+callee_missing_in_static,232,activate_sub_models,getin_p_l,8
+caller_missing_in_static,73,bcast_c,bcast_omp_c,23
+edge_not_in_static_but_symbols_present,109,buildop,histb_reg1d,349
+matched,293,aggregate_2d_p,aggregate_2d,7

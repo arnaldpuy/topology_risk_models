@@ -1,7 +1,0 @@
-model,hops_bin,n_top_decile,n_dormant_loose,n_dormant_strict,frac_dormant_loose,frac_dormant_strict
-ORCHIDEE,1,1,1,1,1,1
-ORCHIDEE,2,41,39,41,0.951219512195122,1
-ORCHIDEE,3-4,100,5,100,0.05,1
-ORCHIDEE,5-7,133,0,133,0,1
-ORCHIDEE,8+,8,0,8,0,1
-PCR-GLOBWB,1,7,7,7,1,1

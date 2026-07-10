@@ -1,0 +1,10 @@
+model,metric,value
+14_PCR-GLOBWB_model,runtime_unique_symbols,74
+14_PCR-GLOBWB_model,missing_runtime_symbols,36
+14_PCR-GLOBWB_model,missing_runtime_symbols_pct,48.65
+14_PCR-GLOBWB_model,runtime_edge_rows,146
+14_PCR-GLOBWB_model,runtime_call_volume,6079316
+14_PCR-GLOBWB_model,missing_symbol_outgoing_call_volume,4182877
+14_PCR-GLOBWB_model,missing_symbol_outgoing_call_volume_pct,68.81
+14_PCR-GLOBWB_model,missing_symbol_touched_edges,124
+14_PCR-GLOBWB_model,missing_symbol_touched_edges_pct,84.93

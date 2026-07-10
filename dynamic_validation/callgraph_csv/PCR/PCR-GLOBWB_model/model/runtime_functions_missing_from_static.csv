@@ -1,0 +1,37 @@
+model,symbol,lang,symbol_gap_cause,candidate_static_symbols,runtime_outgoing_calls,runtime_outgoing_edge_count,runtime_incoming_edge_count,runtime_touched_edge_count,pct_of_runtime_symbols,pct_of_runtime_call_volume,pct_of_runtime_edges_touched,impact_band,likely_effect
+14_PCR-GLOBWB_model,pcrmul,python,missing_symbol_in_static,,669042,2,9,11,1.35,11.01,7.53,high,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,pcrbadd,python,missing_symbol_in_static,,541973,1,1,2,1.35,8.92,1.37,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,pcradd,python,missing_symbol_in_static,,535012,1,8,9,1.35,8.80,6.16,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,max,python,missing_symbol_in_static,,325733,1,5,6,1.35,5.36,4.11,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,pcrbmin,python,missing_symbol_in_static,,282367,1,1,2,1.35,4.64,1.37,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,pcrsub,python,missing_symbol_in_static,,257470,1,5,6,1.35,4.24,4.11,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,pcrgt,python,missing_symbol_in_static,,171618,2,2,4,1.35,2.82,2.74,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,pcrfdiv,python,missing_symbol_in_static,,149703,1,1,2,1.35,2.46,1.37,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,pcrdiv,python,missing_symbol_in_static,,147115,1,4,5,1.35,2.42,3.42,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,min,python,missing_symbol_in_static,,141363,1,4,5,1.35,2.33,3.42,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,ifthenelse,python,missing_symbol_in_static,,129726,1,3,4,1.35,2.13,2.74,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,emit,python,missing_symbol_in_static,,114439,2,2,4,1.35,1.88,2.74,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,handle,python,missing_symbol_in_static,,106593,2,2,4,1.35,1.75,2.74,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,cover,python,missing_symbol_in_static,,101887,1,1,2,1.35,1.68,1.37,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,ifthen,python,missing_symbol_in_static,,91793,1,1,2,1.35,1.51,1.37,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,callhandlers,python,missing_symbol_in_static,,59181,1,1,2,1.35,0.97,1.37,low,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,flush,python,missing_symbol_in_static,,59181,1,1,2,1.35,0.97,1.37,low,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,maptotal,python,missing_symbol_in_static,,58643,1,2,3,1.35,0.96,2.05,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,_log,python,missing_symbol_in_static,,51335,1,1,2,1.35,0.84,1.37,low,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,debug,python,missing_symbol_in_static,,47412,1,3,4,1.35,0.78,2.74,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,pcrpow,python,missing_symbol_in_static,,38104,2,4,6,1.35,0.63,4.11,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,areatotal,python,missing_symbol_in_static,,30385,1,2,3,1.35,0.50,2.05,medium,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,mapmaximum,python,missing_symbol_in_static,,29300,1,1,2,1.35,0.48,1.37,low,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,mapminimum,python,missing_symbol_in_static,,29292,1,1,2,1.35,0.48,1.37,low,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,exists,python,missing_symbol_in_static,,5287,1,1,2,1.35,0.09,1.37,low,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,_execute_child,python,missing_symbol_in_static,,4278,1,1,2,1.35,0.07,1.37,low,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,communicate,python,missing_symbol_in_static,,4278,1,1,2,1.35,0.07,1.37,low,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,_rundynamic,python,missing_symbol_in_static,,366,1,1,2,1.35,0.01,1.37,low,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,run,python,missing_symbol_in_static,,1,1,1,2,1.35,0.00,1.37,low,Potentially relevant gap: static export does not expose this runtime symbol.
+14_PCR-GLOBWB_model,<built-in method pcraster._pcraster.checkandexec>,python,external_or_builtin_symbol,,0,0,14,14,1.35,0.00,9.59,library-runtime,Usually low risk for static model-code coverage; these are runtime/library calls.
+14_PCR-GLOBWB_model,<built-in method _posixsubprocess.fork_exec>,python,external_or_builtin_symbol,,0,0,1,1,1.35,0.00,0.68,library-runtime,Usually low risk for static model-code coverage; these are runtime/library calls.
+14_PCR-GLOBWB_model,<built-in method gc.collect>,python,external_or_builtin_symbol,,0,0,1,1,1.35,0.00,0.68,library-runtime,Usually low risk for static model-code coverage; these are runtime/library calls.
+14_PCR-GLOBWB_model,<built-in method pcraster._pcraster.maptotal>,python,external_or_builtin_symbol,,0,0,1,1,1.35,0.00,0.68,library-runtime,Usually low risk for static model-code coverage; these are runtime/library calls.
+14_PCR-GLOBWB_model,<built-in method posix.stat>,python,external_or_builtin_symbol,,0,0,1,1,1.35,0.00,0.68,library-runtime,Usually low risk for static model-code coverage; these are runtime/library calls.
+14_PCR-GLOBWB_model,<method 'flush' of '_io.textiowrapper' objects>,python,external_or_builtin_symbol,,0,0,1,1,1.35,0.00,0.68,library-runtime,Usually low risk for static model-code coverage; these are runtime/library calls.
+14_PCR-GLOBWB_model,<method 'read' of '_io.bufferedreader' objects>,python,external_or_builtin_symbol,,0,0,1,1,1.35,0.00,0.68,library-runtime,Usually low risk for static model-code coverage; these are runtime/library calls.

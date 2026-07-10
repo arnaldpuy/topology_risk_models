@@ -1,3 +1,4 @@
-model,spearman_pos,any_A_above_reverse,any_A_above_matched,supports_framework
-ORCHIDEE,TRUE,TRUE,TRUE,TRUE
-PCR-GLOBWB,FALSE,,,FALSE
+model,spearman_pos,harder_A_pass,passes
+ORCHIDEE,TRUE,TRUE,TRUE
+ORCHIDEE+IOIPSL,TRUE,TRUE,TRUE
+PCR-GLOBWB,TRUE,TRUE,TRUE
