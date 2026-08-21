@@ -1,0 +1,2 @@
+model,lang,static_unique_edges,runtime_unique_edges,matched_unique_edges,runtime_coverage_pct,runtime_precision_vs_static_pct,adjusted_entrypoints,adjusted_static_unique_edges,adjusted_matched_edges,adjusted_runtime_coverage_pct
+16_swatplus,fortran,602,377,283,47.01,75.07,libc_start_main,0,0,0.00

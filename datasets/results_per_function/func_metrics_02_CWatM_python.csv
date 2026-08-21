@@ -1,0 +1,589 @@
+file,function,type,line,cyclomatic_complexity,cc_rank,loc,loc_span,volume,difficulty,effort,time,bugs
+./models/02_CWatM/run_cwatm.py,<module>,FUNCTION,1,2,A,6.0,,235.5603911808226,6.666666666666666,1570.4026078721504,87.24458932623058,0.07852013039360753
+./models/02_CWatM/run_cwatm.py,run_cwatm.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/setup.py,<module>,FUNCTION,1,1,A,51.0,,782.2395283916128,14.0,10951.353397482579,608.4085220823655,0.26074650946387096
+./models/02_CWatM/setup.py,setup.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/test_script.py,<module>,FUNCTION,1,7,B,12.0,,808.9330704228792,18.6,15046.155109865553,835.8975061036418,0.2696443568076264
+./models/02_CWatM/test_script.py,test_script.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/cwatm/cwatm_dynamic.py,<module>,FUNCTION,1,1,A,3.0,,57.05865002596162,2.8,159.76422007269252,8.875790004038473,0.019019550008653872
+./models/02_CWatM/cwatm/cwatm_dynamic.py,CWATModel_dyn,CLASS,17,17,C,82.0,153.0,4109.727210001879,45.83802816901409,188381.7916190298,10465.6550899461,1.3699090700006264
+./models/02_CWatM/cwatm/cwatm_dynamic.py,CWATModel_dyn.dynamic,METHOD,21,16,C,81.0,149.0,4041.3404715633906,44.79710144927537,181040.33909568755,10057.796616427086,1.3471134905211302
+./models/02_CWatM/cwatm/cwatm_dynamic.py,CWATModel_dyn (aggregate),CLASS_AGG,21,16,C,,,,,,,
+./models/02_CWatM/cwatm/cwatm_dynamic.py,cwatm_dynamic.py (module aggregate),MODULE_AGG,1,16,C,,,,,,,
+./models/02_CWatM/cwatm/cwatm_initial.py,<module>,FUNCTION,1,1,A,26.0,,1131.0760748365212,9.545454545454545,10796.635259803157,599.8130699890643,0.37702535827884043
+./models/02_CWatM/cwatm/cwatm_initial.py,Variables,CLASS,41,5,A,12.0,24.0,328.76166990577076,13.125,4314.996917513241,239.72205097295785,0.10958722330192358
+./models/02_CWatM/cwatm/cwatm_initial.py,Variables.load_initial,METHOD,42,4,A,11.0,23.0,307.67071501168664,12.566666666666666,3866.395318646862,214.79973992482567,0.10255690500389554
+./models/02_CWatM/cwatm/cwatm_initial.py,Config,CLASS,66,1,A,2.0,2.0,8.0,1.5,12.0,0.6666666666666666,0.0026666666666666666
+./models/02_CWatM/cwatm/cwatm_initial.py,CWATModel_ini,CLASS,70,6,B,62.0,109.0,2829.1106420550473,21.102941176470587,59702.5554610146,3316.8086367230335,0.9430368806850158
+./models/02_CWatM/cwatm/cwatm_initial.py,CWATModel_ini.__init__,METHOD,87,5,A,60.0,92.0,2769.0045055606647,19.597014925373134,54264.222623897804,3014.679034660989,0.9230015018535549
+./models/02_CWatM/cwatm/cwatm_initial.py,Variables (aggregate),CLASS_AGG,42,4,A,,,,,,,
+./models/02_CWatM/cwatm/cwatm_initial.py,CWATModel_ini (aggregate),CLASS_AGG,87,5,A,,,,,,,
+./models/02_CWatM/cwatm/cwatm_initial.py,cwatm_initial.py (module aggregate),MODULE_AGG,1,9,B,,,,,,,
+./models/02_CWatM/cwatm/cwatm_model.py,<module>,FUNCTION,1,1,A,2.0,,36.0,1.7999999999999998,64.8,3.5999999999999996,0.012
+./models/02_CWatM/cwatm/cwatm_model.py,CWATModel,CLASS,4,1,A,1.0,2.0,24.0,2.5,60.0,3.3333333333333335,0.008
+./models/02_CWatM/cwatm/cwatm_model.py,cwatm_model.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/cwatm/run_cwatm.py,<module>,FUNCTION,1,4,A,27.0,,940.7127663438381,8.473214285714286,7970.8608505384145,442.8256028076897,0.3135709221146127
+./models/02_CWatM/cwatm/run_cwatm.py,usage,FUNCTION,72,1,A,10.0,28.0,152.29419688230416,7.125,1085.0961527864172,60.283119599245396,0.05076473229410139
+./models/02_CWatM/cwatm/run_cwatm.py,CWATMexe,FUNCTION,104,8,B,31.0,69.0,1707.0913821308618,27.109756097560975,46278.831005815926,2571.0461669897736,0.5690304607102873
+./models/02_CWatM/cwatm/run_cwatm.py,CWATMexe2,FUNCTION,174,5,A,23.0,46.0,1324.0660332153964,22.384615384615387,29638.70889736003,1646.5949387422238,0.44135534440513213
+./models/02_CWatM/cwatm/run_cwatm.py,GNU,FUNCTION,230,1,A,10.0,24.0,160.18251441994926,6.333333333333334,1014.4892579930121,56.360514332945115,0.05339417147331642
+./models/02_CWatM/cwatm/run_cwatm.py,headerinfo,FUNCTION,256,10,B,32.0,40.0,1329.2210751716352,37.5,49845.79031893632,2769.2105732742402,0.4430736917238784
+./models/02_CWatM/cwatm/run_cwatm.py,mainwarm,FUNCTION,297,2,A,12.0,16.0,405.0,10.8,4374.0,243.0,0.135
+./models/02_CWatM/cwatm/run_cwatm.py,main,FUNCTION,316,5,A,15.0,18.0,447.08400775135715,12.294117647058824,5496.503389413744,305.36129941187465,0.1490280025837857
+./models/02_CWatM/cwatm/run_cwatm.py,parse_args,FUNCTION,336,2,A,6.0,6.0,174.165028051187,12.857142857142858,2239.2646463724045,124.40359146513359,0.05805500935039566
+./models/02_CWatM/cwatm/run_cwatm.py,run_from_command_line,FUNCTION,344,1,A,3.0,3.0,62.26976913547135,4.199999999999999,261.5330303689796,14.529612798276645,0.020756589711823783
+./models/02_CWatM/cwatm/run_cwatm.py,run_cwatm.py (module aggregate),MODULE_AGG,1,35,E,,,,,,,
+./models/02_CWatM/cwatm/__init__.py,<module>,FUNCTION,1,1,A,7.0,,69.73835003173087,0.9375,65.37970315474769,3.632205730819316,0.023246116677243626
+./models/02_CWatM/cwatm/__init__.py,__init__.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/capillarRise.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/capillarRise.py,capillarRise,CLASS,14,4,A,23.0,57.0,1621.9399446898701,53.71153846153846,87116.88972151552,4839.827206750862,0.5406466482299567
+./models/02_CWatM/cwatm/hydrological_modules/capillarRise.py,capillarRise.__init__,METHOD,35,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/capillarRise.py,capillarRise.dynamic,METHOD,39,5,A,18.0,32.0,1428.9641170363716,54.54545454545454,77943.497292893,4330.194294049611,0.4763213723454572
+./models/02_CWatM/cwatm/hydrological_modules/capillarRise.py,capillarRise (aggregate),CLASS_AGG,35,6,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/capillarRise.py,capillarRise.py (module aggregate),MODULE_AGG,1,6,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/environflow.py,<module>,FUNCTION,1,1,A,2.0,,46.50699332842307,3.0,139.5209799852692,7.751165554737178,0.015502331109474358
+./models/02_CWatM/cwatm/hydrological_modules/environflow.py,environflow,CLASS,15,7,B,70.0,138.0,5077.715685240308,55.76315789473684,283149.4615006372,15730.525638924288,1.6925718950801025
+./models/02_CWatM/cwatm/hydrological_modules/environflow.py,environflow.__init__,METHOD,39,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/environflow.py,environflow.initial,METHOD,43,7,B,29.0,38.0,1191.209321814014,32.2,38356.94016241125,2130.9411201339585,0.39706977393800463
+./models/02_CWatM/cwatm/hydrological_modules/environflow.py,environflow.dynamic,METHOD,89,11,C,36.0,64.0,3322.081401511543,43.81896551724138,145570.1703783032,8087.231687683512,1.1073604671705144
+./models/02_CWatM/cwatm/hydrological_modules/environflow.py,environflow (aggregate),CLASS_AGG,39,19,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/environflow.py,environflow.py (module aggregate),MODULE_AGG,1,19,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/evaporation.py,<module>,FUNCTION,1,1,A,2.0,,30.0,2.0,60.0,3.3333333333333335,0.01
+./models/02_CWatM/cwatm/hydrological_modules/evaporation.py,evaporation,CLASS,14,26,D,301.0,574.0,33172.15888819908,227.03007518796994,7531077.726535123,418393.20702972903,11.057386296066362
+./models/02_CWatM/cwatm/hydrological_modules/evaporation.py,evaporation.__init__,METHOD,96,1,A,4.0,4.0,75.28421251514428,7.700000000000001,579.688436366611,32.204913131478385,0.025094737505048093
+./models/02_CWatM/cwatm/hydrological_modules/evaporation.py,evaporation.initial,METHOD,101,6,B,17.0,20.0,1359.2132259818886,32.375,44004.52819116364,2444.6960106202023,0.45307107532729624
+./models/02_CWatM/cwatm/hydrological_modules/evaporation.py,evaporation.dynamic,METHOD,122,68,F,278.0,466.0,30596.736833127106,224.3934426229508,6865707.1110138325,381428.17283410183,10.198912277709036
+./models/02_CWatM/cwatm/hydrological_modules/evaporation.py,evaporation (aggregate),CLASS_AGG,96,75,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/evaporation.py,evaporation.py (module aggregate),MODULE_AGG,1,75,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,evaporationPot,CLASS,14,5,A,152.0,399.0,14539.23522579687,107.1111111111111,1557313.639740909,86517.4244300505,4.8464117419322905
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,evaporationPot.__init__,METHOD,57,1,A,4.0,6.0,75.28421251514428,7.700000000000001,579.688436366611,32.204913131478385,0.025094737505048093
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,evaporationPot.initial,METHOD,64,7,B,17.0,29.0,699.5492632983703,22.941176470588236,16048.483099197907,891.5823943998837,0.23318308776612343
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,evaporationPot.initial_1,METHOD,97,2,A,8.0,23.0,266.875200092308,9.863636363636363,2632.3599281832194,146.2422182324011,0.08895840003076932
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,evaporationPot.dynamic,METHOD,125,6,B,7.0,14.0,282.0349360462734,10.15,2862.654600869675,159.03636671498194,0.0940116453487578
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,evaporationPot.dynamic_1,METHOD,143,10,B,54.0,129.0,5471.138580985791,48.72857142857143,266600.76713917905,14811.153729954392,1.823712860328597
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,evaporationPot.dynamic_2,METHOD,284,5,A,29.0,57.0,2904.0,39.42553191489362,114491.74468085107,6360.652482269504,0.968
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,evaporationPot.dynamic_4,METHOD,342,2,A,31.0,71.0,3070.5522126340943,36.48,112013.74471689176,6222.9858176050975,1.0235174042113648
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,evaporationPot (aggregate),CLASS_AGG,57,33,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/evaporationPot.py,evaporationPot.py (module aggregate),MODULE_AGG,1,33,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/groundwater.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/groundwater.py,groundwater,CLASS,14,4,A,43.0,108.0,2969.5219511163496,62.25,184852.74145699275,10269.596747610709,0.9898406503721165
+./models/02_CWatM/cwatm/hydrological_modules/groundwater.py,groundwater.__init__,METHOD,40,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/groundwater.py,groundwater.initial,METHOD,44,3,A,18.0,34.0,1173.572975327405,40.714285714285715,47781.18542404434,2654.5103013357966,0.39119099177580163
+./models/02_CWatM/cwatm/hydrological_modules/groundwater.py,groundwater.dynamic,METHOD,80,5,A,20.0,42.0,1384.7753813419092,34.16,47303.92702663961,2627.995945924423,0.4615917937806364
+./models/02_CWatM/cwatm/hydrological_modules/groundwater.py,groundwater (aggregate),CLASS_AGG,40,9,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/groundwater.py,groundwater.py (module aggregate),MODULE_AGG,1,9,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/inflow.py,<module>,FUNCTION,1,1,A,2.0,,30.0,2.0,60.0,3.3333333333333335,0.01
+./models/02_CWatM/cwatm/hydrological_modules/inflow.py,inflow,CLASS,15,6,B,83.0,164.0,4375.391874891391,45.02272727272727,196992.07509454194,10944.004171918998,1.4584639582971304
+./models/02_CWatM/cwatm/hydrological_modules/inflow.py,inflow.__init__,METHOD,39,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/inflow.py,inflow.initial,METHOD,43,10,B,69.0,117.0,3448.9535480654295,37.33552631578947,128768.49595573232,7153.805330874017,1.1496511826884765
+./models/02_CWatM/cwatm/hydrological_modules/inflow.py,inflow.dynamic,METHOD,163,3,A,9.0,16.0,469.1286531003362,15.842105263157894,7431.985504379009,412.8880835766116,0.15637621770011206
+./models/02_CWatM/cwatm/hydrological_modules/inflow.py,inflow (aggregate),CLASS_AGG,39,14,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/inflow.py,inflow.py (module aggregate),MODULE_AGG,1,14,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,<module>,FUNCTION,1,1,A,2.0,,30.0,2.0,60.0,3.3333333333333335,0.01
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition,CLASS,16,7,B,190.0,334.0,12344.457815729727,92.20370370370371,1138204.7308244132,63233.596156911844,4.1148192719099095
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition.__init__,METHOD,49,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition.crops_initialise,METHOD,53,6,B,26.0,45.0,1898.2464261409837,38.28787878787879,72679.82907361009,4037.7682818672274,0.6327488087136612
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition.reservoir_transfers,METHOD,99,3,A,9.0,13.0,548.8332828131114,13.0,7134.832676570448,396.37959314280266,0.18294442760437046
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition.wastewater_to_reservoirs,METHOD,114,2,A,7.0,15.0,351.74793803746815,13.59375,4781.573532696832,265.6429740387129,0.11724931267915605
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition.wasterwater_def,METHOD,130,2,A,8.0,9.0,460.0,17.205882352941174,7914.70588235294,439.7058823529411,0.15333333333333332
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition.desalinationCapacity,METHOD,140,3,A,12.0,14.0,605.4033765218435,17.708333333333336,10720.684792574313,595.5935995874619,0.20180112550728116
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition.initial,METHOD,156,32,E,111.0,169.0,5619.5552958942,66.53571428571429,373901.1255803891,20772.28475446606,1.8731850986314
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition.dynamic,METHOD,330,4,A,12.0,20.0,507.79901867755166,16.5,8378.683808179603,465.4824337877557,0.16926633955918388
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition (aggregate),CLASS_AGG,49,53,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/initcondition.py,initcondition.py (module aggregate),MODULE_AGG,1,53,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/interception.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/interception.py,interception,CLASS,14,5,A,34.0,102.0,3213.9223978047726,51.849999999999994,166641.87632617744,9257.882018120968,1.0713074659349242
+./models/02_CWatM/cwatm/hydrological_modules/interception.py,interception.__init__,METHOD,41,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/interception.py,interception.dynamic,METHOD,46,7,B,29.0,70.0,3001.430318191116,49.945945945945944,149909.27643289682,8328.293135160935,1.000476772730372
+./models/02_CWatM/cwatm/hydrological_modules/interception.py,interception (aggregate),CLASS_AGG,41,8,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/interception.py,interception.py (module aggregate),MODULE_AGG,1,8,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,<module>,FUNCTION,1,1,A,4.0,,100.37895002019238,2.75,276.04211255552906,15.335672919751614,0.03345965000673079
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,lakes_reservoirs,CLASS,17,8,B,458.0,1021.0,51220.356517006425,167.02857142857144,8555262.977097703,475292.3876165391,17.073452172335475
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,lakes_reservoirs.__init__,METHOD,200,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,lakes_reservoirs.reservoir_releases,METHOD,204,12,C,21.0,27.0,1314.607745541569,23.467741935483872,30850.875318757793,1713.9375177087663,0.4382025818471897
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,lakes_reservoirs.initWaterbodies,METHOD,233,14,C,122.0,214.0,12628.236913598212,81.4469696969697,1028531.6292279877,57140.64606822154,4.209412304532737
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,lakes_reservoirs.initial_lakes,METHOD,449,4,A,24.0,46.0,1703.8471329764589,31.416666666666664,53529.19742767708,2973.8443015376156,0.5679490443254863
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,lakes_reservoirs.initial_reservoirs,METHOD,496,2,A,35.0,52.0,3453.070888385527,51.60714285714286,178203.1226327531,9900.173479597395,1.1510236294618423
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,lakes_reservoirs.dynamic,METHOD,552,12,C,43.0,68.0,3326.3249762504847,67.0,222863.77340878246,12381.32074493236,1.1087749920834948
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,lakes_reservoirs.dynamic_inloop,METHOD,621,7,B,208.0,417.0,19965.536406849835,107.74825174825173,2151251.643054141,119513.98016967451,6.655178802283278
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,lakes_reservoirs (aggregate),CLASS_AGG,200,52,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/lakes_reservoirs.py,lakes_reservoirs.py (module aggregate),MODULE_AGG,1,52,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/lakes_res_small.py,<module>,FUNCTION,1,1,A,3.0,,89.94522208456974,2.857142857142857,256.9863488130564,14.277019378503134,0.02998174069485658
+./models/02_CWatM/cwatm/hydrological_modules/lakes_res_small.py,lakes_res_small,CLASS,19,7,B,122.0,299.0,10155.313633650772,112.01408450704226,1137538.159555276,63196.56441973755,3.3851045445502574
+./models/02_CWatM/cwatm/hydrological_modules/lakes_res_small.py,lakes_res_small.__init__,METHOD,65,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/lakes_res_small.py,lakes_res_small.initial,METHOD,69,7,B,34.0,65.0,2982.0,46.565217391304344,138857.47826086957,7714.304347826087,0.994
+./models/02_CWatM/cwatm/hydrological_modules/lakes_res_small.py,lakes_res_small.dynamic,METHOD,142,11,C,83.0,176.0,6369.329471087538,83.03703703703704,528890.2471917875,29382.79151065486,2.123109823695846
+./models/02_CWatM/cwatm/hydrological_modules/lakes_res_small.py,lakes_res_small (aggregate),CLASS_AGG,65,19,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/lakes_res_small.py,lakes_res_small.py (module aggregate),MODULE_AGG,1,19,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/landcoverType.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/landcoverType.py,decompress,FUNCTION,13,2,A,7.0,14.0,257.84303149524976,13.09090909090909,3375.399685028724,187.522204723818,0.08594767716508325
+./models/02_CWatM/cwatm/hydrological_modules/landcoverType.py,landcoverType,CLASS,28,25,D,441.0,955.0,56829.038966153545,150.560553633218,8556211.569187798,475345.0871770999,18.943012988717847
+./models/02_CWatM/cwatm/hydrological_modules/landcoverType.py,landcoverType.__init__,METHOD,200,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/landcoverType.py,landcoverType.initial,METHOD,205,44,F,212.0,355.0,27992.109439072086,102.5,2869191.217504889,159399.51208360493,9.330703146357362
+./models/02_CWatM/cwatm/hydrological_modules/landcoverType.py,landcoverType.dynamic_fracIrrigation,METHOD,562,15,C,50.0,122.0,3923.8153685449506,65.61627906976744,257466.16424068788,14303.675791149326,1.3079384561816503
+./models/02_CWatM/cwatm/hydrological_modules/landcoverType.py,landcoverType.dynamic,METHOD,695,37,E,173.0,288.0,18209.997525236708,101.34306569343066,1845456.9754772733,102525.38752651519,6.069999175078903
+./models/02_CWatM/cwatm/hydrological_modules/landcoverType.py,landcoverType (aggregate),CLASS_AGG,200,97,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/landcoverType.py,landcoverType.py (module aggregate),MODULE_AGG,1,99,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/miscInitial.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/miscInitial.py,miscInitial,CLASS,14,3,A,25.0,115.0,1169.7647095182208,27.0,31583.647156991963,1754.6470642773313,0.38992156983940696
+./models/02_CWatM/cwatm/hydrological_modules/miscInitial.py,miscInitial.__init__,METHOD,48,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/miscInitial.py,miscInitial.initial,METHOD,53,2,A,20.0,76.0,983.0848127083783,23.75,23348.264301823983,1297.125794545777,0.32769493756945944
+./models/02_CWatM/cwatm/hydrological_modules/miscInitial.py,miscInitial (aggregate),CLASS_AGG,48,3,A,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/miscInitial.py,miscInitial.py (module aggregate),MODULE_AGG,1,3,A,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/readmeteo.py,<module>,FUNCTION,1,1,A,3.0,,62.26976913547135,2.2857142857142856,142.33090088107735,7.907272271170964,0.020756589711823783
+./models/02_CWatM/cwatm/hydrological_modules/readmeteo.py,readmeteo,CLASS,15,31,E,419.0,817.0,42754.36345695319,168.85046728971963,7219094.24838106,401060.79157672555,14.251454485651065
+./models/02_CWatM/cwatm/hydrological_modules/readmeteo.py,readmeteo.__init__,METHOD,84,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/readmeteo.py,readmeteo.initial,METHOD,88,38,E,119.0,195.0,7546.525522126272,58.426966292134836,440920.592304007,24495.588461333722,2.515508507375424
+./models/02_CWatM/cwatm/hydrological_modules/readmeteo.py,readmeteo.downscaling2,METHOD,379,36,E,123.0,177.0,10857.724908164979,77.03804347826087,836457.8835502097,46469.882419456095,3.619241636054993
+./models/02_CWatM/cwatm/hydrological_modules/readmeteo.py,readmeteo.dynamic,METHOD,563,44,F,171.0,269.0,18275.17015409186,156.9627659574468,2868521.2557292376,159362.29198495764,6.0917233846972865
+./models/02_CWatM/cwatm/hydrological_modules/readmeteo.py,readmeteo (aggregate),CLASS_AGG,84,119,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/readmeteo.py,readmeteo.py (module aggregate),MODULE_AGG,1,119,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/runoff_concentration.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/runoff_concentration.py,runoff_concentration,CLASS,16,7,B,91.0,274.0,8449.254484575917,78.47560975609755,663060.3976615368,36836.68875897427,2.8164181615253057
+./models/02_CWatM/cwatm/hydrological_modules/runoff_concentration.py,runoff_concentration.__init__,METHOD,72,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/runoff_concentration.py,runoff_concentration.initial,METHOD,76,7,B,36.0,90.0,2814.0,46.23333333333333,130100.59999999998,7227.81111111111,0.938
+./models/02_CWatM/cwatm/hydrological_modules/runoff_concentration.py,runoff_concentration.dynamic,METHOD,173,10,B,50.0,117.0,4704.556546421082,64.49038461538461,303398.6611235211,16855.48117352895,1.5681855154736941
+./models/02_CWatM/cwatm/hydrological_modules/runoff_concentration.py,runoff_concentration (aggregate),CLASS_AGG,72,18,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/runoff_concentration.py,runoff_concentration.py (module aggregate),MODULE_AGG,1,18,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/sealed_water.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/sealed_water.py,sealed_water,CLASS,14,5,A,28.0,67.0,1633.0491223932254,40.34482758620689,65885.08528276115,3660.282515708953,0.5443497074644085
+./models/02_CWatM/cwatm/hydrological_modules/sealed_water.py,sealed_water.__init__,METHOD,43,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/sealed_water.py,sealed_water.dynamic,METHOD,47,6,B,23.0,34.0,1448.8126895054602,38.25,55417.085373583854,3078.726965199103,0.48293756316848674
+./models/02_CWatM/cwatm/hydrological_modules/sealed_water.py,sealed_water (aggregate),CLASS_AGG,43,7,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/sealed_water.py,sealed_water.py (module aggregate),MODULE_AGG,1,7,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/snow_frost.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/snow_frost.py,snow_frost,CLASS,13,12,C,197.0,461.0,17997.03524971191,118.11851851851851,2125783.1414215267,118099.06341230703,5.9990117499039695
+./models/02_CWatM/cwatm/hydrological_modules/snow_frost.py,snow_frost.__init__,METHOD,80,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/snow_frost.py,snow_frost.initial,METHOD,85,11,C,68.0,140.0,4418.637759860161,45.42622950819672,200722.0529929919,11151.225166277327,1.4728792532867203
+./models/02_CWatM/cwatm/hydrological_modules/snow_frost.py,snow_frost.dynamic,METHOD,229,20,C,124.0,245.0,12307.81882792205,93.10344827586206,1145900.3736341218,63661.13186856233,4.102606275974017
+./models/02_CWatM/cwatm/hydrological_modules/snow_frost.py,snow_frost (aggregate),CLASS_AGG,80,32,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/snow_frost.py,snow_frost.py (module aggregate),MODULE_AGG,1,32,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/soil.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/soil.py,soil,CLASS,14,12,C,311.0,782.0,47788.854577310434,156.97142857142856,7501484.772792672,416749.15404403734,15.929618192436811
+./models/02_CWatM/cwatm/hydrological_modules/soil.py,soil.__init__,METHOD,139,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/soil.py,soil.initial,METHOD,143,4,A,26.0,68.0,1869.6983780903645,33.970588235294116,63514.753726305025,3528.597429239168,0.6232327926967881
+./models/02_CWatM/cwatm/hydrological_modules/soil.py,soil.dynamic,METHOD,215,28,D,280.0,581.0,44024.435362446,159.51612903225808,7022607.511848241,390144.86176934675,14.674811787482
+./models/02_CWatM/cwatm/hydrological_modules/soil.py,soil (aggregate),CLASS_AGG,139,33,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/soil.py,soil.py (module aggregate),MODULE_AGG,1,33,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/waterbalance.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/waterbalance.py,waterbalance,CLASS,14,7,B,189.0,446.0,14534.377426630186,90.8,1319721.470338021,73317.85946322339,4.844792475543396
+./models/02_CWatM/cwatm/hydrological_modules/waterbalance.py,waterbalance.__init__,METHOD,95,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/waterbalance.py,waterbalance.initial,METHOD,102,4,A,15.0,29.0,739.9563106407148,18.48,13674.39262064041,759.6884789244673,0.24665210354690495
+./models/02_CWatM/cwatm/hydrological_modules/waterbalance.py,waterbalance.waterBalanceCheck,METHOD,137,10,B,27.0,51.0,1064.6541879002416,27.68181818181818,29471.563655965776,1637.3090919980987,0.3548847293000805
+./models/02_CWatM/cwatm/hydrological_modules/waterbalance.py,waterbalance.waterBalanceCheckSum,METHOD,191,10,B,25.0,56.0,1291.3832641464978,26.181818181818183,33810.76182492649,1878.3756569403606,0.4304610880488326
+./models/02_CWatM/cwatm/hydrological_modules/waterbalance.py,waterbalance.checkWaterSoilGround,METHOD,255,10,B,112.0,160.0,8933.90460483662,58.10126582278481,519071.16628101375,28837.287015611873,2.9779682016122067
+./models/02_CWatM/cwatm/hydrological_modules/waterbalance.py,waterbalance.dynamic,METHOD,443,2,A,4.0,17.0,204.3263250706733,16.5,3371.3843636661095,187.29913131478386,0.06810877502355776
+./models/02_CWatM/cwatm/hydrological_modules/waterbalance.py,waterbalance (aggregate),CLASS_AGG,95,37,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/waterbalance.py,waterbalance.py (module aggregate),MODULE_AGG,1,37,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/waterquality1.py,<module>,FUNCTION,1,1,A,1.0,,22.458839376460833,2.0,44.91767875292167,2.495426597384537,0.007486279792153611
+./models/02_CWatM/cwatm/hydrological_modules/waterquality1.py,waterquality1,CLASS,14,3,A,41.0,124.0,2800.4010330582314,44.42553191489362,124409.30546862952,6911.628081590529,0.9334670110194104
+./models/02_CWatM/cwatm/hydrological_modules/waterquality1.py,waterquality1.__init__,METHOD,45,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/waterquality1.py,waterquality1.initial,METHOD,49,3,A,14.0,19.0,893.8685031034732,28.111111111111107,25127.6368094643,1395.9798227480167,0.29795616770115774
+./models/02_CWatM/cwatm/hydrological_modules/waterquality1.py,waterquality1.dynamic,METHOD,73,2,A,22.0,65.0,1418.5804751831736,28.863636363636363,40945.3909882416,2274.7439437912,0.4728601583943912
+./models/02_CWatM/cwatm/hydrological_modules/waterquality1.py,waterquality1 (aggregate),CLASS_AGG,45,6,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/waterquality1.py,waterquality1.py (module aggregate),MODULE_AGG,1,6,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/__init__.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/02_CWatM/cwatm/hydrological_modules/__init__.py,__init__.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,<module>,FUNCTION,1,1,A,6.0,,62.26976913547135,1.6875,105.0802354161079,5.837790856450439,0.020756589711823783
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,cd,FUNCTION,14,1,A,7.0,7.0,151.23612512626255,7.875,1190.9844853693176,66.16580474273987,0.050412041708754185
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation,CLASS,23,4,A,203.0,297.0,13522.626534467228,61.37373737373738,829934.1295295241,46107.45164052912,4.5075421781557425
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.__init__,METHOD,24,11,C,116.0,162.0,7151.777738703919,29.782442748091604,212997.4110500255,11833.189502779194,2.383925912901306
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.bmi_return,METHOD,187,1,A,4.0,6.0,144.4295354570819,5.454545454545454,787.7974661295376,43.766525896085426,0.048143178485693966
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.load_bmi,METHOD,194,8,B,42.0,67.0,2358.3231569332866,32.45283018867924,76534.26094198589,4251.9033856658825,0.7861077189777622
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.compress,METHOD,262,1,A,2.0,2.0,68.11428751370197,5.6000000000000005,381.440010076731,21.1911116709295,0.022704762504567322
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.decompress,METHOD,265,1,A,4.0,4.0,172.8771237954945,9.5,1642.3326760571977,91.24070422539987,0.0576257079318315
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.prepare_time_step,METHOD,270,1,A,3.0,3.0,79.56692722865783,6.0,477.40156337194696,26.522309076219276,0.02652230907621928
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.set_recharge,METHOD,274,1,A,4.0,4.0,157.17331799741265,11.0,1728.9064979715392,96.05036099841885,0.05239110599913755
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.set_groundwater_abstraction,METHOD,279,1,A,4.0,4.0,110.36149671375915,8.571428571428571,945.9556861179356,52.55309367321864,0.03678716557125305
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.get_drainage,METHOD,284,1,A,2.0,2.0,95.1838730514401,6.666666666666667,634.5591536762673,35.253286315348184,0.03172795768381337
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.step,METHOD,287,7,B,19.0,30.0,710.8406828659748,18.634615384615387,13246.242724944801,735.9023736080445,0.23694689428865828
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation.finalize,METHOD,318,1,A,2.0,2.0,39.0,4.166666666666667,162.5,9.027777777777779,0.013
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,ModFlowSimulation (aggregate),CLASS_AGG,24,34,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/modflow6.py,modflow6.py (module aggregate),MODULE_AGG,1,35,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,<module>,FUNCTION,1,1,A,5.0,,104.0,2.727272727272727,283.6363636363636,15.757575757575758,0.034666666666666665
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,is_float,FUNCTION,10,2,A,6.0,6.0,70.30835464468075,4.083333333333334,287.0924481324464,15.949580451802579,0.02343611821489358
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,decompress,FUNCTION,18,2,A,7.0,14.0,257.84303149524976,13.09090909090909,3375.399685028724,187.522204723818,0.08594767716508325
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,groundwater_modflow,CLASS,34,13,C,469.0,733.0,37099.45168536994,165.41095890410958,6136655.878093726,340925.32656076254,12.366483895123313
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,groundwater_modflow.__init__,METHOD,35,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,groundwater_modflow.CWATM2modflow,METHOD,92,2,A,11.0,13.0,680.9932061133912,20.63157894736842,14049.965094549967,780.553616363887,0.2269977353711304
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,groundwater_modflow.modflow2CWATM,METHOD,106,4,A,16.0,20.0,971.7834751254811,18.0,17492.10255225866,971.7834751254811,0.32392782504182704
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,groundwater_modflow.modflow2CWATMbis,METHOD,127,4,A,18.0,23.0,1027.491901473083,20.453125,21015.420297316654,1167.5233498509251,0.3424973004910277
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,groundwater_modflow.initial,METHOD,151,48,F,324.0,421.0,23513.167206653896,117.53529411764706,2763627.023271479,153534.83462619327,7.837722402217965
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,groundwater_modflow.dynamic,METHOD,574,17,C,95.0,193.0,7167.701624858813,63.33333333333333,453954.43624105817,25219.69090228101,2.3892338749529376
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,groundwater_modflow (aggregate),CLASS_AGG,35,76,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/transient.py,transient.py (module aggregate),MODULE_AGG,1,80,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/__init__.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/02_CWatM/cwatm/hydrological_modules/groundwater_modflow/__init__.py,__init__.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_kinematic.py,<module>,FUNCTION,1,1,A,3.0,,89.94522208456974,2.857142857142857,256.9863488130564,14.277019378503134,0.02998174069485658
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_kinematic.py,routing_kinematic,CLASS,16,9,B,172.0,596.0,17493.27088410264,68.87886597938144,1204916.6607671212,66939.8144870623,5.83109029470088
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_kinematic.py,routing_kinematic.__init__,METHOD,128,1,A,4.0,4.0,103.61231210795059,8.166666666666668,846.1672155482632,47.00928975268129,0.03453743736931686
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_kinematic.py,routing_kinematic.catchment,METHOD,133,2,A,24.0,47.0,1544.7564092673226,21.21951219512195,32778.97746494075,1821.0543036078193,0.5149188030891075
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_kinematic.py,routing_kinematic.initial,METHOD,185,4,A,44.0,133.0,4105.614995232696,33.75342465753425,138578.56641442963,7698.8092452460905,1.368538331744232
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_kinematic.py,routing_kinematic.dynamic,METHOD,323,24,D,98.0,289.0,9388.510028404413,61.20338983050848,574608.6391960735,31922.70217755964,3.129503342801471
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_kinematic.py,routing_kinematic (aggregate),CLASS_AGG,128,31,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_kinematic.py,routing_kinematic.py (module aggregate),MODULE_AGG,1,31,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,<module>,FUNCTION,1,1,A,4.0,,85.83671966625712,3.5,300.42851883189996,16.690473268438886,0.028612239888752375
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,Compress,FUNCTION,23,1,A,5.0,12.0,137.6075250475963,6.4,880.6881603046164,48.92712001692313,0.04586917501586544
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,decompress1,FUNCTION,37,1,A,6.0,12.0,175.76090217376458,12.142857142857142,2134.239526395713,118.5688625775396,0.05858696739125486
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,postorder,FUNCTION,51,9,B,34.0,44.0,1948.771617344499,108.60000000000001,211636.5976436126,11757.588757978478,0.649590539114833
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,dirUpstream,FUNCTION,97,6,B,16.0,25.0,817.8841784037452,24.38095238095238,19940.795206796072,1107.821955933115,0.2726280594679151
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,dirDownstream,FUNCTION,124,3,A,11.0,19.0,590.1456895850393,20.526315789473685,12113.516786219228,672.9731547899571,0.19671522986167977
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,upstreamArea,FUNCTION,146,1,A,5.0,13.0,143.06119944376186,7.111111111111111,1017.3240849334177,56.5180047185232,0.047687066481253954
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,upstream1,FUNCTION,160,1,A,3.0,9.0,106.19818783608963,6.875,730.1125413731162,40.56180785406201,0.03539939594536321
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,downstream1,FUNCTION,171,3,A,9.0,16.0,194.51316411045156,13.0,2528.67113343587,140.48172963532613,0.06483772137015052
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,catchment1,FUNCTION,189,4,A,10.0,21.0,474.17304721969464,18.352941176470587,8702.470043090865,483.4705579494925,0.15805768240656487
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,subcatchment1,FUNCTION,213,4,A,15.0,31.0,834.7616706421105,19.125,15964.816951030363,886.9342750572424,0.27825389021403685
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,defLdd2,FUNCTION,250,1,A,19.0,39.0,1178.427087652164,17.642857142857142,20790.82076072032,1155.0455978177954,0.392809029217388
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,lddshort,FUNCTION,291,1,A,10.0,23.0,484.2618354584115,11.25,5447.945648907129,302.6636471615072,0.1614206118194705
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,lddrepair,FUNCTION,316,1,A,14.0,46.0,791.8369115756004,15.01923076923077,11892.781306548923,660.7100725860513,0.2639456371918668
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/routing_sub.py,routing_sub.py (module aggregate),MODULE_AGG,1,36,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/__init__.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/02_CWatM/cwatm/hydrological_modules/routing_reservoirs/__init__.py,__init__.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/domestic.py,<module>,FUNCTION,1,1,A,3.0,,114.4489595550095,2.916666666666667,333.80946536877775,18.54497029826543,0.038149653185003164
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/domestic.py,waterdemand_domestic,CLASS,16,7,B,85.0,162.0,4474.285188319,84.17391304347827,376618.09237328626,20923.22735407146,1.4914283961063333
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/domestic.py,waterdemand_domestic.__init__,METHOD,52,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/domestic.py,waterdemand_domestic.initial,METHOD,56,5,A,19.0,25.0,536.4406125843752,15.899999999999999,8529.405740091566,473.8558744495315,0.17881353752812507
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/domestic.py,waterdemand_domestic.dynamic,METHOD,82,12,C,61.0,96.0,3522.8579785123547,75.33749999999999,265403.3129561745,14744.628497565249,1.1742859928374516
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/domestic.py,waterdemand_domestic (aggregate),CLASS_AGG,52,18,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/domestic.py,domestic.py (module aggregate),MODULE_AGG,1,18,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/environmental_need.py,<module>,FUNCTION,1,1,A,2.0,,62.26976913547135,2.5714285714285716,160.12226349121207,8.895681305067336,0.020756589711823783
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/environmental_need.py,waterdemand_environmental_need,CLASS,14,4,A,23.0,55.0,935.516192738618,28.869565217391305,27007.945738193146,1500.4414298996192,0.3118387309128727
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/environmental_need.py,waterdemand_environmental_need.__init__,METHOD,38,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/environmental_need.py,waterdemand_environmental_need.initial,METHOD,42,3,A,10.0,13.0,237.6857250822118,13.0,3089.9144260687535,171.6619125593752,0.07922857502740394
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/environmental_need.py,waterdemand_environmental_need.dynamic,METHOD,56,4,A,8.0,13.0,471.06149717841777,19.6875,9274.023225700099,515.2235125388944,0.1570204990594726
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/environmental_need.py,waterdemand_environmental_need (aggregate),CLASS_AGG,38,8,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/environmental_need.py,environmental_need.py (module aggregate),MODULE_AGG,1,8,B,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/industry.py,<module>,FUNCTION,1,1,A,3.0,,135.93368043019473,2.8571428571428568,388.3819440862706,21.57677467145948,0.04531122681006491
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/industry.py,waterdemand_industry,CLASS,15,6,B,46.0,89.0,2376.7685383935122,54.01428571428572,128379.45490951244,7132.191939417357,0.7922561794645041
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/industry.py,waterdemand_industry.__init__,METHOD,40,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/industry.py,waterdemand_industry.initial,METHOD,44,5,A,17.0,21.0,386.56140372336625,18.45,7132.057898696107,396.2254388164504,0.12885380124112208
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/industry.py,waterdemand_industry.dynamic,METHOD,66,9,B,24.0,38.0,1655.267477799936,45.310344827586206,75000.740201004,4166.707788944666,0.551755825933312
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/industry.py,waterdemand_industry (aggregate),CLASS_AGG,40,15,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/industry.py,industry.py (module aggregate),MODULE_AGG,1,15,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/irrigation.py,<module>,FUNCTION,1,1,A,3.0,,93.76537429460444,3.0,281.2961228838133,15.627562382434073,0.03125512476486815
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/irrigation.py,waterdemand_irrigation,CLASS,35,3,A,63.0,178.0,6201.928292109357,65.85,408396.97803540115,22688.72100196673,2.0673094307031192
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/irrigation.py,waterdemand_irrigation.__init__,METHOD,84,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/irrigation.py,waterdemand_irrigation.initial,METHOD,88,2,A,14.0,26.0,785.0,16.81818181818182,13202.272727272728,733.459595959596,0.26166666666666666
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/irrigation.py,waterdemand_irrigation.dynamic,METHOD,116,2,A,44.0,97.0,4852.330512961656,56.83898305084746,275801.53178333753,15322.30732129653,1.617443504320552
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/irrigation.py,waterdemand_irrigation (aggregate),CLASS_AGG,84,5,A,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/irrigation.py,irrigation.py (module aggregate),MODULE_AGG,1,5,A,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/livestock.py,<module>,FUNCTION,1,1,A,3.0,,104.0,2.9545454545454546,307.27272727272725,17.07070707070707,0.034666666666666665
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/livestock.py,waterdemand_livestock,CLASS,15,5,A,44.0,84.0,1868.1163988154337,45.0,84065.23794669451,4670.2909970385845,0.6227054662718112
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/livestock.py,waterdemand_livestock.__init__,METHOD,41,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/livestock.py,waterdemand_livestock.initial,METHOD,45,5,A,18.0,24.0,423.5489532989615,18.40909090909091,7797.151185730883,433.17506587393797,0.14118298443298719
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/livestock.py,waterdemand_livestock.dynamic,METHOD,70,7,B,21.0,29.0,1112.2829718314588,34.333333333333336,38188.38203288009,2121.5767796044493,0.3707609906104863
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/livestock.py,waterdemand_livestock (aggregate),CLASS_AGG,41,13,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/livestock.py,livestock.py (module aggregate),MODULE_AGG,1,13,C,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/wastewater.py,<module>,FUNCTION,1,1,A,2.0,,48.0,3.0,144.0,8.0,0.016
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/wastewater.py,waterdemand_wastewater,CLASS,16,11,C,234.0,611.0,27647.855935315383,165.0,4561896.229327038,253438.67940705767,9.215951978438461
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/wastewater.py,waterdemand_wastewater.__init__,METHOD,137,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/wastewater.py,waterdemand_wastewater.initial,METHOD,141,5,A,43.0,66.0,3821.6361899883964,35.02777777777778,133863.42321042687,7436.856845023715,1.273878729996132
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/wastewater.py,waterdemand_wastewater.dynamic_init,METHOD,215,14,C,64.0,125.0,5966.165677155922,82.86290322580645,494373.8091352992,27465.21161862773,1.9887218923853074
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/wastewater.py,waterdemand_wastewater.dynamic,METHOD,344,20,C,122.0,283.0,14687.039855772133,110.62977099236642,1624823.8557998294,90267.99198887941,4.895679951924044
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/wastewater.py,waterdemand_wastewater (aggregate),CLASS_AGG,137,40,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/wastewater.py,wastewater.py (module aggregate),MODULE_AGG,1,40,E,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/water_demand.py,<module>,FUNCTION,1,1,A,12.0,,573.0398702191845,5.225806451612903,2994.595450822835,166.36641393460195,0.1910132900730615
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/water_demand.py,water_demand,CLASS,27,67,F,1593.0,2656.0,157485.86578792057,265.40880503144655,41798135.44811477,2322118.636006376,52.49528859597353
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/water_demand.py,water_demand.__init__,METHOD,294,1,A,9.0,10.0,307.60221301187687,7.4375,2287.7914592758343,127.09952551532413,0.10253407100395896
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/water_demand.py,water_demand.initial,METHOD,305,54,F,395.0,537.0,33360.0,96.14592274678111,3207427.982832618,178190.443490701,11.12
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/water_demand.py,water_demand.dynamic,METHOD,844,143,F,1187.0,1839.0,116166.37269734396,225.39650872817953,26183494.837597843,1454638.602088769,38.72212423244799
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/water_demand.py,water_demand (aggregate),CLASS_AGG,294,198,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/water_demand.py,water_demand.py (module aggregate),MODULE_AGG,1,198,F,,,,,,,
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/__init__.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/02_CWatM/cwatm/hydrological_modules/water_demand/__init__.py,__init__.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/cwatm/management_modules/checks.py,<module>,FUNCTION,1,1,A,1.0,,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/02_CWatM/cwatm/management_modules/checks.py,counted,FUNCTION,14,1,A,8.0,13.0,194.4867642699313,12.222222222222223,2377.0604521880496,132.0589140104472,0.06482892142331044
+./models/02_CWatM/cwatm/management_modules/checks.py,checkmap,FUNCTION,30,9,B,85.0,122.0,4360.1942966326005,84.60714285714285,368903.5817400939,20494.643430005217,1.4533980988775335
+./models/02_CWatM/cwatm/management_modules/checks.py,checks.py (module aggregate),MODULE_AGG,1,10,B,,,,,,,
+./models/02_CWatM/cwatm/management_modules/configuration.py,<module>,FUNCTION,1,1,A,7.0,,117.20671786825557,2.3636363636363638,277.0340604158768,15.390781134215379,0.03906890595608519
+./models/02_CWatM/cwatm/management_modules/configuration.py,parse_configuration,FUNCTION,103,10,B,39.0,61.0,1882.8431759024738,32.5,61192.4032168304,3399.5779564905774,0.6276143919674912
+./models/02_CWatM/cwatm/management_modules/configuration.py,read_metanetcdf,FUNCTION,167,8,B,31.0,46.0,1393.765181293825,31.5,43903.603210755486,2439.0890672641935,0.4645883937646083
+./models/02_CWatM/cwatm/management_modules/configuration.py,ExtParser,CLASS,24,7,B,46.0,76.0,2107.4409375884684,42.93333333333334,90479.46425379824,5026.636902988791,0.7024803125294895
+./models/02_CWatM/cwatm/management_modules/configuration.py,ExtParser.__init__,METHOD,35,1,A,3.0,3.0,126.71134807876051,7.3125,926.5767328259362,51.47648515699646,0.042237116026253504
+./models/02_CWatM/cwatm/management_modules/configuration.py,ExtParser.get,METHOD,39,10,B,41.0,61.0,1830.0,37.714285714285715,69017.14285714286,3834.285714285714,0.61
+./models/02_CWatM/cwatm/management_modules/configuration.py,ExtParser (aggregate),CLASS_AGG,35,11,C,,,,,,,
+./models/02_CWatM/cwatm/management_modules/configuration.py,configuration.py (module aggregate),MODULE_AGG,1,29,D,,,,,,,
+./models/02_CWatM/cwatm/management_modules/data_handling.py,<module>,FUNCTION,1,1,A,15.0,,383.78049861507816,3.541666666666667,1359.2225992617352,75.51236662565196,0.1279268328716927
+./models/02_CWatM/cwatm/management_modules/data_handling.py,valuecell,FUNCTION,118,9,B,41.0,56.0,2206.2342895733937,63.13235294117647,139284.76184027322,7738.042324459623,0.7354114298577978
+./models/02_CWatM/cwatm/management_modules/data_handling.py,setmaskmapAttr,FUNCTION,176,6,B,19.0,31.0,942.448313054749,51.69230769230769,48717.32818252241,2706.5182323623562,0.3141494376849163
+./models/02_CWatM/cwatm/management_modules/data_handling.py,loadsetclone,FUNCTION,209,13,C,84.0,145.0,6071.722803196538,51.088235294117645,310193.6032103643,17232.977956131348,2.023907601065513
+./models/02_CWatM/cwatm/management_modules/data_handling.py,maskfrompoint,FUNCTION,356,2,A,22.0,36.0,1089.2481194013096,28.615384615384617,31169.25387825286,1731.6252154584922,0.3630827064671032
+./models/02_CWatM/cwatm/management_modules/data_handling.py,loadmap,FUNCTION,394,22,D,75.0,108.0,4023.4120879406264,38.5,154901.3653857141,8605.63141031745,1.3411373626468754
+./models/02_CWatM/cwatm/management_modules/data_handling.py,compressArray,FUNCTION,508,4,A,14.0,27.0,579.6089809147812,24.555555555555554,14232.62053135185,790.7011406306583,0.1932029936382604
+./models/02_CWatM/cwatm/management_modules/data_handling.py,decompress,FUNCTION,536,5,A,16.0,26.0,495.4196310386875,32.45833333333333,16080.495524130729,893.3608624517071,0.16513987701289584
+./models/02_CWatM/cwatm/management_modules/data_handling.py,getmeta,FUNCTION,570,3,A,7.0,15.0,158.45715005480787,13.357142857142856,2116.534790017791,117.58526611209949,0.05281905001826929
+./models/02_CWatM/cwatm/management_modules/data_handling.py,metaNetCDF,FUNCTION,587,3,A,12.0,15.0,403.5515295486763,12.526315789473685,5055.01389645184,280.8341053584356,0.13451717651622544
+./models/02_CWatM/cwatm/management_modules/data_handling.py,readCoord,FUNCTION,604,4,A,22.0,37.0,774.3512865824841,20.642857142857142,15984.82298730985,888.0457215172139,0.25811709552749473
+./models/02_CWatM/cwatm/management_modules/data_handling.py,readCoordNetCDF,FUNCTION,642,9,B,38.0,56.0,1779.863020584521,52.125,92775.35994796816,5154.186663776009,0.5932876735281737
+./models/02_CWatM/cwatm/management_modules/data_handling.py,readCalendar,FUNCTION,699,1,A,4.0,4.0,133.437600046154,7.0,934.0632003230779,51.89240001794877,0.04447920001538466
+./models/02_CWatM/cwatm/management_modules/data_handling.py,checkMeteo_Wordclim,FUNCTION,704,7,B,47.0,74.0,2410.827000539783,56.82352941176471,136991.69897184885,7610.649942880492,0.8036090001799276
+./models/02_CWatM/cwatm/management_modules/data_handling.py,mapattrNetCDF,FUNCTION,779,2,A,14.0,30.0,716.2669476206769,20.26923076923077,14518.180053696029,806.5655585386683,0.2387556492068923
+./models/02_CWatM/cwatm/management_modules/data_handling.py,mapattrNetCDFMeteo,FUNCTION,810,6,B,27.0,58.0,1750.0349934693152,40.590909090909086,71035.51132582265,3946.417295879036,0.583344997823105
+./models/02_CWatM/cwatm/management_modules/data_handling.py,mapattrTiff,FUNCTION,871,5,A,26.0,44.0,1248.0408935814826,40.770833333333336,50883.66726539503,2826.8704036330573,0.4160136311938275
+./models/02_CWatM/cwatm/management_modules/data_handling.py,multinetdf,FUNCTION,917,24,D,102.0,172.0,6094.937892634949,71.60714285714286,436441.08838332404,24246.72713240689,2.03164596421165
+./models/02_CWatM/cwatm/management_modules/data_handling.py,readmeteodata,FUNCTION,1092,16,C,65.0,112.0,3659.762224534628,46.0,168349.06232859287,9352.725684921827,1.2199207415115427
+./models/02_CWatM/cwatm/management_modules/data_handling.py,readnetcdf2,FUNCTION,1208,28,D,79.0,120.0,4559.969807283852,56.71641791044776,258625.1532489349,14368.064069385271,1.519989935761284
+./models/02_CWatM/cwatm/management_modules/data_handling.py,readnetcdfWithoutTime,FUNCTION,1330,4,A,17.0,32.0,765.1033304129958,18.074074074074073,13828.534268205256,768.2519037891809,0.2550344434709986
+./models/02_CWatM/cwatm/management_modules/data_handling.py,readnetcdf12month,FUNCTION,1363,4,A,16.0,27.0,786.1581530837708,17.714285714285715,13926.230140341084,773.6794522411714,0.26205271769459026
+./models/02_CWatM/cwatm/management_modules/data_handling.py,readnetcdfInitial,FUNCTION,1392,9,B,40.0,58.0,1812.0,32.47674418604652,58847.86046511629,3269.325581395349,0.604
+./models/02_CWatM/cwatm/management_modules/data_handling.py,writenetcdf,FUNCTION,1453,56,F,221.0,298.0,16199.785699456816,107.0077519379845,1733502.6495759836,96305.70275422132,5.399928566485605
+./models/02_CWatM/cwatm/management_modules/data_handling.py,writeIniNetcdf,FUNCTION,1756,27,D,90.0,124.0,6356.062364397006,53.277027027027025,338632.10637344857,18812.89479852492,2.118687454799002
+./models/02_CWatM/cwatm/management_modules/data_handling.py,report,FUNCTION,1884,6,B,40.0,68.0,2264.536176945126,21.51851851851852,48729.463659448826,2707.1924255249346,0.754845392315042
+./models/02_CWatM/cwatm/management_modules/data_handling.py,returnBool,FUNCTION,1959,3,A,10.0,16.0,320.9473750504809,21.0,6739.894876060099,374.43860422556105,0.1069824583501603
+./models/02_CWatM/cwatm/management_modules/data_handling.py,checkOption,FUNCTION,1976,6,B,23.0,31.0,702.4945085251319,27.142857142857142,19067.708088539293,1059.3171160299607,0.23416483617504397
+./models/02_CWatM/cwatm/management_modules/data_handling.py,cbinding,FUNCTION,2008,6,B,23.0,33.0,691.8506523353572,27.142857142857142,18778.803420531123,1043.2668566961736,0.2306168841117857
+./models/02_CWatM/cwatm/management_modules/data_handling.py,divideValues,FUNCTION,2045,1,A,7.0,19.0,188.86964917948671,14.0,2644.175088512814,146.89861602848967,0.06295654972649557
+./models/02_CWatM/cwatm/management_modules/data_handling.py,data_handling.py (module aggregate),MODULE_AGG,1,291,F,,,,,,,
+./models/02_CWatM/cwatm/management_modules/dynamicModel.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/02_CWatM/cwatm/management_modules/dynamicModel.py,DynamicModel,CLASS,3,1,A,2.0,2.0,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/02_CWatM/cwatm/management_modules/dynamicModel.py,ModelFrame,CLASS,8,2,A,18.0,38.0,523.0376252379815,18.21875,9529.091734804475,529.3939852669153,0.17434587507932717
+./models/02_CWatM/cwatm/management_modules/dynamicModel.py,ModelFrame.__init__,METHOD,16,1,A,5.0,12.0,147.14866228501222,6.6499999999999995,978.5386041953312,54.363255788629516,0.049049554095004076
+./models/02_CWatM/cwatm/management_modules/dynamicModel.py,ModelFrame.step,METHOD,29,1,A,4.0,4.0,99.91187238980949,7.583333333333333,757.6650322893886,42.09250179385492,0.03330395746326983
+./models/02_CWatM/cwatm/management_modules/dynamicModel.py,ModelFrame.initialize_run,METHOD,34,1,A,2.0,3.0,51.89147427955946,4.199999999999999,217.9441919741497,12.10801066523054,0.017297158093186486
+./models/02_CWatM/cwatm/management_modules/dynamicModel.py,ModelFrame.run,METHOD,38,2,A,5.0,8.0,109.39293667703852,5.25,574.3129175544523,31.90627319746957,0.03646431222567951
+./models/02_CWatM/cwatm/management_modules/dynamicModel.py,ModelFrame (aggregate),CLASS_AGG,16,5,A,,,,,,,
+./models/02_CWatM/cwatm/management_modules/dynamicModel.py,dynamicModel.py (module aggregate),MODULE_AGG,1,5,A,,,,,,,
+./models/02_CWatM/cwatm/management_modules/globals.py,<module>,FUNCTION,1,5,A,110.0,,6202.0,40.575471698113205,251649.0754716981,13980.504192872117,2.0673333333333335
+./models/02_CWatM/cwatm/management_modules/globals.py,globalclear,FUNCTION,28,1,A,35.0,44.0,937.5716008081647,4.791666666666667,4492.53058720579,249.58503262254388,0.3125238669360549
+./models/02_CWatM/cwatm/management_modules/globals.py,calibclear,FUNCTION,74,2,A,15.0,55.0,384.5883937646083,8.61111111111111,3311.7333907507937,183.9851883750441,0.12819613125486945
+./models/02_CWatM/cwatm/management_modules/globals.py,globalFlags,FUNCTION,293,12,C,28.0,40.0,973.5680650361815,33.75,32857.92219497112,1825.44012194284,0.32452268834539383
+./models/02_CWatM/cwatm/management_modules/globals.py,globals.py (module aggregate),MODULE_AGG,1,15,C,,,,,,,
+./models/02_CWatM/cwatm/management_modules/messages.py,<module>,FUNCTION,1,1,A,2.0,,6.339850002884624,0.5,3.169925001442312,0.1761069445245729,0.002113283334294875
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMError,CLASS,16,3,A,11.0,22.0,261.51881261899075,11.607142857142858,3035.4862178989997,168.6381232166111,0.08717293753966358
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMError.__init__,METHOD,25,2,A,9.0,13.0,220.0782000346155,11.0,2420.8602003807705,134.49223335448724,0.0733594000115385
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMFileError,CLASS,40,5,A,23.0,33.0,819.2373439236485,29.363636363636363,24055.787462485314,1336.4326368047396,0.27307911464121615
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMFileError.__init__,METHOD,49,4,A,21.0,24.0,765.1489002134622,29.2,22342.347886233096,1241.241549235172,0.2550496334044874
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMDirError,CLASS,74,5,A,22.0,33.0,803.3811372670618,28.590909090909093,22969.397060953725,1276.077614497429,0.26779371242235395
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMDirError.__init__,METHOD,83,4,A,20.0,24.0,749.6391252091353,28.4,21289.75115593944,1182.7639531077466,0.2498797084030451
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMWarning,CLASS,109,2,A,9.0,16.0,200.67442283867837,9.166666666666666,1839.5155426878848,102.19530792710471,0.06689147427955945
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMWarning.__init__,METHOD,118,1,A,5.0,5.0,114.4489595550095,6.666666666666667,762.9930637000633,42.38850353889241,0.038149653185003164
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMWarning.__str__,METHOD,123,1,A,2.0,2.0,31.69925001442312,4.0,126.79700005769249,7.044277780982916,0.010566416671474373
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMRunInfo,CLASS,126,2,A,8.0,17.0,265.9278250418271,13.0,3457.061725543752,192.05898475243066,0.08864260834727569
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMRunInfo.__init__,METHOD,137,1,A,4.0,4.0,174.165028051187,10.555555555555555,1838.408629429196,102.13381274606644,0.05805500935039566
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMRunInfo.__str__,METHOD,141,1,A,2.0,2.0,31.69925001442312,4.0,126.79700005769249,7.044277780982916,0.010566416671474373
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMError (aggregate),CLASS_AGG,25,2,A,,,,,,,
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMFileError (aggregate),CLASS_AGG,49,4,A,,,,,,,
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMDirError (aggregate),CLASS_AGG,83,4,A,,,,,,,
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMWarning (aggregate),CLASS_AGG,118,2,A,,,,,,,
+./models/02_CWatM/cwatm/management_modules/messages.py,CWATMRunInfo (aggregate),CLASS_AGG,137,2,A,,,,,,,
+./models/02_CWatM/cwatm/management_modules/messages.py,messages.py (module aggregate),MODULE_AGG,1,14,C,,,,,,,
+./models/02_CWatM/cwatm/management_modules/output.py,<module>,FUNCTION,1,1,A,14.0,,348.3892322882048,3.625,1262.9109670447424,70.16172039137457,0.11612974409606827
+./models/02_CWatM/cwatm/management_modules/output.py,outputTssMap,CLASS,31,35,E,441.0,749.0,38967.32680059937,198.38095238095238,7730375.402442712,429465.30013570626,12.989108933533123
+./models/02_CWatM/cwatm/management_modules/output.py,outputTssMap.__init__,METHOD,55,1,A,3.0,3.0,69.18863237274594,8.75,605.400533261527,33.63336295897372,0.02306287745758198
+./models/02_CWatM/cwatm/management_modules/output.py,outputTssMap.initial,METHOD,59,19,C,106.0,175.0,6323.840998868979,59.91397849462365,378886.47360965534,21049.24853386974,2.107946999622993
+./models/02_CWatM/cwatm/management_modules/output.py,outputTssMap.dynamic,METHOD,236,81,F,330.0,544.0,29732.95411201894,196.33333333333331,5837569.9906597175,324309.44392553985,9.910984704006314
+./models/02_CWatM/cwatm/management_modules/output.py,outputTssMap (aggregate),CLASS_AGG,55,101,F,,,,,,,
+./models/02_CWatM/cwatm/management_modules/output.py,output.py (module aggregate),MODULE_AGG,1,101,F,,,,,,,
+./models/02_CWatM/cwatm/management_modules/replace_pcr.py,<module>,FUNCTION,1,1,A,1.0,,8.0,1.0,8.0,0.4444444444444444,0.0026666666666666666
+./models/02_CWatM/cwatm/management_modules/replace_pcr.py,npareatotal,FUNCTION,22,1,A,3.0,9.0,108.0,6.0,648.0,36.0,0.036
+./models/02_CWatM/cwatm/management_modules/replace_pcr.py,npareaaverage,FUNCTION,33,1,A,4.0,10.0,210.83123629338053,9.545454545454547,2012.4799828004507,111.80444348891393,0.07027707876446018
+./models/02_CWatM/cwatm/management_modules/replace_pcr.py,npareamaximum,FUNCTION,45,1,A,5.0,11.0,193.26196660226546,7.5,1449.4647495169909,80.5258194176106,0.06442065553408849
+./models/02_CWatM/cwatm/management_modules/replace_pcr.py,npareamajority,FUNCTION,58,2,A,4.0,11.0,256.7639251168273,10.678571428571429,2741.871914640406,152.32621748002256,0.08558797503894243
+./models/02_CWatM/cwatm/management_modules/replace_pcr.py,replace_pcr.py (module aggregate),MODULE_AGG,1,5,A,,,,,,,
+./models/02_CWatM/cwatm/management_modules/timestep.py,<module>,FUNCTION,1,1,A,10.0,,229.24812503605781,3.666666666666667,840.5764584655454,46.69869213697475,0.07641604167868594
+./models/02_CWatM/cwatm/management_modules/timestep.py,datenum,FUNCTION,23,1,A,4.0,9.0,157.17331799741265,8.88888888888889,1397.0961599770014,77.61645333205564,0.05239110599913755
+./models/02_CWatM/cwatm/management_modules/timestep.py,numdate,FUNCTION,33,1,A,3.0,8.0,184.47733175670794,9.35,1724.8630519252192,95.82572510695663,0.06149244391890265
+./models/02_CWatM/cwatm/management_modules/timestep.py,date2str,FUNCTION,42,1,A,3.0,8.0,87.56916320732489,6.666666666666667,583.794421382166,32.433023410120335,0.029189721069108297
+./models/02_CWatM/cwatm/management_modules/timestep.py,ctbinding,FUNCTION,52,3,A,12.0,20.0,387.64435705307295,20.0,7752.887141061459,430.7159522811922,0.12921478568435765
+./models/02_CWatM/cwatm/management_modules/timestep.py,timemeasure,FUNCTION,73,2,A,9.0,18.0,252.0090376146638,11.142857142857142,2808.100704849111,156.0055947138395,0.08400301253822128
+./models/02_CWatM/cwatm/management_modules/timestep.py,Calendar,FUNCTION,96,8,B,30.0,41.0,930.2307905197558,37.05,34465.05078875695,1914.7250438198305,0.31007693017325194
+./models/02_CWatM/cwatm/management_modules/timestep.py,datetoInt,FUNCTION,139,3,A,13.0,26.0,401.2899011413369,11.68421052631579,4688.7556870198305,260.48642705665725,0.13376330038044562
+./models/02_CWatM/cwatm/management_modules/timestep.py,addmonths,FUNCTION,167,2,A,10.0,17.0,559.3855278993711,32.03846153846154,17921.85172077601,995.6584289320004,0.1864618426331237
+./models/02_CWatM/cwatm/management_modules/timestep.py,datetosaveInit,FUNCTION,187,11,C,54.0,84.0,1941.2722062894077,56.72727272727272,110123.07788405365,6117.948771336314,0.6470907354298026
+./models/02_CWatM/cwatm/management_modules/timestep.py,checkifDate,FUNCTION,273,15,C,71.0,120.0,4634.655411366583,64.75862068965517,300133.89181194635,16674.105100663684,1.5448851371221946
+./models/02_CWatM/cwatm/management_modules/timestep.py,date2indexNew,FUNCTION,395,10,B,35.0,54.0,2088.7759752697125,55.71428571428571,116374.66147931253,6465.258971072919,0.6962586584232375
+./models/02_CWatM/cwatm/management_modules/timestep.py,timestep_dynamic,FUNCTION,453,5,A,38.0,61.0,2784.3101255050215,90.83333333333334,252908.1697333728,14050.453874076267,0.9281033751683405
+./models/02_CWatM/cwatm/management_modules/timestep.py,timestep.py (module aggregate),MODULE_AGG,1,62,F,,,,,,,
+./models/02_CWatM/cwatm/management_modules/__init__.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/02_CWatM/cwatm/management_modules/__init__.py,__init__.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/cwatm/variable_documentation/List_all_variables.py,<module>,FUNCTION,1,35,E,156.0,,7607.576766829643,67.30188679245283,512004.270326063,28444.681684781277,2.5358589222765477
+./models/02_CWatM/cwatm/variable_documentation/List_all_variables.py,open_workbook,FUNCTION,67,4,A,16.0,23.0,436.5224818388241,17.538461538461537,7655.932758403991,425.32959768911064,0.14550749394627469
+./models/02_CWatM/cwatm/variable_documentation/List_all_variables.py,scan_variables,FUNCTION,92,12,C,34.0,44.0,1886.8455467047013,50.758620689655174,95773.67740514898,5320.75985584161,0.6289485155682337
+./models/02_CWatM/cwatm/variable_documentation/List_all_variables.py,extract_selfvar,FUNCTION,141,36,E,57.0,86.0,2582.7665282929956,81.07407407407408,209395.40483086547,11633.078046159193,0.8609221760976652
+./models/02_CWatM/cwatm/variable_documentation/List_all_variables.py,extract_localvar,FUNCTION,228,4,A,9.0,13.0,356.702134347855,12.76470588235294,4553.197832557914,252.95543514210632,0.118900711449285
+./models/02_CWatM/cwatm/variable_documentation/List_all_variables.py,make_all_variables_df,FUNCTION,246,11,C,46.0,67.0,2893.6948256764445,35.31132075471698,102180.18615572577,5676.677008651432,0.9645649418921481
+./models/02_CWatM/cwatm/variable_documentation/List_all_variables.py,write_new_excel,FUNCTION,314,3,A,18.0,27.0,808.847613416814,22.78,18425.548633635026,1023.6415907575015,0.26961587113893803
+./models/02_CWatM/cwatm/variable_documentation/List_all_variables.py,write_to_metaNetCdf,FUNCTION,342,11,C,39.0,55.0,1641.9824809077502,25.367346938775512,41652.73926057824,2314.0410700321245,0.5473274936359167
+./models/02_CWatM/cwatm/variable_documentation/List_all_variables.py,get_vars_modules_descriptor,FUNCTION,400,2,A,8.0,9.0,252.1729375396636,16.099999999999998,4059.9842943885833,225.55468302158795,0.08405764584655454
+./models/02_CWatM/cwatm/variable_documentation/List_all_variables.py,List_all_variables.py (module aggregate),MODULE_AGG,1,83,F,,,,,,,
+./models/02_CWatM/Toolkit/Calibration/scripts/calibration_single.py,<module>,FUNCTION,1,50,F,253.0,,21272.0,88.19730941704036,1876133.1659192825,104229.62032884902,7.0906666666666665
+./models/02_CWatM/Toolkit/Calibration/scripts/calibration_single.py,RunModel,FUNCTION,165,13,C,71.0,108.0,5708.06217075154,46.875,267565.41425397847,14864.745236332137,1.9026873902505135
+./models/02_CWatM/Toolkit/Calibration/scripts/calibration_single.py,checkBounds,FUNCTION,303,1,A,13.0,13.0,412.1788100311156,21.576923076923077,8893.55047797907,494.0861376655039,0.13739293667703853
+./models/02_CWatM/Toolkit/Calibration/scripts/calibration_single.py,calibration_single.py (module aggregate),MODULE_AGG,1,14,C,,,,,,,
+./models/02_CWatM/Toolkit/Calibration/scripts/Cali_plot.py,<module>,FUNCTION,1,8,B,158.0,,17051.164592885354,63.79533678756477,1087784.7878233208,60432.488212406715,5.683721530961785
+./models/02_CWatM/Toolkit/Calibration/scripts/Cali_plot.py,Cali_plot.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,<module>,FUNCTION,1,1,A,6.0,,129.26767504471167,3.076923076923077,397.74669244526666,22.09703846918148,0.043089225014903886
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,filter_nan,FUNCTION,45,1,A,6.0,18.0,307.60221301187687,11.916666666666666,3665.5930383915324,203.64405768841846,0.10253407100395896
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,RSR,FUNCTION,66,1,A,5.0,15.0,262.36659345130676,11.458333333333334,3006.2838832962234,167.01577129423464,0.08745553115043558
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,br,FUNCTION,82,1,A,6.0,13.0,271.4137173634208,17.55,4763.3107397280355,264.6283744293353,0.09047123912114027
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,pc_bias,FUNCTION,96,1,A,6.0,13.0,232.7928234072743,19.5,4539.460056441849,252.1922253578805,0.07759760780242476
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,pc_bias2,FUNCTION,110,1,A,3.0,13.0,150.11730005192322,9.375,1407.3496879867803,78.18609377704335,0.05003910001730774
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,apb,FUNCTION,124,1,A,6.0,13.0,249.72817064368866,18.055555555555554,4508.980858844378,250.49893660246548,0.08324272354789622
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,apb2,FUNCTION,138,1,A,6.0,13.0,298.0225625468751,20.3,6049.858019701565,336.10322331675366,0.0993408541822917
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,rmse,FUNCTION,152,1,A,3.0,13.0,120.92782504182705,6.0,725.5669502509622,40.30927501394235,0.04030927501394235
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,mae,FUNCTION,166,1,A,3.0,13.0,92.0,5.0,460.0,25.555555555555557,0.030666666666666665
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,bias,FUNCTION,180,1,A,6.0,13.0,210.83123629338053,14.666666666666668,3092.191465636248,171.7884147575693,0.07027707876446018
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,NS,FUNCTION,194,1,A,3.0,14.0,169.9171005377434,8.88888888888889,1510.3742270021637,83.90967927789798,0.056639033512581136
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,NSlog,FUNCTION,209,1,A,5.0,15.0,245.9697756756106,13.2,3246.80103891806,180.37783549544778,0.08198992522520354
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,correlation,FUNCTION,225,2,A,7.0,18.0,192.56842503028855,11.227272727272727,2162.018226476421,120.1121236931345,0.06418947501009618
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,index_agreement,FUNCTION,245,1,A,5.0,15.0,316.6493369239909,15.272727272727273,4836.098963930043,268.6721646627802,0.10554977897466364
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,rmseglobal,FUNCTION,261,1,A,3.0,3.0,116.75790004038474,7.5,875.6842503028855,48.64912501682697,0.03891930001346158
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,KGEglobal,FUNCTION,265,2,A,17.0,21.0,1828.6094054870107,39.65625,72515.79173634427,4028.6550964635703,0.6095364684956702
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,rankObj,FUNCTION,288,4,A,18.0,20.0,819.5769266126539,27.40909090909091,22463.85848851956,1247.9921382510865,0.27319230887088464
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,rankB,FUNCTION,309,4,A,19.0,21.0,873.5554224901592,26.625,23258.41312380049,1292.1340624333604,0.2911851408300531
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,KGE,FUNCTION,333,1,A,7.0,19.0,519.1943315822213,23.0,11941.469626391088,663.4149792439493,0.17306477719407376
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,vr,FUNCTION,353,1,A,6.0,13.0,357.6270750562502,19.5,6973.727963596879,387.4293313109377,0.11920902501875007
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,budykoFunc,FUNCTION,367,1,A,2.0,2.0,109.39293667703852,15.125,1654.5681672402077,91.9204537355671,0.03646431222567951
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,budykoDist,FUNCTION,370,1,A,2.0,2.0,113.29982727264704,8.25,934.7235749993381,51.92908749996323,0.03776660909088234
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,iter1,FUNCTION,374,3,A,9.0,9.0,267.9250639340422,15.75,4219.819756961165,234.43443094228692,0.08930835464468073
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,Budyko,FUNCTION,384,4,A,14.0,17.0,703.2762043599083,22.095238095238095,15539.055182047498,863.2808434470832,0.23442540145330276
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,budw,FUNCTION,402,3,A,13.0,21.0,723.7822209046814,23.318181818181817,16877.285423822796,937.6269679901553,0.24126074030156044
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,budw1d,FUNCTION,424,2,A,8.0,14.0,543.7039997961664,20.305555555555554,11040.211773638823,613.3450985354901,0.18123466659872212
+./models/02_CWatM/Toolkit/Calibration/scripts/hydroStats.py,hydroStats.py (module aggregate),MODULE_AGG,1,42,F,,,,,,,
+./models/02_CWatM/Toolkit/Calibration/scripts/Violin_plots.py,<module>,FUNCTION,1,22,D,136.0,,11255.740343367606,62.75539568345324,706358.438958242,39242.13549768011,3.751913447789202
+./models/02_CWatM/Toolkit/Calibration/scripts/Violin_plots.py,Violin_plots.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/Toolkit/documentation/conf.py,<module>,FUNCTION,1,1,A,108.0,,1887.9970504413475,13.975409836065573,26385.532549200798,1465.8629194000443,0.6293323501471159
+./models/02_CWatM/Toolkit/documentation/conf.py,conf.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/ComputeRiverPercent.py,<module>,FUNCTION,1,1,A,4.0,,82.0447025077789,2.75,225.62293189639195,12.53460732757733,0.02734823416925963
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/ComputeRiverPercent.py,ComputeRiverPercent,FUNCTION,13,5,A,36.0,91.0,2860.8984020781377,30.61111111111111,87575.2788636141,4865.293270200784,0.9536328006927126
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/ComputeRiverPercent.py,ComputeRiverPercent.py (module aggregate),MODULE_AGG,1,5,A,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Compute_RiverNetwork.py,<module>,FUNCTION,1,1,A,5.0,,98.99122797349771,2.8,277.1754383257936,15.398635462544089,0.03299707599116591
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Compute_RiverNetwork.py,Compute_RiverNetwork,FUNCTION,17,1,A,60.0,112.0,3643.6921159160897,28.52112676056338,103922.20471450819,5773.455817472677,1.2145640386386967
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Compute_RiverNetwork.py,Compute_RiverNetwork.py (module aggregate),MODULE_AGG,1,1,A,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/create_raster.py,<module>,FUNCTION,1,2,A,9.0,,181.11039140121426,5.34375,967.8086540502387,53.76714744723549,0.06037013046707142
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/create_raster.py,create_raster,FUNCTION,20,1,A,31.0,53.0,1949.7947360472056,18.103448275862068,35298.00815257872,1961.0004529210398,0.6499315786824018
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/create_raster.py,create_raster.py (module aggregate),MODULE_AGG,1,1,A,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/define_modflow_basinmask.py,<module>,FUNCTION,1,1,A,10.0,,164.99896988958,2.111111111111111,348.33115865578,19.35173103643222,0.05499965662986
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/define_modflow_basinmask.py,define_modflow_basinmask,FUNCTION,21,2,A,86.0,138.0,6786.692300062204,55.91772151898734,379496.370069934,21083.131670551888,2.2622307666874013
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/define_modflow_basinmask.py,define_modflow_basinmask.py (module aggregate),MODULE_AGG,1,2,A,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/ExtractBasinLimits.py,<module>,FUNCTION,1,1,A,11.0,,173.9178331268546,2.2222222222222223,386.48407361523243,21.47133742306847,0.05797261104228486
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/ExtractBasinLimits.py,ExtractBasinLimits,FUNCTION,22,6,B,32.0,52.0,1839.8466599095443,26.444444444444446,48653.72278427462,2702.984599126368,0.6132822199698481
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/ExtractBasinLimits.py,ExtractBasinLimits.py (module aggregate),MODULE_AGG,1,6,B,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Main_Preprocess_ModFlow.py,<module>,FUNCTION,1,9,B,88.0,,5428.99653639776,38.163716814159294,207190.68640013575,11510.59368889643,1.8096655121325866
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Main_Preprocess_ModFlow.py,Main_Preprocess_ModFlow.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,<module>,FUNCTION,1,2,A,11.0,,178.6167092893615,4.764705882352941,851.0560854375459,47.28089363541922,0.05953890309645383
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,cd,FUNCTION,13,1,A,7.0,7.0,151.23612512626255,7.875,1190.9844853693176,66.16580474273987,0.050412041708754185
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,main,FUNCTION,309,2,A,53.0,65.0,2618.3580511913497,30.491803278688522,79838.45861009689,4435.469922783161,0.8727860170637832
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation,CLASS,22,4,A,207.0,285.0,13291.877178708184,64.51351351351352,857505.6979885524,47639.20544380847,4.4306257262360615
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.__init__,METHOD,23,5,A,100.0,123.0,5674.62418927569,21.9009009009009,124279.382019182,6904.410112176778,1.89154139642523
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.bmi_return,METHOD,147,1,A,4.0,6.0,144.4295354570819,5.454545454545454,787.7974661295376,43.766525896085426,0.048143178485693966
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.load_bmi,METHOD,154,7,B,36.0,58.0,1818.0,30.681818181818183,55779.545454545456,3098.8636363636365,0.606
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.compress,METHOD,213,1,A,2.0,2.0,68.11428751370197,5.6000000000000005,381.440010076731,21.1911116709295,0.022704762504567322
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.decompress,METHOD,216,1,A,4.0,4.0,152.92539048396907,9.444444444444445,1444.295354570819,80.23863080948995,0.050975130161323025
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.prepare_time_step,METHOD,221,1,A,3.0,3.0,79.56692722865783,6.0,477.40156337194696,26.522309076219276,0.02652230907621928
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.set_recharge,METHOD,225,2,A,6.0,6.0,286.7268228066066,12.5,3584.0852850825827,199.11584917125458,0.0955756076022022
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.set_well_rate,METHOD,232,2,A,6.0,6.0,286.7268228066066,12.5,3584.0852850825827,199.11584917125458,0.0955756076022022
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.step,METHOD,239,8,B,29.0,48.0,1382.2123993723933,24.329268292682926,33628.21630180396,1868.2342389891087,0.46073746645746444
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.plot,METHOD,288,5,A,11.0,12.0,401.2899011413369,13.0,5216.76871483738,289.8204841576322,0.13376330038044562
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.plot_compressed,METHOD,301,1,A,3.0,3.0,114.22064766172812,7.0,799.5445336320969,44.41914075733872,0.03807354922057604
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation.finalize,METHOD,305,1,A,2.0,2.0,39.0,4.166666666666667,162.5,9.027777777777779,0.013
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,ModFlowSimulation (aggregate),CLASS_AGG,23,35,E,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow.py,modflow.py (module aggregate),MODULE_AGG,1,38,E,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow_cwatm_translation_test2.py,<module>,FUNCTION,1,1,A,20.0,,894.39702524952,19.0,16993.543479740878,944.0857488744932,0.29813234174984
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/modflow_cwatm_translation_test2.py,modflow_cwatm_translation_test2.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Project_InputsMap.py,<module>,FUNCTION,1,1,A,3.0,,53.77443751081734,2.8571428571428568,153.64125003090666,8.535625001717037,0.01792481250360578
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Project_InputsMap.py,Project_InputsMap,FUNCTION,13,2,A,19.0,33.0,977.0497915856675,13.658536585365853,13345.070324096921,741.3927957831623,0.32568326386188917
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Project_InputsMap.py,Project_InputsMap.py (module aggregate),MODULE_AGG,1,2,A,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Proj_properties.py,<module>,FUNCTION,1,1,A,2.0,,34.86917501586544,1.5,52.303762523798156,2.905764584655453,0.011623058338621813
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Proj_properties.py,Proj_properties,FUNCTION,12,18,C,53.0,74.0,3171.5681402914265,49.819148936170215,158004.82554239096,8778.045863466165,1.0571893800971421
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Proj_properties.py,Proj_properties.py (module aggregate),MODULE_AGG,1,18,C,,,,,,,
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Proj_topo.py,<module>,FUNCTION,1,1,A,2.0,,34.86917501586544,1.5,52.303762523798156,2.905764584655453,0.011623058338621813
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Proj_topo.py,Proj_topo,FUNCTION,13,2,A,12.0,27.0,597.2504507314341,12.75,7614.943246825785,423.0524026014325,0.1990834835771447
+./models/02_CWatM/Toolkit/preprocessing_forModFlow/Proj_topo.py,Proj_topo.py (module aggregate),MODULE_AGG,1,2,A,,,,,,,
+./models/02_CWatM/Toolkit/pytesting/conftest.py,<module>,FUNCTION,1,1,A,5.0,,62.907475208398566,2.0,125.81495041679713,6.989719467599841,0.02096915840279952
+./models/02_CWatM/Toolkit/pytesting/conftest.py,pytest_addoption,FUNCTION,11,1,A,3.0,3.0,93.20902501875005,8.4,782.9558101575005,43.49754500875003,0.03106967500625002
+./models/02_CWatM/Toolkit/pytesting/conftest.py,pytest_configure,FUNCTION,16,2,A,26.0,28.0,944.4816700242525,14.5,13694.98421535166,760.8324564084255,0.3148272233414175
+./models/02_CWatM/Toolkit/pytesting/conftest.py,pytest_html_report_title,FUNCTION,54,1,A,2.0,2.0,36.541209043760986,3.75,137.0295339141037,7.6127518841168715,0.012180403014586996
+./models/02_CWatM/Toolkit/pytesting/conftest.py,pytest_html_results_table_header,FUNCTION,61,1,A,2.0,3.0,51.89147427955946,5.25,272.43023996768716,15.135013331538175,0.017297158093186486
+./models/02_CWatM/Toolkit/pytesting/conftest.py,pytest_html_results_table_row,FUNCTION,66,1,A,3.0,3.0,78.13781191217038,6.75,527.43023040715,29.30167946706389,0.026045937304056792
+./models/02_CWatM/Toolkit/pytesting/conftest.py,pytest_runtest_makereport,FUNCTION,72,1,A,4.0,4.0,110.36149671375915,5.333333333333333,588.5946491400488,32.69970273000271,0.03678716557125305
+./models/02_CWatM/Toolkit/pytesting/conftest.py,conftest.py (module aggregate),MODULE_AGG,1,7,B,,,,,,,
+./models/02_CWatM/Toolkit/pytesting/test_cwatm3.py,<module>,FUNCTION,1,34,E,110.0,,5530.726961752813,55.32432432432432,305983.7321812975,16999.096232294305,1.8435756539176043
+./models/02_CWatM/Toolkit/pytesting/test_cwatm3.py,replace_setting,FUNCTION,48,3,A,20.0,32.0,703.2762043599083,20.454545454545453,14385.195089179942,799.1775049544412,0.23442540145330276
+./models/02_CWatM/Toolkit/pytesting/test_cwatm3.py,cwatm,FUNCTION,190,7,B,19.0,33.0,904.7368752524046,36.5,33022.89594671277,1834.6053303729318,0.3015789584174682
+./models/02_CWatM/Toolkit/pytesting/test_cwatm3.py,test_cwatm_without_settings,FUNCTION,229,2,A,1.0,1.0,15.509775004326936,2.0,31.019550008653873,1.723308333814104,0.005169925001442312
+./models/02_CWatM/Toolkit/pytesting/test_cwatm3.py,test_cwatm,FUNCTION,242,1,A,1.0,1.0,44.37895002019237,3.75,166.42106257572138,9.245614587540077,0.014792983340064124
+./models/02_CWatM/Toolkit/pytesting/test_cwatm3.py,test_cwatm3.py (module aggregate),MODULE_AGG,1,13,C,,,,,,,
+./models/02_CWatM/Tutorials/08_Inputs/tif2netcdf.py,<module>,FUNCTION,1,3,A,48.0,,1992.8381199409785,23.033898305084744,45902.83059321677,2550.1572551787094,0.6642793733136595
+./models/02_CWatM/Tutorials/08_Inputs/tif2netcdf.py,ConvertMapsToNetCDF4,CLASS,22,6,B,67.0,90.0,3108.842930258243,41.983333333333334,130519.58902200857,7251.088279000476,1.0362809767527477
+./models/02_CWatM/Tutorials/08_Inputs/tif2netcdf.py,ConvertMapsToNetCDF4.__init__,METHOD,23,2,A,15.0,21.0,534.7057766519961,27.09375,14487.184636165019,804.8435908980566,0.1782352588839987
+./models/02_CWatM/Tutorials/08_Inputs/tif2netcdf.py,ConvertMapsToNetCDF4.writeToNetCDF,METHOD,46,7,B,51.0,66.0,2301.060953992628,29.5,67881.29814278253,3771.183230154585,0.7670203179975427
+./models/02_CWatM/Tutorials/08_Inputs/tif2netcdf.py,ConvertMapsToNetCDF4 (aggregate),CLASS_AGG,23,9,B,,,,,,,
+./models/02_CWatM/Tutorials/08_Inputs/tif2netcdf.py,tif2netcdf.py (module aggregate),MODULE_AGG,1,9,B,,,,,,,
+./models/02_CWatM/Tutorials/09_Calibration/calibration_single.py,<module>,FUNCTION,1,50,F,253.0,,21209.9578433801,88.84615384615385,1884423.177623386,104690.17653463256,7.069985947793366
+./models/02_CWatM/Tutorials/09_Calibration/calibration_single.py,RunModel,FUNCTION,162,13,C,70.0,107.0,5642.929616612159,46.8421052631579,264326.703093938,14684.816838552111,1.8809765388707198
+./models/02_CWatM/Tutorials/09_Calibration/calibration_single.py,checkBounds,FUNCTION,299,1,A,13.0,13.0,412.1788100311156,21.576923076923077,8893.55047797907,494.0861376655039,0.13739293667703853
+./models/02_CWatM/Tutorials/09_Calibration/calibration_single.py,calibration_single.py (module aggregate),MODULE_AGG,1,14,C,,,,,,,
+./models/02_CWatM/Tutorials/09_Calibration/Cali_plot.py,<module>,FUNCTION,1,9,B,164.0,,17374.810610002285,69.65721649484537,1210280.9442178656,67237.83023432587,5.791603536667428
+./models/02_CWatM/Tutorials/09_Calibration/Cali_plot.py,Cali_plot.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,<module>,FUNCTION,1,1,A,6.0,,129.26767504471167,3.076923076923077,397.74669244526666,22.09703846918148,0.043089225014903886
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,filter_nan,FUNCTION,45,1,A,6.0,18.0,307.60221301187687,11.916666666666666,3665.5930383915324,203.64405768841846,0.10253407100395896
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,RSR,FUNCTION,66,1,A,5.0,15.0,262.36659345130676,11.458333333333334,3006.2838832962234,167.01577129423464,0.08745553115043558
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,br,FUNCTION,82,1,A,6.0,13.0,271.4137173634208,17.55,4763.3107397280355,264.6283744293353,0.09047123912114027
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,pc_bias,FUNCTION,96,1,A,6.0,13.0,232.7928234072743,19.5,4539.460056441849,252.1922253578805,0.07759760780242476
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,pc_bias2,FUNCTION,110,1,A,3.0,13.0,150.11730005192322,9.375,1407.3496879867803,78.18609377704335,0.05003910001730774
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,apb,FUNCTION,124,1,A,6.0,13.0,249.72817064368866,18.055555555555554,4508.980858844378,250.49893660246548,0.08324272354789622
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,apb2,FUNCTION,138,1,A,6.0,13.0,298.0225625468751,20.3,6049.858019701565,336.10322331675366,0.0993408541822917
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,rmse,FUNCTION,152,1,A,3.0,13.0,120.92782504182705,6.0,725.5669502509622,40.30927501394235,0.04030927501394235
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,mae,FUNCTION,166,1,A,3.0,13.0,92.0,5.0,460.0,25.555555555555557,0.030666666666666665
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,bias,FUNCTION,180,1,A,6.0,13.0,210.83123629338053,14.666666666666668,3092.191465636248,171.7884147575693,0.07027707876446018
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,NS,FUNCTION,194,1,A,3.0,14.0,169.9171005377434,8.88888888888889,1510.3742270021637,83.90967927789798,0.056639033512581136
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,NSlog,FUNCTION,209,1,A,5.0,15.0,245.9697756756106,13.2,3246.80103891806,180.37783549544778,0.08198992522520354
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,correlation,FUNCTION,225,2,A,7.0,18.0,192.56842503028855,11.227272727272727,2162.018226476421,120.1121236931345,0.06418947501009618
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,index_agreement,FUNCTION,245,1,A,5.0,15.0,316.6493369239909,15.272727272727273,4836.098963930043,268.6721646627802,0.10554977897466364
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,rmseglobal,FUNCTION,261,1,A,3.0,3.0,116.75790004038474,7.5,875.6842503028855,48.64912501682697,0.03891930001346158
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,KGEglobal,FUNCTION,265,2,A,17.0,21.0,1828.6094054870107,39.65625,72515.79173634427,4028.6550964635703,0.6095364684956702
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,rankObj,FUNCTION,288,4,A,18.0,20.0,819.5769266126539,27.40909090909091,22463.85848851956,1247.9921382510865,0.27319230887088464
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,rankB,FUNCTION,309,4,A,19.0,21.0,873.5554224901592,26.625,23258.41312380049,1292.1340624333604,0.2911851408300531
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,KGE,FUNCTION,333,1,A,7.0,19.0,519.1943315822213,23.0,11941.469626391088,663.4149792439493,0.17306477719407376
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,vr,FUNCTION,353,1,A,6.0,13.0,357.6270750562502,19.5,6973.727963596879,387.4293313109377,0.11920902501875007
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,budykoFunc,FUNCTION,367,1,A,2.0,2.0,109.39293667703852,15.125,1654.5681672402077,91.9204537355671,0.03646431222567951
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,budykoDist,FUNCTION,370,1,A,2.0,2.0,113.29982727264704,8.25,934.7235749993381,51.92908749996323,0.03776660909088234
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,iter1,FUNCTION,374,3,A,9.0,9.0,267.9250639340422,15.75,4219.819756961165,234.43443094228692,0.08930835464468073
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,Budyko,FUNCTION,384,4,A,14.0,17.0,703.2762043599083,22.095238095238095,15539.055182047498,863.2808434470832,0.23442540145330276
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,budw,FUNCTION,402,3,A,13.0,21.0,723.7822209046814,23.318181818181817,16877.285423822796,937.6269679901553,0.24126074030156044
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,budw1d,FUNCTION,424,2,A,8.0,14.0,543.7039997961664,20.305555555555554,11040.211773638823,613.3450985354901,0.18123466659872212
+./models/02_CWatM/Tutorials/09_Calibration/hydroStats.py,hydroStats.py (module aggregate),MODULE_AGG,1,42,F,,,,,,,
+./models/02_CWatM/Tutorials/09_Calibration/Violin_plots.py,<module>,FUNCTION,1,21,D,126.0,,10025.190563965234,54.71484375,548526.7352713322,30473.707515074013,3.341730187988411
+./models/02_CWatM/Tutorials/09_Calibration/Violin_plots.py,Violin_plots.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/Tutorials/09_Calibration/Violin_plots_V2.py,<module>,FUNCTION,1,21,D,111.0,,8608.710998927907,49.48770491803278,426025.3496395675,23668.074979975972,2.869570332975969
+./models/02_CWatM/Tutorials/09_Calibration/Violin_plots_V2.py,Violin_plots_V2.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/Tutorials/09_Calibration_renovation/calibration_single.py,<module>,FUNCTION,1,50,F,253.0,,21138.05968119915,88.54751131221718,1871722.5787393036,103984.58770773909,7.04601989373305
+./models/02_CWatM/Tutorials/09_Calibration_renovation/calibration_single.py,RunModel,FUNCTION,163,13,C,70.0,107.0,5642.929616612159,46.8421052631579,264326.703093938,14684.816838552111,1.8809765388707198
+./models/02_CWatM/Tutorials/09_Calibration_renovation/calibration_single.py,checkBounds,FUNCTION,300,1,A,13.0,13.0,412.1788100311156,21.576923076923077,8893.55047797907,494.0861376655039,0.13739293667703853
+./models/02_CWatM/Tutorials/09_Calibration_renovation/calibration_single.py,calibration_single.py (module aggregate),MODULE_AGG,1,14,C,,,,,,,
+./models/02_CWatM/Tutorials/09_Calibration_renovation/Cali_plot.py,<module>,FUNCTION,1,9,B,164.0,,17374.810610002285,69.65721649484537,1210280.9442178656,67237.83023432587,5.791603536667428
+./models/02_CWatM/Tutorials/09_Calibration_renovation/Cali_plot.py,Cali_plot.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,<module>,FUNCTION,1,1,A,6.0,,129.26767504471167,3.076923076923077,397.74669244526666,22.09703846918148,0.043089225014903886
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,filter_nan,FUNCTION,45,1,A,6.0,18.0,307.60221301187687,11.916666666666666,3665.5930383915324,203.64405768841846,0.10253407100395896
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,RSR,FUNCTION,66,1,A,5.0,15.0,262.36659345130676,11.458333333333334,3006.2838832962234,167.01577129423464,0.08745553115043558
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,br,FUNCTION,82,1,A,6.0,13.0,271.4137173634208,17.55,4763.3107397280355,264.6283744293353,0.09047123912114027
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,pc_bias,FUNCTION,96,1,A,6.0,13.0,232.7928234072743,19.5,4539.460056441849,252.1922253578805,0.07759760780242476
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,pc_bias2,FUNCTION,110,1,A,3.0,13.0,150.11730005192322,9.375,1407.3496879867803,78.18609377704335,0.05003910001730774
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,apb,FUNCTION,124,1,A,6.0,13.0,249.72817064368866,18.055555555555554,4508.980858844378,250.49893660246548,0.08324272354789622
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,apb2,FUNCTION,138,1,A,6.0,13.0,298.0225625468751,20.3,6049.858019701565,336.10322331675366,0.0993408541822917
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,rmse,FUNCTION,152,1,A,3.0,13.0,120.92782504182705,6.0,725.5669502509622,40.30927501394235,0.04030927501394235
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,mae,FUNCTION,166,1,A,3.0,13.0,92.0,5.0,460.0,25.555555555555557,0.030666666666666665
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,bias,FUNCTION,180,1,A,6.0,13.0,210.83123629338053,14.666666666666668,3092.191465636248,171.7884147575693,0.07027707876446018
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,NS,FUNCTION,194,1,A,3.0,14.0,169.9171005377434,8.88888888888889,1510.3742270021637,83.90967927789798,0.056639033512581136
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,NSlog,FUNCTION,209,1,A,5.0,15.0,245.9697756756106,13.2,3246.80103891806,180.37783549544778,0.08198992522520354
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,correlation,FUNCTION,225,2,A,7.0,18.0,192.56842503028855,11.227272727272727,2162.018226476421,120.1121236931345,0.06418947501009618
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,index_agreement,FUNCTION,245,1,A,5.0,15.0,316.6493369239909,15.272727272727273,4836.098963930043,268.6721646627802,0.10554977897466364
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,rmseglobal,FUNCTION,261,1,A,3.0,3.0,116.75790004038474,7.5,875.6842503028855,48.64912501682697,0.03891930001346158
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,KGEglobal,FUNCTION,265,2,A,17.0,21.0,1828.6094054870107,39.65625,72515.79173634427,4028.6550964635703,0.6095364684956702
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,rankObj,FUNCTION,288,4,A,18.0,20.0,819.5769266126539,27.40909090909091,22463.85848851956,1247.9921382510865,0.27319230887088464
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,rankB,FUNCTION,309,4,A,19.0,21.0,873.5554224901592,26.625,23258.41312380049,1292.1340624333604,0.2911851408300531
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,KGE,FUNCTION,333,1,A,7.0,19.0,519.1943315822213,23.0,11941.469626391088,663.4149792439493,0.17306477719407376
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,vr,FUNCTION,353,1,A,6.0,13.0,357.6270750562502,19.5,6973.727963596879,387.4293313109377,0.11920902501875007
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,budykoFunc,FUNCTION,367,1,A,2.0,2.0,109.39293667703852,15.125,1654.5681672402077,91.9204537355671,0.03646431222567951
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,budykoDist,FUNCTION,370,1,A,2.0,2.0,113.29982727264704,8.25,934.7235749993381,51.92908749996323,0.03776660909088234
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,iter1,FUNCTION,374,3,A,9.0,9.0,267.9250639340422,15.75,4219.819756961165,234.43443094228692,0.08930835464468073
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,Budyko,FUNCTION,384,4,A,14.0,17.0,703.2762043599083,22.095238095238095,15539.055182047498,863.2808434470832,0.23442540145330276
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,budw,FUNCTION,402,3,A,13.0,21.0,723.7822209046814,23.318181818181817,16877.285423822796,937.6269679901553,0.24126074030156044
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,budw1d,FUNCTION,424,2,A,8.0,14.0,543.7039997961664,20.305555555555554,11040.211773638823,613.3450985354901,0.18123466659872212
+./models/02_CWatM/Tutorials/09_Calibration_renovation/hydroStats.py,hydroStats.py (module aggregate),MODULE_AGG,1,42,F,,,,,,,
+./models/02_CWatM/Tutorials/09_Calibration_renovation/Violin_plots.py,<module>,FUNCTION,1,21,D,126.0,,10025.190563965234,54.71484375,548526.7352713322,30473.707515074013,3.341730187988411
+./models/02_CWatM/Tutorials/09_Calibration_renovation/Violin_plots.py,Violin_plots.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/02_CWatM/Tutorials/09_Calibration_renovation/Violin_plots_V2.py,<module>,FUNCTION,1,21,D,111.0,,8608.710998927907,49.48770491803278,426025.3496395675,23668.074979975972,2.869570332975969
+./models/02_CWatM/Tutorials/09_Calibration_renovation/Violin_plots_V2.py,Violin_plots_V2.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,

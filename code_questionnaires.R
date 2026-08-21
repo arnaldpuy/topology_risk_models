@@ -1,0 +1,314 @@
+## ----setup, include=FALSE-----------------------------------------------------
+knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
+
+
+## ----preliminary, warning=FALSE, message=FALSE, results="hide"----------------
+
+# PRELIMINARY FUNCTIONS ########################################################
+################################################################################
+
+sensobol::load_packages(c("data.table", "readxl", "ggplot2", "cowplot",
+                          "softwareRisk", "parallel", "benchmarkme"))
+
+theme_AP <- softwareRisk::theme_AP
+
+# Load data --------------------------------------------------------------------
+
+tidy <- as.data.table(read_excel("./questionnaire_data/questionnaire_analysis.xlsx",
+                                 sheet = "1_TidyData"))
+
+setnames(tidy,
+  old = seq_len(14),
+  new = c("model", "respondent_id", "path_num", "path_name",
+          "path_type", "familiarity_text", "familiarity_num",
+          "q1_real_execution", "q2_central_workflow",
+          "q3_maintenance", "q4_system_consequences",
+          "mean_likert", "excluded_unfamiliar", "comment"))
+
+usable <- tidy[excluded_unfamiliar == FALSE]
+
+usable[, path_type := factor(path_type, levels = c("high_risk", "low_risk"),
+                             labels = c("High-risk", "Low-risk"))]
+usable[, model := factor(model, levels = c("CTSM","H08","HyrdroPy","HYPE","PCRGLOBWB"),
+                             labels = c("CTSM","H08","HydroPy","HYPE","PCR-GLOBWB"))]
+
+q_cols  <- c("q1_real_execution","q2_central_workflow",
+             "q3_maintenance","q4_system_consequences")
+q_names <- c("Q1: Real execution chain",
+             "Q2: Central to workflow",
+             "Q3: Maintenance relevance",
+             "Q4: System-wide consequences")
+
+
+## ----sample_summary, dependson="preliminary"----------------------------------
+
+# SAMPLE #######################################################################
+
+cat("----------------------------------------------------------------\n")
+cat("SAMPLE\n")
+cat("----------------------------------------------------------------\n")
+cat("Total records (all)  :", nrow(tidy), "\n")
+cat("Excluded (unfamiliar):", nrow(tidy[excluded_unfamiliar == TRUE]), "\n")
+cat("Usable records       :", nrow(usable), "\n\n")
+
+print(usable[, .N, by = .(model, path_type)])
+
+
+## ----descriptives, dependson="preliminary"------------------------------------
+
+# DESCRIPTIVE STATISTICS #######################################################
+
+cat("----------------------------------------------------------------\n")
+cat("DESCRIPTIVES: mean_likert (all models pooled)\n")
+cat("----------------------------------------------------------------\n")
+desc <- usable[, .(
+  N      = sum(!is.na(mean_likert)),
+  Mean   = round(mean(mean_likert, na.rm = TRUE), 3),
+  Median = round(median(mean_likert, na.rm = TRUE), 3),
+  SD     = round(sd(mean_likert, na.rm = TRUE), 3),
+  Q25    = round(quantile(mean_likert, .25, na.rm = TRUE), 3),
+  Q75    = round(quantile(mean_likert, .75, na.rm = TRUE), 3)
+), by = path_type]
+print(desc)
+cat("\n")
+
+cat("Per-question means by path type:\n")
+for (i in seq_along(q_cols)) {
+  hr <- usable[path_type == "High-risk",  get(q_cols[i])]
+  lr <- usable[path_type == "Low-risk",   get(q_cols[i])]
+  cat(sprintf("  %-35s  High = %.3f  Low = %.3f  Diff = %+.3f\n",
+              q_names[i], mean(hr, na.rm=T), mean(lr, na.rm=T),
+              mean(hr, na.rm=T) - mean(lr, na.rm=T)))
+}
+
+
+## ----primary_test, dependson="preliminary"------------------------------------
+
+# PRIMARY TEST #################################################################
+
+cat("----------------------------------------------------------------\n")
+cat("PRIMARY: Wilcoxon rank-sum, mean_likert, all models pooled\n")
+cat("H1: high-risk > low-risk (one-sided)\n")
+cat("----------------------------------------------------------------\n")
+
+hr_all <- usable[path_type == "High-risk", mean_likert]
+lr_all <- usable[path_type == "Low-risk",  mean_likert]
+
+wt_all <- wilcox.test(hr_all, lr_all, alternative = "greater", exact = FALSE)
+A_all  <- wt_all$statistic / (length(hr_all) * length(lr_all))
+
+cat(sprintf("  W = %.0f\n  p = %.4f (one-sided, high > low)\n  A = %.3f\n",
+            wt_all$statistic, wt_all$p.value, A_all))
+cat(sprintf("  n_high = %d, n_low = %d\n", length(hr_all), length(lr_all)))
+
+
+## ----per_question_tests, dependson="preliminary"------------------------------
+
+# PER-QUESTION TESTS ###########################################################
+
+cat("----------------------------------------------------------------\n")
+cat("PER-QUESTION Wilcoxon rank-sum (one-sided), all models\n")
+cat("----------------------------------------------------------------\n")
+
+pq_results <- lapply(seq_along(q_cols), function(i) {
+  hr <- usable[path_type == "High-risk", get(q_cols[i])]
+  lr <- usable[path_type == "Low-risk",  get(q_cols[i])]
+  wt <- wilcox.test(hr, lr, alternative = "greater", exact = FALSE)
+  A  <- wt$statistic / (sum(!is.na(hr)) * sum(!is.na(lr)))
+  list(q = q_names[i], W = wt$statistic, p = wt$p.value, A = A,
+       mean_hr = mean(hr, na.rm=T), mean_lr = mean(lr, na.rm=T))
+})
+
+raw_p <- sapply(pq_results, `[[`, "p")
+adj_p <- p.adjust(raw_p, method = "BH")
+
+for (i in seq_along(pq_results)) {
+  r <- pq_results[[i]]
+  cat(sprintf("  %-35s W=%5.0f  p=%.4f  p_BH=%.4f  A=%.3f  Diff=%+.3f\n",
+              r$q, r$W, r$p, adj_p[i], r$A, r$mean_hr - r$mean_lr))
+}
+
+
+## ----per_model_tests, dependson="preliminary"---------------------------------
+
+# PER-MODEL TESTS ##############################################################
+
+cat("----------------------------------------------------------------\n")
+cat("PER-MODEL Wilcoxon rank-sum, mean_likert (two-sided)\n")
+cat("----------------------------------------------------------------\n")
+
+for (m in levels(usable$model)) {
+  sub_m <- usable[model == m]
+  hr_m  <- sub_m[path_type == "High-risk", mean_likert]
+  lr_m  <- sub_m[path_type == "Low-risk",  mean_likert]
+  wt_m  <- wilcox.test(hr_m, lr_m, alternative = "two.sided", exact = FALSE)
+  A_m   <- wt_m$statistic / (length(hr_m) * length(lr_m))
+  cat(sprintf("  %-12s  W=%5.0f  p=%.4f  A=%.3f  mean_high=%.2f  mean_low=%.2f  n_high=%d  n_low=%d\n",
+              m, wt_m$statistic, wt_m$p.value, A_m,
+              mean(hr_m, na.rm=T), mean(lr_m, na.rm=T),
+              length(hr_m), length(lr_m)))
+}
+
+
+## ----sensitivity, dependson="preliminary"-------------------------------------
+
+# SENSITIVITY: EXCLUDE HYPE ####################################################
+
+cat("----------------------------------------------------------------\n")
+cat("SENSITIVITY: Exclude HYPE (deprecated calibration paths)\n")
+cat("----------------------------------------------------------------\n")
+
+no_hype <- usable[model != "HYPE"]
+hr_nh   <- no_hype[path_type == "High-risk", mean_likert]
+lr_nh   <- no_hype[path_type == "Low-risk",  mean_likert]
+wt_nh   <- wilcox.test(hr_nh, lr_nh, alternative = "greater", exact = FALSE)
+A_nh    <- wt_nh$statistic / (length(hr_nh) * length(lr_nh))
+
+cat(sprintf("  W = %.0f\n  p = %.4f (one-sided)\n  A = %.3f\n",
+            wt_nh$statistic, wt_nh$p.value, A_nh))
+cat(sprintf("  n_high = %d, n_low = %d\n", length(hr_nh), length(lr_nh)))
+cat(sprintf("  mean_high = %.3f, mean_low = %.3f\n\n",
+            mean(hr_nh, na.rm=T), mean(lr_nh, na.rm=T)))
+
+cat("Per-question (excluding HYPE):\n")
+for (i in seq_along(q_cols)) {
+  hr <- no_hype[path_type == "High-risk", get(q_cols[i])]
+  lr <- no_hype[path_type == "Low-risk",  get(q_cols[i])]
+  wt <- wilcox.test(hr, lr, alternative = "greater", exact = FALSE)
+  A  <- wt$statistic / (sum(!is.na(hr)) * sum(!is.na(lr)))
+  cat(sprintf("  %-35s p=%.4f  A=%.3f  Diff=%+.3f\n",
+              q_names[i], wt$p.value, A, mean(hr,na.rm=T)-mean(lr,na.rm=T)))
+}
+
+
+## ----familiarity, dependson="preliminary"-------------------------------------
+
+# FAMILIARITY CORRELATION ######################################################
+
+cat("----------------------------------------------------------------\n")
+cat("FAMILIARITY CORRELATION with mean_likert\n")
+cat("----------------------------------------------------------------\n")
+fam_cor <- cor.test(usable$familiarity_num, usable$mean_likert,
+                    method = "spearman", exact = FALSE)
+cat(sprintf("  Spearman rho = %.3f,  p = %.4f\n",
+            fam_cor$estimate, fam_cor$p.value))
+
+
+## ----plot_p1, dependson=c("preliminary", "primary_test"), fig.height=3.5, fig.width=3----
+
+# PLOT DISTRIBUTIONS ###########################################################
+
+p1 <- ggplot(usable, aes(x = path_type, y = mean_likert,
+                          fill = path_type, colour = path_type)) +
+  geom_violin(alpha = 0.35, trim = FALSE, width = 0.8) +
+  geom_boxplot(width = 0.15, outlier.shape = NA, alpha = 0.8,
+               colour = "grey30") +
+  geom_jitter(width = 0.08, size = 1.5, alpha = 0.6) +
+  scale_fill_manual(values   = c("High-risk" = "#2471A3",
+                                 "Low-risk"  = "#E67E22")) +
+  scale_colour_manual(values = c("High-risk" = "#2471A3",
+                                 "Low-risk"  = "#E67E22")) +
+  scale_y_continuous(limits = c(0.5, 5.5), breaks = 1:5) +
+  labs(x = NULL, y = "Mean Likert score",
+       title = "All models",
+       subtitle = sprintf("Wilcoxon W = %.0f, p = %.3f, \nA = %.3f",
+                          wt_all$statistic, wt_all$p.value, A_all)) +
+  theme_AP() +
+  theme(legend.position = "none",
+        plot.title    = element_text(face = "bold"),
+        plot.subtitle = element_text(size = 6, colour = "grey40"))
+
+p1
+
+
+## ----plot_p3, dependson="preliminary", fig.height=3.5, fig.width=4.5----------
+
+# PLOT PER QUESTION ############################################################
+
+q_long <- melt(usable, measure.vars = q_cols,
+               variable.name = "question", value.name = "score")
+q_long[, question := factor(question, levels = q_cols, labels = q_names)]
+q_long <- q_long[!is.na(score)]
+
+q_desc <- q_long[, .(mean  = mean(score),
+                      lower = mean(score) - 1.96 * sd(score) / sqrt(.N),
+                      upper = mean(score) + 1.96 * sd(score) / sqrt(.N)),
+                 by = .(question, path_type)]
+
+p3 <- ggplot(q_desc, aes(x = question, y = mean, fill = path_type,
+                          ymin = lower, ymax = upper)) +
+  geom_col(position = position_dodge(0.7), width = 0.65, alpha = 0.85) +
+  geom_errorbar(position = position_dodge(0.7), width = 0.2,
+                linewidth = 0.5) +
+  scale_fill_manual(values = c("High-risk" = "#2471A3",
+                                "Low-risk"  = "#E67E22"),
+                    name = "Path type") +
+  scale_y_continuous(limits = c(0, 5.5), breaks = 0:5) +
+  scale_x_discrete(labels = function(x) sub("Q\\d+: ", "", x),
+                   guide = guide_axis(n.dodge=2)) +
+  labs(x = NULL, y = "Mean Likert score",
+       title = "Per question, all models") +
+  theme_AP() +
+  theme(legend.position = "bottom")
+
+p3
+
+
+## ----plot_p4, dependson="preliminary", fig.height=3.5, fig.width=9------------
+
+# PLOT PER MODEL ###############################################################
+
+p4 <- ggplot(usable,
+             aes(x = path_type, y = mean_likert, fill = path_type)) +
+  geom_boxplot(width = 0.5, outlier.shape = 21, outlier.size = 1.5,
+               alpha = 0.7) +
+  geom_jitter(width = 0.12, size = 1.2, alpha = 0.55) +
+  scale_fill_manual(values = c("High-risk" = "#2471A3",
+                                "Low-risk"  = "#E67E22"),
+                    name = "Path type") +
+  scale_y_continuous(limits = c(0.5, 5.5), breaks = 1:5) +
+  facet_wrap(~model, nrow = 1) +
+  geom_text(data = data.frame(model = factor("HYPE", levels = levels(usable$model)),
+                              x = 1.5, y = 4.7),
+            aes(x = x, y = y, label = "Deprecated\ncalibration paths"),
+            inherit.aes = FALSE,
+            size = 2.5, colour = "firebrick", fontface = "italic") +
+  labs(x = NULL, y = "Mean Likert score",
+       title = "Per model") +
+  theme_AP() +
+  theme(axis.text.x      = element_blank(),
+        axis.ticks.x     = element_blank(),
+        legend.position  = "none")
+
+p4
+
+
+## ----merged_figure, dependson=c("plot_p1", "plot_p3", "plot_p4"), fig.height=4, fig.width=5.5----
+
+# ASSEMBLE FIGURE ##############################################################
+
+top  <- plot_grid(p1, p3, nrow = 1, rel_widths = c(0.3, 0.7),
+                  labels = c("a","b"))
+full <- plot_grid(top, p4, ncol = 1, rel_heights = c(0.6, 0.4),
+                  labels = c("","c"))
+full
+
+
+## ----session_information------------------------------------------------------
+
+# SESSION INFORMATION ##########################################################
+
+sessionInfo()
+
+## Return the machine CPU ------------------------------------------------------
+
+cat("Machine:     "); print(get_cpu()$model_name)
+
+## Return number of true cores -------------------------------------------------
+
+cat("Num cores:   "); print(parallel::detectCores(logical = FALSE))
+
+## Return number of threads ---------------------------------------------------
+
+cat("Num threads: "); print(parallel::detectCores(logical = FALSE))
+

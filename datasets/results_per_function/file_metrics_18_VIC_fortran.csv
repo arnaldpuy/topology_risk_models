@@ -1,0 +1,5 @@
+file,total_lines,include_lines,code_lines,comment_lines,preproc_lines,blank_lines_raw,inline_comment_count,comments_per_loc,function_count,avg_func_loc,module_count
+./models/18_VIC/vic/drivers/cesm/cpl_mct/lnd_comp_mct.F90,741,0,508,199,0,110,199,0.3917,8,48.88,1
+./models/18_VIC/vic/drivers/cesm/src/cesm_def_mod_f.F90,173,0,118,144,0,12,144,1.2203,0,0.0,1
+./models/18_VIC/vic/drivers/cesm/src/cesm_interface_f.F90,80,0,48,24,0,9,24,0.5,0,0.0,1
+./models/18_VIC/vic/drivers/cesm/src/cesm_print_library_f.F90,201,0,135,28,0,41,28,0.2074,7,17.14,1

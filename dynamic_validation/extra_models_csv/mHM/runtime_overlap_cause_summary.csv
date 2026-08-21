@@ -1,0 +1,6 @@
+cause,count,example_caller,example_callee,example_runtime_calls
+both_symbols_missing_in_static,63,add_option,new_option,8
+callee_missing_in_static,199,caldat,selectcalendar,35069
+caller_missing_in_static,25,getvariableshape,getdimensionlength,41
+edge_not_in_static_but_symbols_present,114,chunk_config,chunk_size,1
+matched,319,caldat,caldatjulian,35069

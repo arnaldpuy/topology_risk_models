@@ -1,8 +1,9 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17962642.svg)](https://doi.org/10.5281/zenodo.17962642)
 # The topology of software risk in scientific models
 
-[Arnald Puy](https://www.arnaldpuy.com/), Federico Díaz, Ulrike Proske, Olivia Richards,
-Seth N. Linga, Samuel Flinders, Carmen Aguiló-Rivera, and Fernando G. Tinetti.
+[Arnald Puy](https://www.arnaldpuy.com/), Federico Díaz, Olivia Richards, Ulrike Proske,
+Seth N. Linga, Samuel Flinders, Carmen Aguiló-Rivera, Warrick Ball, Matthew Barton and
+Fernando G. Tinetti.
 
 This study proposes a framework to identify risky paths in scientific models: sequences of
 function calls whose potential failure can cascade into other parts of the software. Node
@@ -22,7 +23,8 @@ All analyses rely on the `softwareRisk` R package (available on [CRAN](https://c
 `all_paths_fun()` and `uncertainty_fun()`. Additional R packages are loaded automatically
 via `sensobol::load_packages()` at the top of each script. The key packages are:
 `data.table`, `tidyverse`, `tidygraph`, `igraph`, `ggraph`, `sensobol`, `softwareRisk`,
-`cowplot`, `openxlsx`, `scales`, and `benchmarkme`.
+`cowplot`, `openxlsx`, `readxl`, `scales`, `here`, `boot`, `MatchIt`, `effsize` and
+`benchmarkme`.
 
 ## Models
 
@@ -55,16 +57,29 @@ The fourteen models used in this study are:
 │   ├── descriptive_statistics/        # Lines of code, files, functions per model
 │   ├── git_logs/                      # Git commit history per function
 │   └── results_per_function/          # Function-level metrics
+├── dynamic_validation/                # Runtime (dynamic) validation data and outputs
+│   ├── callgraph_csv/                 # Drift-corrected static + runtime call graphs (ORCHIDEE, PCR-GLOBWB)
+│   ├── extra_models_csv/              # gprof-profiled call graphs (HYPE, mHM, SWAT+)
+│   └── results/                       # Per-model joined paths and synthesis tables
 ├── functions/                         # Custom R functions sourced by all scripts
+│   ├── build_static_fun.R
 │   ├── extract_sa_fun.R
 │   ├── get_legend_fun.R
+│   ├── join_runtime_fun.R
+│   ├── load_edges_fun.R
+│   ├── norm_name_fun.R
 │   ├── to_tex_list_fun.R
 │   ├── unnest_paths_tbl_fun.R
 │   └── unnest_us_fun.R
+├── questionnaire_data/                # Expert questionnaire materials
+│   ├── questionnaire_template.pdf     # Questionnaire sent to participants
+│   └── questionnaire_analysis.xlsx    # Collected responses and results
 ├── code_synthetic_example.*           # Analysis 1: synthetic example
 ├── code_uncertainty_analysis.*        # Analysis 2: uncertainty & sensitivity
 ├── code_hydrological_models.*         # Analysis 3: domain models
 ├── code_scalability_test.*            # Analysis 4: scalability benchmark
+├── code_questionnaires.*              # Analysis 5: expert questionnaire validation
+├── code_dynamic_validation.*          # Analysis 6: dynamic profiling validation
 └── README.md
 ```
 
@@ -105,6 +120,27 @@ Reports wall-clock times for graph generation, path enumeration and uncertainty 
 as well as rank-stability metrics (top-1 stability, top-10 Jaccard similarity) across
 graph sizes.
 
+### 5. Expert questionnaire validation (`code_questionnaires`)
+
+Tests whether execution paths ranked as high-risk by the framework are perceived as more
+critical by model maintainers and contributors than low-risk paths. Includes descriptive
+statistics, Wilcoxon rank-sum tests (pooled and per model), Benjamini–Hochberg correction,
+a sensitivity analysis excluding HYPE (deprecated calibration paths), and a familiarity
+moderator analysis.
+
+### 6. Dynamic profiling validation (`code_dynamic_validation`)
+
+Validates the static risk rankings against runtime behaviour for five models (ORCHIDEE,
+PCR-GLOBWB, HYPE, mHM and SWAT+) profiled under developer-shipped configurations. The
+static call graphs are parsed from the same code that was compiled and run, and each
+execution path is joined to its per-edge runtime call counts. Reports: 1) the rank
+correlation between the path risk score $P_k$ and runtime intensity (Spearman
+$\rho = 0.24$--$0.50$, bootstrap CIs), 2) a matched-frequency contrast showing that
+high-risk paths traverse more structurally central and more reused functions than
+low-risk paths of equal execution frequency, length and size, and 3) a check of
+cyclomatic complexity within runtime-heavy paths. VIC was excluded because its C build
+pipeline could not be profiled reliably.
+
 ## Datasets
 
 | Folder / file | Description |
@@ -114,6 +150,9 @@ graph sizes.
 | `descriptive_statistics/` | Lines of code, number of files, functions, and modules per model |
 | `results_per_function/` | File- and function-level metrics (LOC, bugs, complexity category) |
 | `git_logs/` | Git commit history linked to individual functions, used for churn analysis |
+| `dynamic_validation/callgraph_csv/` | Static call graphs parsed from the executed codebases and matched runtime traces with per-edge call counts (ORCHIDEE, PCR-GLOBWB) |
+| `dynamic_validation/extra_models_csv/` | `gprof` runtime call graphs and static/runtime overlap diagnostics (HYPE, mHM, SWAT+) |
+| `dynamic_validation/results/` | Per-model path-level joins of static risk and runtime intensity, plus cross-model synthesis tables |
 
 ## Functions
 
@@ -122,8 +161,12 @@ top of each script. Users do not need to load them manually.
 
 | File | Purpose |
 |---|---|
+| `build_static_fun.R` | Builds a call graph from an edge list and computes $P_k$ with its uncertainty ensemble |
 | `extract_sa_fun.R` | Extracts sensitivity indices from uncertainty analysis output |
 | `get_legend_fun.R` | Utility to extract ggplot legends for composite figures |
+| `join_runtime_fun.R` | Joins per-edge runtime call counts onto static execution paths |
+| `load_edges_fun.R` | Loads and normalizes static and runtime call-graph edge lists |
+| `norm_name_fun.R` | Normalizes function names across static, runtime and complexity datasets |
 | `to_tex_list_fun.R` | Formats path lists as LaTeX output |
 | `unnest_paths_tbl_fun.R` | Unnests nested path tables from `all_graphs` |
 | `unnest_us_fun.R` | Unnests uncertainty/sensitivity results from `all_graphs` |
@@ -135,8 +178,8 @@ To reproduce all results:
 1. Install `softwareRisk` and all packages listed in the Dependencies section.
 2. Set your working directory to the root of this repository (the folder containing this
    README).
-3. Run the scripts in order (1 → 2 → 3 → 4), or knit the corresponding `.Rmd`
-   files. Each script sources all functions from `functions/` automatically.
+3. Run the scripts in order (1 → 2 → 3 → 4 → 5 → 6), or knit the corresponding
+   `.Rmd` files. Each script sources all functions from `functions/` automatically.
 
 > The code must be run from the repository root so that relative paths to `datasets/` and
 > `functions/` resolve correctly.
@@ -145,9 +188,9 @@ To reproduce all results:
 
 If you use this workflow, please cite:
 
-A. Puy, F. Díaz, U. Proske, O. Richards, S. N. Linga, S. Flinders, C. Aguiló-Rivera, 
-F. G. Tinetti (2026). Code and Datasets of The Topology of Software Risk in
-Scientific Models. Zenodo. doi:10.5281/zenodo.17962642.
+A. Puy, F. Díaz, O. Richards, U. Proske, S. N. Linga, S. Flinders, C. Aguiló-Rivera,
+W. Ball, M. Barton, F. G. Tinetti (2026). Code and Datasets of The Topology of
+Software Risk in Scientific Models. Zenodo. doi:10.5281/zenodo.17962642.
 
 ## License
 

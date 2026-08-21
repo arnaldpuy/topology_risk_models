@@ -1,0 +1,2 @@
+file,total_lines,code_lines,comment_lines,blank_lines_raw,comments_per_loc,function_count,avg_func_loc
+./models/06_hbv_hydromodel/hbv_py_modular.py,180,80,60,40,0.75,2,29.5

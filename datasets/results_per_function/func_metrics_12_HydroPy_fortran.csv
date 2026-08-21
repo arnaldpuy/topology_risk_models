@@ -1,0 +1,5 @@
+file,function,type,line,do_loops,is_recursive,cyclomatic_complexity,loc,volume,difficulty,effort,time,bugs
+./models/12_hydropy/streamflow_fortran.f95,routing_cascade,SUBROUTINE,200,1,False,5,59,2017.7465659311117,27.95918367346939,56414.54684338006,3134.1414912988926,0.6725821886437039
+./models/12_hydropy/streamflow_fortran.f95,eval_flowfield,SUBROUTINE,45,2,False,4,46,1831.1360846386408,31.9468085106383,58498.953852870625,3249.9418807150346,0.6103786948795469
+./models/12_hydropy/streamflow_fortran.f95,river_routing,SUBROUTINE,116,1,False,3,25,754.2508009035917,10.88888888888889,8212.953165394665,456.2751758552592,0.25141693363453055
+./models/12_hydropy/streamflow_fortran.f95,linear_cascade,SUBROUTINE,155,1,False,3,30,977.5498511466822,17.625,17229.31612646027,957.1842292477928,0.32584995038222736

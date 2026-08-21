@@ -29,10 +29,10 @@
 
 !README.md
 
-# Include the "dataset" folder and its contents
-#!dataset/
-#!dataset/*.csv
-#!dataset/*.xlsx
+# Include the "datasets" folder and its contents
+!datasets/
+!datasets/**/*.csv
+!datasets/**/*.xlsx
 
 # Include the "functions" folder and its contents
 !functions/
@@ -53,6 +53,11 @@
 # Local-only files inside dynamic_validation/ (not tracked, not pushed)
 dynamic_validation/*.md
 dynamic_validation/analysis/
+dynamic_validation/*.zip
+
+# Superseded May-2026 runtime exports (replaced by callgraph_csv/)
+dynamic_validation/ORCHIDEE/
+dynamic_validation/PCR/
 
 # Knit-ed / rendered artefacts (local-only too)
 dynamic_validation/*.html

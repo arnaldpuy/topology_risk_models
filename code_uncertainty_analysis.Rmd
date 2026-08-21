@@ -197,16 +197,23 @@ dt_plot <- nodes_dt_unnested %>%
   .[sensitivity != "Ti"] %>%
   .[, name := factor(name, levels = unique(name[order(-original)]))]
 
+# Before plotting, convert factor levels to plotmath strings
+dt_plot <- dt_plot %>%
+  mutate(parameters = recode_factor(parameters,
+                                     "a_raw" = "alpha",
+                                     "b_raw" = "beta",
+                                     "c_raw" = "gamma",
+                                     "p_raw" = "p"))
+
+
 plot_sa <- ggplot(dt_plot, aes(x = parameters, y = name, fill = original)) +
   geom_tile() +
   scale_fill_viridis_c(name = expression(S[p]), breaks = c(0, 0.3, 0.6)) +
+  scale_x_discrete(labels = scales::label_parse()) +
   theme_AP() +
-  scale_x_discrete(labels = c("a_raw" = expression(alpha),
-                              "b_raw" = expression(beta),
-                              "c_raw" = expression(gamma),
-                              "p_raw" = expression(p))) +
   labs(x = "", y = "Node ID") +
-  theme(axis.text.y = element_text(size = 5),
+  theme(axis.text.x = element_text(),
+        axis.text.y = element_text(size = 5),
         legend.position = "top",
         plot.margin = margin(1, 0.1, 1, 1))
 

@@ -1,0 +1,6 @@
+cause,count,example_caller,example_callee,example_runtime_calls
+both_symbols_missing_in_static,23,adddates,date2julian,2
+callee_missing_in_static,71,calc_qbank,endofday,7304
+caller_missing_in_static,63,find_variable_index_type,find_variable_index,15
+edge_not_in_static_but_symbols_present,20,add_infiltration,atmdep_in_loss,4692
+matched,322,add_deposition_to_lake_as_load,add_source_to_water,3652

@@ -1,8 +1,8 @@
-## ----setup, include=FALSE-----------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
 
-## ----warning=FALSE, message=FALSE, results = "hide", cache = FALSE------------------
+## ----warning=FALSE, message=FALSE, results = "hide", cache = FALSE------------
 
 # PRELIMINARY FUNCTIONS #######################################################
 ################################################################################
@@ -18,7 +18,7 @@ sensobol::load_packages(c("data.table", "tidyverse", "openxlsx", "scales",
 seed <- 123
 
 
-## ----uncertainty_analysis-----------------------------------------------------------
+## ----uncertainty_analysis-----------------------------------------------------
 
 # UNCERTAINTY AND SENSITIVITY ANALYSIS #########################################
 ################################################################################
@@ -44,7 +44,7 @@ output_ua <- softwareRisk::uncertainty_fun(all_paths_out = out, N = N,
 
 
 
-## ----create_dataset, dependson="uncertainty_analysis"-------------------------------
+## ----create_dataset, dependson="uncertainty_analysis"-------------------------
 
 # CREATE THE DATASETS ###########################################################
 
@@ -156,23 +156,30 @@ dt_plot <- nodes_dt_unnested %>%
   .[sensitivity != "Ti"] %>%
   .[, name := factor(name, levels = unique(name[order(-original)]))]
 
+# Before plotting, convert factor levels to plotmath strings
+dt_plot <- dt_plot %>%
+  mutate(parameters = recode_factor(parameters,
+                                     "a_raw" = "alpha",
+                                     "b_raw" = "beta",
+                                     "c_raw" = "gamma",
+                                     "p_raw" = "p"))
+
+
 plot_sa <- ggplot(dt_plot, aes(x = parameters, y = name, fill = original)) +
   geom_tile() +
   scale_fill_viridis_c(name = expression(S[p]), breaks = c(0, 0.3, 0.6)) +
+  scale_x_discrete(labels = scales::label_parse()) +
   theme_AP() +
-  scale_x_discrete(labels = c("a_raw" = expression(alpha),
-                              "b_raw" = expression(beta),
-                              "c_raw" = expression(gamma),
-                              "p_raw" = expression(p))) +
   labs(x = "", y = "Node ID") +
-  theme(axis.text.y = element_text(size = 5),
+  theme(axis.text.x = element_text(),
+        axis.text.y = element_text(size = 5),
         legend.position = "top",
         plot.margin = margin(1, 0.1, 1, 1))
 
 plot_sa
 
 
-## ----bump_chart_plot, dependson="create_dataset", fig.height=3, fig.width=3---------
+## ----bump_chart_plot, dependson="create_dataset", fig.height=3, fig.width=3----
 
 # RANK DISTRIBUTION PLOT #######################################################
 
@@ -223,7 +230,7 @@ right <- plot_grid(bump_chart_plot, plot_sa, ncol = 1, rel_heights = c(0.3, 0.7)
 plot_grid(left, right, ncol = 2, rel_widths = c(0.6, 0.4))
 
 
-## ----session_information------------------------------------------------------------
+## ----session_information------------------------------------------------------
 
 # SESSION INFORMATION ##########################################################
 

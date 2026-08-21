@@ -1,0 +1,10 @@
+model,metric,value
+11_mHM,runtime_unique_symbols,358
+11_mHM,missing_runtime_symbols,131
+11_mHM,missing_runtime_symbols_pct,36.59
+11_mHM,runtime_edge_rows,723
+11_mHM,runtime_call_volume,18505759
+11_mHM,missing_symbol_outgoing_call_volume,745829
+11_mHM,missing_symbol_outgoing_call_volume_pct,4.03
+11_mHM,missing_symbol_touched_edges,353
+11_mHM,missing_symbol_touched_edges_pct,48.82

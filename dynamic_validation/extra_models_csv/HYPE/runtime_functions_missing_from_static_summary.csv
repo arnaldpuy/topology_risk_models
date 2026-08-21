@@ -1,0 +1,10 @@
+model,metric,value
+07_hype_5_32_0_src,runtime_unique_symbols,373
+07_hype_5_32_0_src,missing_runtime_symbols,60
+07_hype_5_32_0_src,missing_runtime_symbols_pct,16.09
+07_hype_5_32_0_src,runtime_edge_rows,499
+07_hype_5_32_0_src,runtime_call_volume,3944071
+07_hype_5_32_0_src,missing_symbol_outgoing_call_volume,458440
+07_hype_5_32_0_src,missing_symbol_outgoing_call_volume_pct,11.62
+07_hype_5_32_0_src,missing_symbol_touched_edges,180
+07_hype_5_32_0_src,missing_symbol_touched_edges_pct,36.07

@@ -1,0 +1,6 @@
+cause,count,example_caller,example_callee,example_runtime_calls
+both_symbols_missing_in_static,24,atri,aunif,33604
+callee_missing_in_static,63,cbn_zhang2,fcgd,943959
+caller_missing_in_static,3,libc_start_main,main,1
+edge_not_in_static_but_symbols_present,4,cli_staread,search,3
+matched,283,allocate_parms,zero0,1

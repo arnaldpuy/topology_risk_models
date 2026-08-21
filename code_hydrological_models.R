@@ -1,8 +1,8 @@
-## ----setup, include=FALSE----------------------------------------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, dev = "pdf", cache = TRUE)
 
 
-## ----warning=FALSE, message=FALSE, results = "hide"--------------------------------------------------------------
+## ----warning=FALSE, message=FALSE, results = "hide"---------------------------
 
 # PRELIMINARY FUNCTIONS ########################################################
 ###############################################################################
@@ -30,7 +30,7 @@ r_functions <- list.files(path = here("functions"), pattern = "\\.R$", full.name
 lapply(r_functions, source)
 
 
-## ----run_analysis, cache.lazy=FALSE------------------------------------------------------------------------------
+## ----run_analysis, cache.lazy=FALSE-------------------------------------------
 
 # CREATE DATASET ##############################################################
 
@@ -328,7 +328,7 @@ write.xlsx(nodes_all, "full_nodes_df.xlsx")
 write.xlsx(paths_all, "full_paths_df.xlsx")
 
 
-## ----ua_sa, dependson="run_analysis"-----------------------------------------------------------------------------
+## ----ua_sa, dependson="run_analysis"------------------------------------------
 
 # CONDUCT UNCERTAINTY AND SENSITIVITY ANALYSIS #################################
 
@@ -421,7 +421,7 @@ for (nm in cols) {
 indices_all <- extract_sa_fun(nodes_us_all)
 
 
-## ----some_stats, dependson="run_analysis"------------------------------------------------------------------------
+## ----some_stats, dependson="run_analysis"-------------------------------------
 
 # CALCULATE SOME DESCRIPTIVE METRICS ###########################################
 
@@ -640,7 +640,7 @@ plot_bar_category <- metrics_combined[grep("^func_", names(metrics_combined))] %
 plot_bar_category
 
 
-## ----correlation_metrics, dependson="run_analysis", fig.height=3, fig.width=4------------------------------------
+## ----correlation_metrics, dependson="run_analysis", fig.height=3, fig.width=4----
 
 # CORRELATION ANALYSIS AMONG METRICS ###########################################
 
@@ -983,7 +983,7 @@ top10_fate[, .(
 ), substitution]
 
 
-## ----merge_descriptive_flow, dependson="some_stats", fig.height=3.9, fig.width=6---------------------------------
+## ----merge_descriptive_flow, dependson="some_stats", fig.height=3.9, fig.width=6----
 
 # MERGE FIGURES ################################################################
 
@@ -997,7 +997,7 @@ plot_grid(top_plot, bottom, ncol = 1, rel_heights = c(0.52, 0.48), align = "h",
           axis = "tb")
 
 
-## ----plot_all_callgraphs, dependson="run_analysis", fig.height=2.5, fig.width=3----------------------------------
+## ----plot_all_callgraphs, dependson="run_analysis", fig.height=2.5, fig.width=3----
 
 # PLOT FIGURES #################################################################
 
@@ -1027,11 +1027,161 @@ plot_specs <- list(additive = list(paths_col = "paths_tbl_additive",
 
 # Plot graphs ------------------------------------------------------------------
 
+# Override plot_top_paths_fun locally to fix colour-to-complexity mapping:
+# named values + drop = FALSE ensure colours are always bound to the same
+# complexity range regardless of which levels are present in a given model.
+plot_top_paths_fun <- function(graph,
+                               all_paths_out,
+                               model.name = "",
+                               language = "",
+                               top_n = 10,
+                               alpha_non_top = 0.05) {
+
+  if (is.list(all_paths_out) && !is.data.frame(all_paths_out)) {
+    nodes_tbl <- all_paths_out$nodes %||% all_paths_out$nodes_tbl
+    paths_tbl <- all_paths_out$paths %||% all_paths_out$paths_tbl
+  } else {
+    nodes_tbl <- NULL
+    paths_tbl <- all_paths_out
+  }
+
+  if (is.null(paths_tbl) || !is.data.frame(paths_tbl) || nrow(paths_tbl) == 0) {
+    message("No paths in `paths_tbl`; skipping plot for: ", model.name)
+    return(invisible(NULL))
+  }
+
+  if (is.null(nodes_tbl) || !is.data.frame(nodes_tbl) || nrow(nodes_tbl) == 0) {
+    stop("`all_paths_out` must be the output of all_paths_fun() ",
+         "(a list with $nodes and $paths containing node-level metrics).",
+         call. = FALSE)
+  }
+
+  required_node_cols <- c("name", "indeg", "cyclomatic_complexity", "risk_score", "btw")
+  missing_node_cols <- setdiff(required_node_cols, names(nodes_tbl))
+  if (length(missing_node_cols) > 0) {
+    stop("`all_paths_out$nodes` is missing required columns: ",
+         paste(missing_node_cols, collapse = ", "), call. = FALSE)
+  }
+
+  k <- min(top_n, nrow(paths_tbl))
+  top_k_paths <- paths_tbl |>
+    dplyr::arrange(dplyr::desc(.data$path_risk_score)) |>
+    dplyr::slice_head(n = k)
+
+  path_edges_all <- purrr::imap_dfr(top_k_paths$path_nodes, function(nodes_vec, pid) {
+    tibble::tibble(from = utils::head(nodes_vec, -1), to = utils::tail(nodes_vec, -1),
+                   path_id = pid, risk_sum = top_k_paths$risk_sum[pid])
+  })
+
+  ig2 <- tidygraph::as.igraph(graph)
+  edge_df_names <- igraph::as_data_frame(ig2, what = "edges") |>
+    dplyr::mutate(.edge_idx = dplyr::row_number())
+
+  path_edges_collapsed <- path_edges_all |>
+    dplyr::group_by(.data$from, .data$to) |>
+    dplyr::summarise(path_freq = dplyr::n(),
+                     risk_mean_path = mean(.data$risk_sum, na.rm = TRUE),
+                     .groups = "drop")
+
+  edge_marks <- edge_df_names |>
+    dplyr::left_join(path_edges_collapsed, by = c("from", "to")) |>
+    dplyr::mutate(
+      on_top_path    = !is.na(.data$path_freq),
+      path_freq      = dplyr::if_else(is.na(.data$path_freq), 0L, as.integer(.data$path_freq)),
+      risk_mean_path = dplyr::if_else(is.na(.data$risk_mean_path), 0, .data$risk_mean_path)
+    )
+
+  graph_sugi <- graph |>
+    tidygraph::activate("edges") |>
+    dplyr::mutate(on_top_path    = edge_marks$on_top_path,
+                  path_freq      = edge_marks$path_freq,
+                  risk_mean_path = edge_marks$risk_mean_path) |>
+    tidygraph::activate("nodes") |>
+    dplyr::mutate(
+      indeg                 = nodes_tbl$indeg[match(.data$name, nodes_tbl$name)],
+      cyclomatic_complexity = nodes_tbl$cyclomatic_complexity[match(.data$name, nodes_tbl$name)],
+      risk_score            = nodes_tbl$risk_score[match(.data$name, nodes_tbl$name)],
+      btw                   = nodes_tbl$btw[match(.data$name, nodes_tbl$name)],
+      cyclo_class = dplyr::case_when(
+        .data$cyclomatic_complexity <= 10 ~ "green",
+        .data$cyclomatic_complexity <= 20 ~ "orange",
+        .data$cyclomatic_complexity <= 50 ~ "red",
+        .data$cyclomatic_complexity >  50 ~ "purple",
+        TRUE ~ "grey"
+      ),
+      complexity_category = cut(
+        .data$cyclomatic_complexity,
+        breaks = c(-Inf, 10, 20, 50, Inf),
+        labels = c("b1", "b2", "b3", "b4")
+      )
+    )
+
+  risky_nodes <- unique(unlist(top_k_paths$path_nodes))
+  graph_sugi  <- graph_sugi |>
+    tidygraph::activate("nodes") |>
+    dplyr::mutate(on_top_node = .data$name %in% risky_nodes)
+
+  node_df     <- graph_sugi |> tidygraph::activate("nodes") |> tibble::as_tibble()
+  risky_indeg <- node_df$indeg[node_df$on_top_node & is.finite(node_df$indeg)]
+  risky_indeg <- sort(unique(risky_indeg))
+  if (length(risky_indeg) == 0)
+    risky_indeg <- sort(unique(node_df$indeg[is.finite(node_df$indeg)]))
+
+  if (length(risky_indeg) >= 3) {
+    min_indeg     <- min(risky_indeg)
+    max_indeg     <- max(risky_indeg)
+    mid_indeg     <- risky_indeg[ceiling(length(risky_indeg) / 2)]
+    legend_breaks <- c(min_indeg, mid_indeg, max_indeg)
+  } else {
+    legend_breaks <- risky_indeg
+  }
+  legend_labels <- round(legend_breaks, 1)
+
+  p_sugi <- ggraph::ggraph(graph_sugi, layout = "sugiyama") +
+    ggraph::geom_edge_link0(ggplot2::aes(filter = !.data$on_top_path),
+                            colour = "grey80", alpha = alpha_non_top, linewidth = 0.3) +
+    ggraph::geom_edge_link0(
+      ggplot2::aes(filter = .data$on_top_path, colour = .data$risk_mean_path,
+                   linewidth = pmin(pmax(.data$path_freq, 0.5), 3)),
+      alpha = 0.9, arrow = grid::arrow(length = grid::unit(1, "mm"))) +
+    ggraph::scale_edge_colour_gradient(low = "orange", high = "red", guide = "none") +
+    ggraph::scale_edge_width(range = c(0.3, 2.2), guide = "none") +
+    ggraph::geom_node_point(size = 1.2, colour = "#BDBDBD", alpha = 0.35, show.legend = FALSE) +
+    ggraph::geom_node_point(
+      ggplot2::aes(filter = .data$on_top_node, size = .data$indeg, fill = .data$complexity_category),
+      shape = 21, alpha = 0.95, show.legend = TRUE) +
+    ggplot2::scale_size_continuous(breaks = legend_breaks, labels = legend_labels, name = "indegree") +
+    ggplot2::scale_fill_manual(
+      values = c(b1 = "yellowgreen", b2 = "orange", b3 = "red", b4 = "purple"),
+      labels = c(b1 = expression(C %in% "(" * 0 * ", 10" * "]"),
+                 b2 = expression(C %in% "(" * 10 * ", 20" * "]"),
+                 b3 = expression(C %in% "(" * 20 * ", 50" * "]"),
+                 b4 = expression(C %in% "(" * 50 * ", " * infinity * ")")),
+      drop = FALSE,
+      name = ""
+    ) +
+    theme_AP() +
+    ggplot2::labs(x = "", y = "") +
+    ggplot2::theme(
+      axis.text.y  = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank(),
+      axis.text.x  = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank(),
+      legend.position = "right",
+      plot.margin  = ggplot2::margin(1, 1, 1, 1),
+      panel.spacing = grid::unit(0.1, "lines")
+    ) +
+    ggplot2::ggtitle(paste(model.name, ": ", language, sep = ""))
+
+  print(p_sugi)
+  invisible(p_sugi)
+}
+
 set.seed(seed)
 
 for (nm in names(plot_specs)) {
   spec <- plot_specs[[nm]]
-  
+
   all_graphs[, (spec$out_col):= mapply(FUN = plot_top_paths_fun, graph = graph,
                                        all_paths_out= get(spec$paths_col),
                                        model.name = model, language = language,
@@ -1061,7 +1211,7 @@ plot_all_risky_paths <- plot_grid(plotlist = tmp$plot_obj_additive, ncol = 2, al
 plot_all_risky_paths <- plot_grid(legend2, plot_all_risky_paths, ncol = 1, rel_heights = c(0.1, 0.9))
 
 
-## ----same_additive_compensatory_paths, dependson="ua_sa"---------------------------------------------------------
+## ----same_additive_compensatory_paths, dependson="ua_sa"----------------------
 
 # HOW MANY OF THE TOP N PATHS ARE THE SAME IN THE ADDITIVE AND COMPENSATORY? ###
 
@@ -1082,7 +1232,7 @@ top_add[top_com, on = .(model, path_id), .N, model] %>%
 
 
 
-## ----risk_slope, dependson="run_analysis", fig.height=2.2, fig.width=3-------------------------------------------
+## ----risk_slope, dependson="run_analysis", fig.height=2.2, fig.width=3--------
 
 # PLOT DISTRIBUTION OF RISK SLOPE AND GINI FOR THE TOP TEN PATHS ###############
 
@@ -1100,7 +1250,7 @@ plot_spread_risk <- paths_all[order(-path_risk_score), .SD[1:10], .(model, risk_
 plot_spread_risk
 
 
-## ----path_level_risk, dependson = "run_analysis", fig.height=2.5, fig.width=3------------------------------------
+## ----path_level_risk, dependson = "run_analysis", fig.height=2.5, fig.width=3----
 
 # PATH-LEVEL RISK ACCOUNTED FOR THE TOP 5% NODES ###############################
 
@@ -1196,7 +1346,7 @@ tmp <- top_share_functions(0.05)
 tmp
 
 
-## ----sensitivity_functions, dependson="ua_sa", fig.height=4.5, fig.width=2.5-------------------------------------
+## ----sensitivity_functions, dependson="ua_sa", fig.height=4.5, fig.width=2.5----
 
 # SENSITIVITY OF SELECTED FUNCTIONS ############################################
 
@@ -1239,7 +1389,7 @@ plot_grid(plot_all_risky_paths, top, rel_widths = c(0.62, 0.38),
           labels = c("a", ""))
 
 
-## ----plot_tile_top_n, dependson="run_analysis", fig.height=3, fig.width=4----------------------------------------
+## ----plot_tile_top_n, dependson="run_analysis", fig.height=3, fig.width=4-----
 
 # WHICH PATHS IMPROVE IF A NODE'S RISK IS FIXED TO 0? ##########################
 
@@ -1270,7 +1420,7 @@ all_graphs[, path_fix_heatmap:= Map(
 all_graphs$path_fix_heatmap
 
 
-## ----model_scalability, dependson=c("run_analysis", "ua_sa", "some_stats")---------------------------------------
+## ----model_scalability, dependson=c("run_analysis", "ua_sa", "some_stats")----
 
 # REAL-MODEL SCALABILITY: TIMING AND RANK STABILITY ###########################
 ################################################################################
@@ -1507,7 +1657,7 @@ print(real_scalability[!is.na(top1_stability), .(
 
 
 
-## ----plot_real_model_scalability, dependson="model_scalability", fig.height = 4.5, fig.width=5.5-----------------
+## ----plot_real_model_scalability, dependson="model_scalability", fig.height = 4.5, fig.width=5.5----
 
 plot_time_real <- ggplot(time_real_long, 
                          aes(model, seconds, fill = stage)) +
@@ -1569,7 +1719,7 @@ bottom_row <- plot_grid(plot_time_vs_paths, plot_stab_vs_paths, ncol = 2,
 plot_grid(top_row, bottom_row, ncol = 1, rel_heights = c(0.45, 0.55))
 
 
-## ----git_logs, fig.height=3, fig.width=4-------------------------------------------------------------------------
+## ----git_logs, fig.height=3, fig.width=4--------------------------------------
 
 # METRICS AT THE FILE AND FUNCTION LEVEL #######################################
 
@@ -1716,7 +1866,7 @@ wilcox_dt
 
 
 
-## ----print_top_paths, dependson="run_analysis", eval=FALSE, results="hide"---------------------------------------
+## ----print_top_paths, dependson="run_analysis", eval=FALSE, results="hide"----
 # 
 # # FUNCTIONS TO SELECT THE TOP TEN RISKY PATHS PER MODEL AND
 # # PRINT THEM OUT FOR LATEX #####################################################
@@ -1747,7 +1897,7 @@ wilcox_dt
 # to_tex_list_fun(tmp2)
 
 
-## ----session_information-----------------------------------------------------------------------------------------
+## ----session_information------------------------------------------------------
 
 # SESSION INFORMATION ##########################################################
 

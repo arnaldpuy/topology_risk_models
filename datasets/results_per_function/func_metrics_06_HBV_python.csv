@@ -1,0 +1,5 @@
+file,function,type,line,cyclomatic_complexity,cc_rank,loc,loc_span,volume,difficulty,effort,time,bugs
+./models/06_hbv_hydromodel/hbv_py_modular.py,<module>,FUNCTION,1,2,A,22.0,,1225.3518885541544,18.29268292682927,22414.97357111258,1245.2763095062544,0.40845062951805144
+./models/06_hbv_hydromodel/hbv_py_modular.py,nse_cost,FUNCTION,21,1,A,6.0,11.0,324.33034055173533,10.633333333333333,3448.712621200119,191.59514562222884,0.10811011351724512
+./models/06_hbv_hydromodel/hbv_py_modular.py,hbv_main,FUNCTION,33,5,A,53.0,92.0,4653.170652045216,93.11842105263158,433295.9040068947,24071.994667049705,1.551056884015072
+./models/06_hbv_hydromodel/hbv_py_modular.py,hbv_py_modular.py (module aggregate),MODULE_AGG,1,6,B,,,,,,,

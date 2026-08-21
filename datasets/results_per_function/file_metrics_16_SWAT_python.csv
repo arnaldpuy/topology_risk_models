@@ -1,0 +1,3 @@
+file,total_lines,code_lines,comment_lines,blank_lines_raw,comments_per_loc,function_count,avg_func_loc
+./models/16_swatplus/test/spcheck.py,352,245,39,68,0.1592,14,14.5
+./models/16_swatplus/test/swat_output_to_csv_files.py,161,115,35,11,0.3043,2,22.0

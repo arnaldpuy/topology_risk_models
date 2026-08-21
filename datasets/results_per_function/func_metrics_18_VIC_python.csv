@@ -1,0 +1,380 @@
+file,function,type,line,cyclomatic_complexity,cc_rank,loc,loc_span,volume,difficulty,effort,time,bugs
+./models/18_VIC/tests/archive_tests.py,<module>,FUNCTION,1,2,A,6.0,,121.01398665684616,5.318181818181818,643.5743835841364,35.75413242134091,0.040337995552282055
+./models/18_VIC/tests/archive_tests.py,main,FUNCTION,12,1,A,20.0,28.0,712.9703393553503,12.6,8983.426275877415,499.07923754874525,0.2376567797851168
+./models/18_VIC/tests/archive_tests.py,archive_tests.py (module aggregate),MODULE_AGG,1,1,A,,,,,,,
+./models/18_VIC/tests/run_profiling.py,<module>,FUNCTION,1,4,A,187.0,,4036.148905642897,64.6829268292683,261069.92433573082,14503.884685318379,1.3453829685476322
+./models/18_VIC/tests/run_profiling.py,log2_range,FUNCTION,25,1,A,4.0,6.0,190.16483617504394,6.333333333333333,1204.3772957752783,66.90984976529325,0.06338827872501465
+./models/18_VIC/tests/run_profiling.py,main,FUNCTION,232,4,A,35.0,42.0,1290.126337666587,24.545454545454547,31666.737379088954,1759.2631877271642,0.430042112555529
+./models/18_VIC/tests/run_profiling.py,run_profiling,FUNCTION,276,1,A,5.0,5.0,137.6075250475963,5.090909090909091,700.5474002423085,38.91930001346159,0.04586917501586544
+./models/18_VIC/tests/run_profiling.py,run_scaling,FUNCTION,283,6,B,43.0,53.0,2200.412603083243,28.730769230769234,63219.54671166088,3512.1970395367152,0.7334708676944144
+./models/18_VIC/tests/run_profiling.py,get_header_info,FUNCTION,338,2,A,17.0,17.0,554.4786373037626,22.5,12475.76933933466,693.0982966297033,0.18482621243458755
+./models/18_VIC/tests/run_profiling.py,CustomFormatter,CLASS,227,1,A,3.0,3.0,44.97261104228487,4.375,196.7551733099963,10.930842961666462,0.01499087034742829
+./models/18_VIC/tests/run_profiling.py,run_profiling.py (module aggregate),MODULE_AGG,1,14,C,,,,,,,
+./models/18_VIC/tests/run_tests.py,<module>,FUNCTION,1,4,A,65.0,,1112.131097392958,8.76984126984127,9753.213195390625,541.8451775217013,0.3707103657976527
+./models/18_VIC/tests/run_tests.py,main,FUNCTION,109,26,D,118.0,156.0,6344.962014194486,49.529411764705884,314262.23623245634,17459.013124025354,2.1149873380648287
+./models/18_VIC/tests/run_tests.py,run_unit_tests,FUNCTION,267,1,A,14.0,36.0,570.0165354875053,18.789473684210527,10710.310693107336,595.0172607281853,0.19000551182916842
+./models/18_VIC/tests/run_tests.py,run_system,FUNCTION,305,62,F,255.0,370.0,11807.25912270854,85.86486486486487,1013828.7089958116,56323.81716643398,3.9357530409028465
+./models/18_VIC/tests/run_tests.py,run_science,FUNCTION,677,9,B,74.0,152.0,3221.3636940841066,35.67567567567568,114924.3263835411,6384.684799085617,1.0737878980280355
+./models/18_VIC/tests/run_tests.py,run_examples,FUNCTION,831,9,B,64.0,136.0,2910.237450144871,34.457142857142856,100278.46756784899,5571.025975991611,0.9700791500482904
+./models/18_VIC/tests/run_tests.py,run_release,FUNCTION,969,1,A,3.0,6.0,34.86917501586544,2.5,87.1729375396636,4.842940974425755,0.011623058338621813
+./models/18_VIC/tests/run_tests.py,CustomFormatter,CLASS,78,1,A,3.0,3.0,44.97261104228487,4.375,196.7551733099963,10.930842961666462,0.01499087034742829
+./models/18_VIC/tests/run_tests.py,TestResults,CLASS,83,2,A,17.0,24.0,549.9514470225078,15.088235294117647,8297.796833016073,460.9887129453374,0.1833171490075026
+./models/18_VIC/tests/run_tests.py,TestResults.__init__,METHOD,85,1,A,8.0,8.0,241.8556500836541,9.863636363636363,2385.5761849160426,132.53201027311349,0.0806185500278847
+./models/18_VIC/tests/run_tests.py,TestResults.__repr__,METHOD,94,1,A,4.0,8.0,122.62388523751017,6.222222222222222,762.9930637000633,42.38850353889241,0.04087462841250339
+./models/18_VIC/tests/run_tests.py,TestResults.__str__,METHOD,103,1,A,4.0,4.0,87.56916320732489,5.0,437.84581603662446,24.32476755759025,0.029189721069108297
+./models/18_VIC/tests/run_tests.py,TestResults (aggregate),CLASS_AGG,85,3,A,,,,,,,
+./models/18_VIC/tests/run_tests.py,run_tests.py (module aggregate),MODULE_AGG,1,111,F,,,,,,,
+./models/18_VIC/tests/test_image_driver.py,<module>,FUNCTION,1,1,A,8.0,,108.0,1.6153846153846154,174.46153846153845,9.692307692307692,0.036
+./models/18_VIC/tests/test_image_driver.py,test_image_driver_no_output_file_nans,FUNCTION,14,2,A,6.0,9.0,152.92539048396907,7.6499999999999995,1169.8792372023634,64.99329095568686,0.050975130161323025
+./models/18_VIC/tests/test_image_driver.py,assert_nan_equal,FUNCTION,25,5,A,13.0,30.0,664.3364485726424,12.535714285714286,8327.931908892768,462.662883827376,0.22144548285754748
+./models/18_VIC/tests/test_image_driver.py,check_multistream_image,FUNCTION,57,10,B,62.0,85.0,2759.1775700042485,39.51724137931035,109035.08604223687,6057.504780124271,0.9197258566680828
+./models/18_VIC/tests/test_image_driver.py,setup_subdirs_and_fill_in_global_param_mpi_test,FUNCTION,144,2,A,15.0,46.0,549.4459868550366,13.363636363636363,7342.596369790034,407.92202054389077,0.1831486622850122
+./models/18_VIC/tests/test_image_driver.py,check_mpi_fluxes,FUNCTION,192,6,B,27.0,51.0,1177.4994517703553,25.982142857142858,30593.95897010477,1699.6643872280429,0.3924998172567851
+./models/18_VIC/tests/test_image_driver.py,check_mpi_states,FUNCTION,245,6,B,27.0,51.0,1215.48330505327,27.05357142857143,32883.16441349472,1826.8424674163734,0.4051611016844233
+./models/18_VIC/tests/test_image_driver.py,test_image_driver.py (module aggregate),MODULE_AGG,1,31,E,,,,,,,
+./models/18_VIC/tests/test_restart.py,<module>,FUNCTION,1,1,A,8.0,,112.58797503894243,2.0,225.17595007788486,12.509775004326936,0.03752932501298081
+./models/18_VIC/tests/test_restart.py,prepare_restart_run_periods,FUNCTION,14,3,A,45.0,86.0,2083.685665805606,48.0,100016.91195866908,5556.495108814949,0.6945618886018686
+./models/18_VIC/tests/test_restart.py,setup_subdirs_and_fill_in_global_param_restart_test,FUNCTION,102,4,A,40.0,71.0,1554.0927801099783,20.595744680851062,32007.698109499124,1778.2054505277292,0.5180309267033261
+./models/18_VIC/tests/test_restart.py,check_exact_restart_fluxes,FUNCTION,175,12,C,53.0,89.0,2653.9795463371706,38.6,102443.6104886148,5691.311693811933,0.8846598487790569
+./models/18_VIC/tests/test_restart.py,check_exact_restart_states,FUNCTION,266,13,C,73.0,103.0,2461.479585977521,46.25,113843.43085146033,6324.635047303352,0.8204931953258403
+./models/18_VIC/tests/test_restart.py,read_ascii_state,FUNCTION,371,2,A,7.0,19.0,259.5971657911106,11.0,2855.568823702217,158.64271242790093,0.08653238859703688
+./models/18_VIC/tests/test_restart.py,read_binary_state,FUNCTION,392,1,A,5.0,17.0,106.27403387250882,7.857142857142857,835.0102661411407,46.38945923006337,0.03542467795750294
+./models/18_VIC/tests/test_restart.py,test_restart.py (module aggregate),MODULE_AGG,1,35,E,,,,,,,
+./models/18_VIC/tests/test_utils.py,<module>,FUNCTION,1,1,A,21.0,,535.0242986264551,5.333333333333333,2853.4629260077604,158.52571811154223,0.17834143287548504
+./models/18_VIC/tests/test_utils.py,setup_test_dirs,FUNCTION,41,3,A,10.0,13.0,408.6251683748963,13.875,5669.674211201686,314.9819006223159,0.13620838945829877
+./models/18_VIC/tests/test_utils.py,print_test_dict,FUNCTION,56,2,A,9.0,9.0,385.44006375130215,8.470588235294118,3264.9040694227947,181.38355941237748,0.12848002125043406
+./models/18_VIC/tests/test_utils.py,clip_string,FUNCTION,67,2,A,4.0,4.0,131.68575291675114,14.083333333333332,1854.5743535775784,103.0319085320877,0.04389525097225038
+./models/18_VIC/tests/test_utils.py,print_tail,FUNCTION,73,3,A,8.0,8.0,280.53836262764463,12.384615384615383,3474.359721773137,193.01998454295207,0.09351278754254821
+./models/18_VIC/tests/test_utils.py,replace_global_values,FUNCTION,83,7,B,21.0,25.0,708.4856577255372,20.952380952380953,14844.461399963637,824.6922999979798,0.2361618859085124
+./models/18_VIC/tests/test_utils.py,drop_tests,FUNCTION,110,13,C,25.0,30.0,807.4652716724872,38.0625,30734.146903034045,1707.4526057241137,0.26915509055749576
+./models/18_VIC/tests/test_utils.py,pop_run_kwargs,FUNCTION,142,1,A,6.0,6.0,165.66917302429982,14.57142857142857,2414.0365212112256,134.11314006729032,0.05522305767476661
+./models/18_VIC/tests/test_utils.py,check_returncode,FUNCTION,150,3,A,12.0,12.0,278.63137138648347,14.083333333333332,3924.0584803596416,218.00324890886898,0.09287712379549448
+./models/18_VIC/tests/test_utils.py,process_error,FUNCTION,164,7,B,25.0,27.0,675.0,16.76190476190476,11314.285714285712,628.5714285714284,0.225
+./models/18_VIC/tests/test_utils.py,test_classic_driver_all_complete,FUNCTION,193,4,A,11.0,16.0,294.80302513413505,17.5,5159.052939847364,286.6140522137424,0.09826767504471169
+./models/18_VIC/tests/test_utils.py,test_classic_driver_no_output_file_nans,FUNCTION,211,2,A,6.0,6.0,101.57915548582149,5.25,533.2905663005628,29.6272536833646,0.033859718495273826
+./models/18_VIC/tests/test_utils.py,read_vic_ascii,FUNCTION,221,7,B,18.0,33.0,943.8586626218754,23.1,21803.13510656532,1211.2852836980735,0.3146195542072918
+./models/18_VIC/tests/test_utils.py,find_global_param_value,FUNCTION,256,4,A,9.0,22.0,239.72242562519568,12.954545454545455,3105.49505923549,172.52750329086055,0.07990747520839857
+./models/18_VIC/tests/test_utils.py,check_multistream_classic,FUNCTION,280,10,B,46.0,68.0,1990.6221307200708,31.714285714285715,63131.15900283653,3507.286611268696,0.6635407102400236
+./models/18_VIC/tests/test_utils.py,setup_subdirs_and_fill_in_global_param_driver_match_test,FUNCTION,350,2,A,15.0,45.0,509.4838060552038,16.94736842105263,8634.409765777664,479.6894314320924,0.1698279353517346
+./models/18_VIC/tests/test_utils.py,parse_classic_driver_outfile_name,FUNCTION,397,1,A,7.0,7.0,325.4847266735473,9.472222222222223,3083.063660991101,171.2813144995056,0.10849490889118243
+./models/18_VIC/tests/test_utils.py,check_drivers_match_fluxes,FUNCTION,406,15,C,57.0,103.0,2554.3489505971174,40.04,102276.13198190858,5682.007332328254,0.8514496501990392
+./models/18_VIC/tests/test_utils.py,tsplit,FUNCTION,511,4,A,11.0,14.0,344.9166506540576,13.0,4483.916458502749,249.1064699168194,0.11497221688468587
+./models/18_VIC/tests/test_utils.py,read_snotel_swe_obs,FUNCTION,527,1,A,15.0,23.0,494.3506236971284,10.0,4943.506236971284,274.6392353872936,0.16478354123237612
+./models/18_VIC/tests/test_utils.py,read_vic_42_output,FUNCTION,552,6,B,32.0,49.0,1709.20158814255,39.11764705882353,66859.94447734092,3714.4413598522733,0.5697338627141834
+./models/18_VIC/tests/test_utils.py,read_vic_5_output,FUNCTION,603,5,A,23.0,35.0,1122.2030629218764,25.88235294117647,29045.25574621327,1613.6253192340707,0.3740676876406255
+./models/18_VIC/tests/test_utils.py,plot_science_tests,FUNCTION,640,3,A,22.0,47.0,330.1173000519232,13.96153846153846,4608.945381494158,256.0525211941199,0.11003910001730774
+./models/18_VIC/tests/test_utils.py,plot_snotel_comparison,FUNCTION,689,2,A,26.0,33.0,718.0996223722952,15.125,10861.256788380966,603.4031549100537,0.23936654079076508
+./models/18_VIC/tests/test_utils.py,plot_snotel_comparison_one_site,FUNCTION,724,9,B,51.0,69.0,2390.702819179363,24.76923076923077,59215.86982890422,3289.7705460502348,0.7969009397264543
+./models/18_VIC/tests/test_utils.py,check_site_files,FUNCTION,795,1,A,2.0,2.0,118.53642239625984,5.333333333333333,632.1942527800525,35.12190293222514,0.03951214079875328
+./models/18_VIC/tests/test_utils.py,get_fluxnet_lat_lon,FUNCTION,799,2,A,12.0,17.0,569.7958382200379,16.45,9373.141538719623,520.7300854844235,0.189931946073346
+./models/18_VIC/tests/test_utils.py,read_fluxnet_obs,FUNCTION,818,3,A,29.0,39.0,1240.850875549461,25.454545454545453,31585.29501398628,1754.7386118881268,0.413616958516487
+./models/18_VIC/tests/test_utils.py,plot_fluxnet_comparison,FUNCTION,859,2,A,26.0,36.0,792.8103328293373,17.75,14072.383407720738,781.7990782067077,0.2642701109431124
+./models/18_VIC/tests/test_utils.py,plot_fluxnet_comparison_one_site,FUNCTION,897,22,D,113.0,158.0,6423.791012810483,51.096774193548384,328234.9988481227,18235.277713784595,2.141263670936828
+./models/18_VIC/tests/test_utils.py,VICReturnCodeError,CLASS,33,1,A,2.0,2.0,19.651484454403228,2.5,49.12871113600807,2.7293728408893374,0.00655049481813441
+./models/18_VIC/tests/test_utils.py,VICValgrindError,CLASS,37,1,A,2.0,2.0,19.651484454403228,2.5,49.12871113600807,2.7293728408893374,0.00655049481813441
+./models/18_VIC/tests/test_utils.py,test_utils.py (module aggregate),MODULE_AGG,1,146,F,,,,,,,
+./models/18_VIC/tests/unit/test_cesm_driver.py,<module>,FUNCTION,1,3,A,15.0,,430.0,12.0,5160.0,286.6666666666667,0.14333333333333334
+./models/18_VIC/tests/unit/test_cesm_driver.py,nm,FUNCTION,23,7,B,14.0,20.0,671.5100890923876,21.25,14269.589393213237,792.7549662896242,0.2238366963641292
+./models/18_VIC/tests/unit/test_cesm_driver.py,test_vic_lib_present,FUNCTION,46,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/test_cesm_driver.py,test_fortran_symbols_present,FUNCTION,51,3,A,8.0,10.0,118.53642239625984,8.571428571428571,1016.0264776822271,56.44591542679039,0.03951214079875328
+./models/18_VIC/tests/unit/test_cesm_driver.py,CESMTestException,CLASS,7,1,A,2.0,2.0,19.651484454403228,2.5,49.12871113600807,2.7293728408893374,0.00655049481813441
+./models/18_VIC/tests/unit/test_cesm_driver.py,test_cesm_driver.py (module aggregate),MODULE_AGG,1,12,C,,,,,,,
+./models/18_VIC/tests/unit/test_python_driver.py,<module>,FUNCTION,1,1,A,3.0,,53.150849518197795,2.6666666666666665,141.7355987151941,7.874199928621895,0.017716949839399265
+./models/18_VIC/tests/unit/test_python_driver.py,test_print_version,FUNCTION,6,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/test_python_driver.py,test_set_global_scalars,FUNCTION,11,7,B,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/test_python_driver.py,test_globals_are_initialized,FUNCTION,24,4,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/test_python_driver.py,test_python_driver.py (module aggregate),MODULE_AGG,1,14,C,,,,,,,
+./models/18_VIC/tests/unit/__init__.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/__init__.py,__init__.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/shared/test_cmd_proc.py,<module>,FUNCTION,1,1,A,1.0,,24.0,2.0,48.0,2.6666666666666665,0.008
+./models/18_VIC/tests/unit/shared/test_cmd_proc.py,test_print_version,FUNCTION,6,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_cmd_proc.py,test_print_license,FUNCTION,10,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_cmd_proc.py,test_print_usage,FUNCTION,14,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_cmd_proc.py,test_cmd_proc.py (module aggregate),MODULE_AGG,1,6,B,,,,,,,
+./models/18_VIC/tests/unit/shared/test_free_all_vars.py,<module>,FUNCTION,1,1,A,3.0,,44.37895002019237,2.8,124.26106005653862,6.903392225363257,0.014792983340064124
+./models/18_VIC/tests/unit/shared/test_free_all_vars.py,test_free_all_vars.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/shared/test_free_vegcon.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/shared/test_free_vegcon.py,test_free_vegcon.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/shared/test_get_parameters.py,<module>,FUNCTION,1,1,A,3.0,,30.0,1.5,45.0,2.5,0.01
+./models/18_VIC/tests/unit/shared/test_get_parameters.py,param_file,FUNCTION,7,1,A,6.0,6.0,272.62550365218334,8.125,2215.0822171739896,123.06012317633275,0.09087516788406111
+./models/18_VIC/tests/unit/shared/test_get_parameters.py,test_get_parameters,FUNCTION,15,3,A,1.0,1.0,15.509775004326936,2.0,31.019550008653873,1.723308333814104,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_get_parameters.py,test_validate_parameters,FUNCTION,20,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_get_parameters.py,test_get_parameters.py (module aggregate),MODULE_AGG,1,6,B,,,,,,,
+./models/18_VIC/tests/unit/shared/test_initialize_global.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_initialize_global.py,test_initialize_global,FUNCTION,4,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_initialize_global.py,test_initialize_global.py (module aggregate),MODULE_AGG,1,3,A,,,,,,,
+./models/18_VIC/tests/unit/shared/test_initialize_options.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_initialize_options.py,test_initialize_options,FUNCTION,4,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_initialize_options.py,test_initialize_options_bools,FUNCTION,9,4,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_initialize_options.py,test_initialize_options.py (module aggregate),MODULE_AGG,1,7,B,,,,,,,
+./models/18_VIC/tests/unit/shared/test_initialize_parameters.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_initialize_parameters.py,test_initialize_parameters,FUNCTION,4,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_initialize_parameters.py,test_initialize_parameters.py (module aggregate),MODULE_AGG,1,3,A,,,,,,,
+./models/18_VIC/tests/unit/shared/test_initialize_snow.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/shared/test_initialize_snow.py,test_initialize_snow.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/shared/test_initialize_soil.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/shared/test_initialize_soil.py,test_initialize_soil.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/shared/test_input_tools.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_str_to_bool,FUNCTION,4,3,A,4.0,4.0,187.53074858920888,11.25,2109.7209216286,117.20671786825557,0.0625102495297363
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_str_to_agg_type,FUNCTION,11,6,B,6.0,6.0,267.56589711823784,17.333333333333332,4637.808883382789,257.6560490768216,0.08918863237274595
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_str_to_out_type,FUNCTION,21,6,B,6.0,6.0,249.72817064368866,15.88888888888889,3967.903155783053,220.43906421016962,0.08324272354789622
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_str_to_out_mult,FUNCTION,31,5,A,4.0,4.0,179.30677506201943,10.0,1793.0677506201941,99.61487503445522,0.059768925020673144
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_str_to_freq_flag,FUNCTION,38,4,A,4.0,4.0,179.30677506201943,14.142857142857144,2535.9101044485606,140.8838946915867,0.059768925020673144
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_str_to_ascii_format,FUNCTION,46,1,A,2.0,3.0,15.509775004326936,2.5,38.77443751081734,2.1541354172676304,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_str_to_calendar,FUNCTION,51,4,A,4.0,4.0,170.9669250591348,13.357142857142856,2283.6296418613006,126.86831343673892,0.056988975019711605
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_str_to_timeunits,FUNCTION,63,4,A,3.0,3.0,129.26767504471167,9.428571428571429,1218.8095075644244,67.71163930913468,0.043089225014903886
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_str_from_time_units,FUNCTION,70,1,A,2.0,3.0,15.509775004326936,2.5,38.77443751081734,2.1541354172676304,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_str_from_calendar,FUNCTION,75,1,A,2.0,3.0,15.509775004326936,2.5,38.77443751081734,2.1541354172676304,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_cell_method_from_agg_type,FUNCTION,80,1,A,2.0,3.0,15.509775004326936,2.5,38.77443751081734,2.1541354172676304,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_input_tools.py,test_input_tools.py (module aggregate),MODULE_AGG,1,36,E,,,,,,,
+./models/18_VIC/tests/unit/shared/test_make_all_vars.py,<module>,FUNCTION,1,1,A,2.0,,22.458839376460833,1.5,33.68825906469125,1.871569948038403,0.007486279792153611
+./models/18_VIC/tests/unit/shared/test_make_all_vars.py,test_make_all_vars,FUNCTION,6,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_all_vars.py,test_make_all_vars.py (module aggregate),MODULE_AGG,1,3,A,,,,,,,
+./models/18_VIC/tests/unit/shared/test_make_cell_data.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_make_cell_data.py,test_make_cell_data,FUNCTION,4,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_cell_data.py,test_make_cell_data.py (module aggregate),MODULE_AGG,1,2,A,,,,,,,
+./models/18_VIC/tests/unit/shared/test_make_dmy.py,<module>,FUNCTION,1,1,A,2.0,,28.07354922057604,1.875,52.63790478858007,2.924328043810004,0.009357849740192013
+./models/18_VIC/tests/unit/shared/test_make_dmy.py,test_make_dmy,FUNCTION,6,8,B,16.0,18.0,600.2829002036559,16.857142857142854,10119.054603433055,562.1697001907253,0.2000943000678853
+./models/18_VIC/tests/unit/shared/test_make_dmy.py,test_make_dmy.py (module aggregate),MODULE_AGG,1,8,B,,,,,,,
+./models/18_VIC/tests/unit/shared/test_make_energy_bal.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_make_energy_bal.py,test_make_energy_bal,FUNCTION,4,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_energy_bal.py,test_make_energy_bal_1snowband,FUNCTION,8,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_energy_bal.py,test_make_energy_bal_5snowband,FUNCTION,13,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_energy_bal.py,test_make_energy_bal.py (module aggregate),MODULE_AGG,1,6,B,,,,,,,
+./models/18_VIC/tests/unit/shared/test_make_snow_data.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_make_snow_data.py,test_make_snow_data,FUNCTION,4,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_snow_data.py,test_make_snow_data_1snowband,FUNCTION,8,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_snow_data.py,test_make_snow_data_5snowband,FUNCTION,13,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_snow_data.py,test_make_snow_data.py (module aggregate),MODULE_AGG,1,6,B,,,,,,,
+./models/18_VIC/tests/unit/shared/test_make_veg_var.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_make_veg_var.py,test_make_veg_var,FUNCTION,4,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_veg_var.py,test_make_veg_var_1snowband,FUNCTION,8,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_veg_var.py,test_make_veg_var_5snowband,FUNCTION,13,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_veg_var.py,test_make_veg_var_5snowbands_carbon_is_true,FUNCTION,18,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_make_veg_var.py,test_make_veg_var.py (module aggregate),MODULE_AGG,1,8,B,,,,,,,
+./models/18_VIC/tests/unit/shared/test_open_file.py,<module>,FUNCTION,1,1,A,3.0,,30.0,1.5,45.0,2.5,0.01
+./models/18_VIC/tests/unit/shared/test_open_file.py,temp_file,FUNCTION,7,1,A,4.0,4.0,146.94555522617034,5.0,734.7277761308517,40.818209785047316,0.048981851742056784
+./models/18_VIC/tests/unit/shared/test_open_file.py,test_open_file_read,FUNCTION,13,2,A,1.0,1.0,15.509775004326936,2.0,31.019550008653873,1.723308333814104,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_open_file.py,test_open_file_write,FUNCTION,18,2,A,1.0,1.0,15.509775004326936,2.0,31.019550008653873,1.723308333814104,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_open_file.py,test_open_file.py (module aggregate),MODULE_AGG,1,5,A,,,,,,,
+./models/18_VIC/tests/unit/shared/test_print_library_shared.py,<module>,FUNCTION,1,1,A,2.0,,31.69925001442312,2.0,63.39850002884624,3.522138890491458,0.010566416671474373
+./models/18_VIC/tests/unit/shared/test_print_library_shared.py,dmy,FUNCTION,6,1,A,8.0,8.0,254.75441052116813,10.5,2674.9213104722653,148.60673947068142,0.08491813684038937
+./models/18_VIC/tests/unit/shared/test_print_library_shared.py,test_print_dmy,FUNCTION,16,2,A,1.0,1.0,15.509775004326936,2.0,31.019550008653873,1.723308333814104,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_print_library_shared.py,test_print_global_param,FUNCTION,20,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_print_library_shared.py,test_print_option,FUNCTION,25,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_print_library_shared.py,test_print_parameters,FUNCTION,29,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_print_library_shared.py,test_print_library_shared.py (module aggregate),MODULE_AGG,1,9,B,,,,,,,
+./models/18_VIC/tests/unit/shared/test_put_data.py,<module>,FUNCTION,1,1,A,3.0,,68.53238859703687,3.375,231.29681151499943,12.849822861944412,0.022844129532345624
+./models/18_VIC/tests/unit/shared/test_put_data.py,test_calc_water_balance_error,FUNCTION,7,4,A,9.0,10.0,417.78636558097116,14.470588235294116,6045.614466642288,335.867470369016,0.13926212186032372
+./models/18_VIC/tests/unit/shared/test_put_data.py,test_calc_energy_balance_error,FUNCTION,21,4,A,10.0,10.0,505.2300234932675,17.647058823529413,8915.82394399884,495.32355244437997,0.16841000783108917
+./models/18_VIC/tests/unit/shared/test_put_data.py,test_put_data.py (module aggregate),MODULE_AGG,1,8,B,,,,,,,
+./models/18_VIC/tests/unit/shared/test_timing.py,<module>,FUNCTION,1,1,A,3.0,,44.37895002019237,2.8,124.26106005653862,6.903392225363257,0.014792983340064124
+./models/18_VIC/tests/unit/shared/test_timing.py,test_vic_timers,FUNCTION,7,6,B,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_timing.py,test_timing.py (module aggregate),MODULE_AGG,1,6,B,,,,,,,
+./models/18_VIC/tests/unit/shared/test_vic_log.py,<module>,FUNCTION,1,1,A,3.0,,36.0,1.7999999999999998,64.8,3.5999999999999996,0.012
+./models/18_VIC/tests/unit/shared/test_vic_log.py,test_finalize_logging,FUNCTION,6,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_vic_log.py,test_get_current_datetime,FUNCTION,10,4,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_vic_log.py,test_get_logname,FUNCTION,20,4,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_vic_log.py,test_initialize_log,FUNCTION,30,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_vic_log.py,test_vic_log.py (module aggregate),MODULE_AGG,1,12,C,,,,,,,
+./models/18_VIC/tests/unit/shared/test_vic_time.py,<module>,FUNCTION,1,2,A,40.0,,1285.115183552482,13.65,17541.82225549138,974.5456808606323,0.42837172785082733
+./models/18_VIC/tests/unit/shared/test_vic_time.py,datetime_to_dmy,FUNCTION,50,1,A,9.0,9.0,450.8318642452056,13.578947368421051,6121.8221565927915,340.10123092182175,0.1502772880817352
+./models/18_VIC/tests/unit/shared/test_vic_time.py,dmy_to_datetime,FUNCTION,61,1,A,4.0,4.0,231.89044416913947,11.5,2666.740107945104,148.15222821917243,0.07729681472304649
+./models/18_VIC/tests/unit/shared/test_vic_time.py,feb3_noon,FUNCTION,68,1,A,2.0,2.0,77.70923408096293,7.2,559.5064853829331,31.08369363238517,0.025903078026987644
+./models/18_VIC/tests/unit/shared/test_vic_time.py,dmy_feb_3_noon,FUNCTION,73,1,A,2.0,2.0,53.77443751081734,4.2,225.85263754543286,12.547368752524047,0.01792481250360578
+./models/18_VIC/tests/unit/shared/test_vic_time.py,dmy_june31,FUNCTION,78,1,A,8.0,8.0,254.75441052116813,10.5,2674.9213104722653,148.60673947068142,0.08491813684038937
+./models/18_VIC/tests/unit/shared/test_vic_time.py,dmy_too_many_seconds,FUNCTION,89,1,A,8.0,8.0,334.35764566378015,11.333333333333332,3789.3866508561746,210.5214806031208,0.11145254855459338
+./models/18_VIC/tests/unit/shared/test_vic_time.py,dmy_now,FUNCTION,100,1,A,3.0,3.0,81.40967379910403,5.25,427.40078744529615,23.744488191405342,0.027136557933034676
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_fractional_day_from_dmy,FUNCTION,105,2,A,1.0,1.0,15.509775004326936,2.0,31.019550008653873,1.723308333814104,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_leap_year,FUNCTION,110,4,A,3.0,3.0,102.18657103125848,5.625,574.799462050829,31.933303447268276,0.034062190343752824
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_julian_day_from_dmy,FUNCTION,118,2,A,6.0,6.0,253.82374477961895,8.8,2233.6489540606467,124.09160855892482,0.08460791492653964
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_no_leap_day_from_dmy,FUNCTION,127,1,A,4.0,4.0,144.4295354570819,4.666666666666666,674.0044987997154,37.44469437776197,0.048143178485693966
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_all_leap_from_dmy,FUNCTION,134,1,A,4.0,4.0,144.4295354570819,4.666666666666666,674.0044987997154,37.44469437776197,0.048143178485693966
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_all_30_day_from_dmy,FUNCTION,141,1,A,4.0,4.0,144.4295354570819,4.666666666666666,674.0044987997154,37.44469437776197,0.048143178485693966
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_date2num,FUNCTION,148,3,A,9.0,9.0,427.3468786650285,6.84,2923.0526500687947,162.39181389271081,0.1424489595550095
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_dmy_julian_day,FUNCTION,160,3,A,7.0,7.0,280.53836262764463,9.28125,2603.7466781378266,144.65259322987924,0.09351278754254821
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_dmy_julian_day_timeseries,FUNCTION,172,4,A,9.0,11.0,406.24409745172375,9.9,4021.8165647720652,223.43425359844807,0.13541469915057458
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_dmy_no_leap_day,FUNCTION,188,2,A,1.0,1.0,15.509775004326936,2.0,31.019550008653873,1.723308333814104,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_dmy_all_leap,FUNCTION,199,2,A,1.0,1.0,15.509775004326936,2.0,31.019550008653873,1.723308333814104,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_dmy_all_30_day,FUNCTION,210,2,A,1.0,1.0,15.509775004326936,2.0,31.019550008653873,1.723308333814104,0.005169925001442312
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_num2date,FUNCTION,221,5,A,16.0,20.0,786.8083894318042,10.828125,8519.659591816255,473.3144217675697,0.26226946314393473
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_make_lastday,FUNCTION,245,7,B,20.0,21.0,1290.0,33.599999999999994,43343.99999999999,2407.9999999999995,0.43
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_initialize_time,FUNCTION,269,5,A,12.0,12.0,509.04896880402777,10.153846153846153,5168.8049140101275,287.1558285561182,0.1696829896013426
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_invalid_date,FUNCTION,283,5,A,2.0,2.0,55.506595772116384,3.5,194.27308520240734,10.792949177911519,0.01850219859070546
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_dt_seconds_to_time_units,FUNCTION,291,3,A,5.0,5.0,162.51574464281416,8.8,1430.1385528567646,79.4521418253758,0.05417191488093805
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_calendar_from_chars,FUNCTION,299,5,A,2.0,2.0,59.207035490257475,4.0,236.8281419610299,13.157118997834994,0.019735678496752493
+./models/18_VIC/tests/unit/shared/test_vic_time.py,timeunits_from_chars,FUNCTION,306,4,A,5.0,5.0,306.49450852513183,9.821428571428571,3010.2139230146877,167.23410683414932,0.10216483617504395
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_parse_nc_time_units,FUNCTION,314,6,B,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_timedelta,FUNCTION,326,6,B,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_dmy_equal,FUNCTION,357,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_strpdmy,FUNCTION,366,3,A,9.0,10.0,364.3485746345679,7.6499999999999995,2787.2665959544443,154.84814421969133,0.1214495248781893
+./models/18_VIC/tests/unit/shared/test_vic_time.py,test_vic_time.py (module aggregate),MODULE_AGG,1,86,F,,,,,,,
+./models/18_VIC/tests/unit/shared/__init__.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/shared/__init__.py,__init__.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_advected_sensible_heat.py,<module>,FUNCTION,1,1,A,2.0,,30.0,1.5,45.0,2.5,0.01
+./models/18_VIC/tests/unit/vic_run/test_advected_sensible_heat.py,test_advected_sensible_heat,FUNCTION,5,7,B,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_advected_sensible_heat.py,test_advected_sensible_heat.py (module aggregate),MODULE_AGG,1,7,B,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_arno_evap.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_arno_evap.py,test_arno_evap.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_CalcAerodynamic.py,<module>,FUNCTION,1,1,A,3.0,,53.150849518197795,2.6666666666666665,141.7355987151941,7.874199928621895,0.017716949839399265
+./models/18_VIC/tests/unit/vic_run/test_CalcAerodynamic.py,test_calc_aerodynamic,FUNCTION,6,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_CalcAerodynamic.py,test_CalcAerodynamic.py (module aggregate),MODULE_AGG,1,2,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_CalcBlowingSnow.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_CalcBlowingSnow.py,test_CalcBlowingSnow.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_calc_atmos_energy_bal.py,<module>,FUNCTION,1,1,A,2.0,,36.0,3.0,108.0,6.0,0.012
+./models/18_VIC/tests/unit/vic_run/test_calc_atmos_energy_bal.py,test_calc_atmos_energy_bal,FUNCTION,5,9,B,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_calc_atmos_energy_bal.py,test_calc_atmos_energy_bal.py (module aggregate),MODULE_AGG,1,9,B,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_calc_Nscale_factors.py,<module>,FUNCTION,1,1,A,3.0,,53.150849518197795,2.6666666666666665,141.7355987151941,7.874199928621895,0.017716949839399265
+./models/18_VIC/tests/unit/vic_run/test_calc_Nscale_factors.py,test_calc_nscale_factors,FUNCTION,6,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_calc_Nscale_factors.py,test_calc_Nscale_factors.py (module aggregate),MODULE_AGG,1,2,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_calc_rainonly.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/vic_run/test_calc_rainonly.py,test_rainonly,FUNCTION,4,4,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_calc_rainonly.py,test_calc_rainonly.py (module aggregate),MODULE_AGG,1,4,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_calc_snow_coverage.py,<module>,FUNCTION,1,1,A,2.0,,36.0,3.0,108.0,6.0,0.012
+./models/18_VIC/tests/unit/vic_run/test_calc_snow_coverage.py,test_calc_snow_coverage_no_change,FUNCTION,5,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_calc_snow_coverage.py,test_calc_snow_coverage_increased,FUNCTION,18,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_calc_snow_coverage.py,test_calc_snow_coverage.py (module aggregate),MODULE_AGG,1,4,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_calc_surf_energy_bal.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_calc_surf_energy_bal.py,test_calc_surf_energy_bal.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_calc_veg_params.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/vic_run/test_calc_veg_params.py,test_calc_veg_displacement,FUNCTION,4,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_calc_veg_params.py,test_calc_veg_height,FUNCTION,9,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_calc_veg_params.py,test_calc_veg_roughness,FUNCTION,14,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_calc_veg_params.py,test_calc_veg_params.py (module aggregate),MODULE_AGG,1,9,B,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_canopy_assimilation.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_canopy_assimilation.py,test_canopy_assimilation.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_canopy_evap.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_canopy_evap.py,test_canopy_evap.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_comparisons.py,<module>,FUNCTION,1,1,A,3.0,,55.35090589819676,2.2857142857142856,126.51635633873543,7.02868646326308,0.018450301966065584
+./models/18_VIC/tests/unit/vic_run/test_comparisons.py,test_assert_close_float,FUNCTION,6,4,A,6.0,7.0,394.3067750620194,14.807692307692308,5838.773399956826,324.37629999760145,0.13143559168733981
+./models/18_VIC/tests/unit/vic_run/test_comparisons.py,test_assert_close_double,FUNCTION,16,4,A,6.0,7.0,394.3067750620194,14.807692307692308,5838.773399956826,324.37629999760145,0.13143559168733981
+./models/18_VIC/tests/unit/vic_run/test_comparisons.py,test_comparisons.py (module aggregate),MODULE_AGG,1,8,B,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_compute_coszen.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_compute_coszen.py,test_compute_coszen.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_compute_pot_evap.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_compute_pot_evap.py,test_compute_pot_evap.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_compute_soil_resp.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_compute_soil_resp.py,test_compute_soil_resp.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_compute_zwt.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_compute_zwt.py,test_compute_zwt.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_correct_precip.py,<module>,FUNCTION,1,1,A,5.0,,83.76180828526729,3.333333333333333,279.2060276175576,15.5114459787532,0.027920602761755765
+./models/18_VIC/tests/unit/vic_run/test_correct_precip.py,test_correct_precip,FUNCTION,10,5,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_correct_precip.py,test_correct_precip.py (module aggregate),MODULE_AGG,1,5,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_estimate_T1.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/vic_run/test_estimate_T1.py,test_estimate_t1,FUNCTION,4,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_estimate_T1.py,test_estimate_T1.py (module aggregate),MODULE_AGG,1,2,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_faparl.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_faparl.py,test_faparl.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_frozen_soil.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_frozen_soil.py,test_frozen_soil.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_func_atmos_energy_bal.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_func_atmos_energy_bal.py,test_func_atmos_energy_bal.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_func_atmos_moist_bal.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_func_atmos_moist_bal.py,test_func_atmos_moist_bal.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_func_canopy_energy_bal.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_func_canopy_energy_bal.py,test_func_canopy_energy_bal.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_func_surf_energy_bal.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_func_surf_energy_bal.py,test_func_surf_energy_bal.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_IceEnergyBalance.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_IceEnergyBalance.py,test_IceEnergyBalance.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_ice_melt.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_ice_melt.py,test_ice_melt.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_initialize_lake.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_initialize_lake.py,test_initialize_lake.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_lakes.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_lakes.py,test_lakes.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_latent_heat_from_snow.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_latent_heat_from_snow.py,test_latent_heat_from_snow.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_massrelease.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_massrelease.py,test_massrelease.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_modify_Ksat.py,<module>,FUNCTION,1,1,A,3.0,,57.3594000115385,2.0,114.718800023077,6.373266667948722,0.019119800003846166
+./models/18_VIC/tests/unit/vic_run/test_modify_Ksat.py,test_linear_interp,FUNCTION,6,3,A,9.0,9.0,549.4459868550366,15.476190476190476,8503.330748946995,472.4072638303886,0.1831486622850122
+./models/18_VIC/tests/unit/vic_run/test_modify_Ksat.py,test_modify_Ksat.py (module aggregate),MODULE_AGG,1,3,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_newt_raph_func_fast.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_newt_raph_func_fast.py,test_newt_raph_func_fast.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_penman.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_penman.py,test_penman.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_photosynth.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/vic_run/test_photosynth.py,test_hitinhib,FUNCTION,4,3,A,3.0,3.0,101.57915548582149,13.75,1396.7133879300454,77.59518821833586,0.033859718495273826
+./models/18_VIC/tests/unit/vic_run/test_photosynth.py,test_darkinhib,FUNCTION,10,5,A,4.0,4.0,126.71134807876051,19.5,2470.87128753583,137.2706270853239,0.042237116026253504
+./models/18_VIC/tests/unit/vic_run/test_photosynth.py,test_photosynth.py (module aggregate),MODULE_AGG,1,8,B,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_physics.py,<module>,FUNCTION,1,1,A,5.0,,70.30835464468075,2.4444444444444446,171.86486690921961,9.548048161623312,0.02343611821489358
+./models/18_VIC/tests/unit/vic_run/test_physics.py,test_calc_latent_heat_of_sublimation,FUNCTION,11,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_physics.py,test_calc_latent_heat_of_vaporization,FUNCTION,18,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_physics.py,test_calc_outgoing_longwave,FUNCTION,25,3,A,6.0,6.0,194.4867642699313,12.833333333333334,2495.913474797452,138.66185971096957,0.06482892142331044
+./models/18_VIC/tests/unit/vic_run/test_physics.py,test_calc_scale_height,FUNCTION,33,4,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_physics.py,test_calc_sensible_heat,FUNCTION,42,4,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_physics.py,test_physics.py (module aggregate),MODULE_AGG,1,17,C,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_prepare_full_energy.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_prepare_full_energy.py,test_prepare_full_energy.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_root_brent.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_root_brent.py,test_root_brent.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_runoff.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_runoff.py,test_runoff.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_SnowPackEnergyBalance.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_SnowPackEnergyBalance.py,test_SnowPackEnergyBalance.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_snow_intercept.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_snow_intercept.py,test_snow_intercept.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_snow_melt.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_snow_melt.py,test_snow_melt.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_snow_utility.py,<module>,FUNCTION,1,1,A,3.0,,44.37895002019237,2.8,124.26106005653862,6.903392225363257,0.014792983340064124
+./models/18_VIC/tests/unit/vic_run/test_snow_utility.py,test_snow_albedo_new_snow,FUNCTION,7,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_snow_utility.py,test_snow_albedo_old_snow,FUNCTION,15,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_snow_utility.py,test_snow_utility.py (module aggregate),MODULE_AGG,1,5,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_soil_carbon_balance.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_soil_carbon_balance.py,test_soil_carbon_balance.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_soil_conduction.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_soil_conduction.py,test_soil_conduction.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_soil_thermal_eqn.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_soil_thermal_eqn.py,test_soil_thermal_eqn.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_solve_snow.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_solve_snow.py,test_solve_snow.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_StabilityCorrection.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/vic_run/test_StabilityCorrection.py,test_stability_correction,FUNCTION,4,2,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_StabilityCorrection.py,test_StabilityCorrection.py (module aggregate),MODULE_AGG,1,2,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_surface_fluxes.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_surface_fluxes.py,test_surface_fluxes.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_svp.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/tests/unit/vic_run/test_svp.py,test_svp,FUNCTION,4,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_svp.py,test_svp_slope,FUNCTION,9,3,A,1.0,1.0,11.60964047443681,2.0,23.21928094887362,1.289960052715201,0.0038698801581456034
+./models/18_VIC/tests/unit/vic_run/test_svp.py,test_svp.py (module aggregate),MODULE_AGG,1,6,B,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_vic_run.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_vic_run.py,test_vic_run.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_water_energy_balance.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_water_energy_balance.py,test_water_energy_balance.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_water_under_ice.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_water_under_ice.py,test_water_under_ice.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_write_layer.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_write_layer.py,test_write_layer.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_write_vegvar.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_write_vegvar.py,test_write_vegvar.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/tests/unit/vic_run/test_zero_output_list.py,<module>,FUNCTION,1,1,A,0.0,,0.0,0.0,0.0,0.0,0.0
+./models/18_VIC/tests/unit/vic_run/test_zero_output_list.py,test_zero_output_list.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/vic/drivers/python/setup.py,<module>,FUNCTION,1,13,C,99.0,,4419.5781862803915,44.92307692307693,198541.05082982683,11030.058379434824,1.4731927287601305
+./models/18_VIC/vic/drivers/python/setup.py,write_version_py,FUNCTION,77,2,A,6.0,10.0,236.83666567851094,7.666666666666667,1815.7477702019173,100.87487612232874,0.07894555522617032
+./models/18_VIC/vic/drivers/python/setup.py,maybe_eval_between_brackets,FUNCTION,91,4,A,10.0,10.0,249.12330506147785,12.25,3051.7604870031037,169.5422492779502,0.08304110168715928
+./models/18_VIC/vic/drivers/python/setup.py,make_cffi_headers,FUNCTION,105,9,B,59.0,76.0,1962.4236333677366,40.526315789473685,79529.79987858722,4418.322215477067,0.6541412111225788
+./models/18_VIC/vic/drivers/python/setup.py,CleanCommand,CLASS,46,3,A,23.0,28.0,584.7382639317261,18.526315789473685,10833.045731787768,601.8358739882093,0.1949127546439087
+./models/18_VIC/vic/drivers/python/setup.py,CleanCommand.initialize_options,METHOD,50,1,A,2.0,2.0,19.651484454403228,2.5,49.12871113600807,2.7293728408893374,0.00655049481813441
+./models/18_VIC/vic/drivers/python/setup.py,CleanCommand.finalize_options,METHOD,53,1,A,2.0,2.0,19.651484454403228,2.5,49.12871113600807,2.7293728408893374,0.00655049481813441
+./models/18_VIC/vic/drivers/python/setup.py,CleanCommand.run,METHOD,56,5,A,16.0,18.0,432.3603085663539,19.28571428571429,8338.37737949397,463.24318774966497,0.14412010285545132
+./models/18_VIC/vic/drivers/python/setup.py,CleanCommand (aggregate),CLASS_AGG,50,7,B,,,,,,,
+./models/18_VIC/vic/drivers/python/setup.py,setup.py (module aggregate),MODULE_AGG,1,22,D,,,,,,,
+./models/18_VIC/vic/drivers/python/vic_build.py,<module>,FUNCTION,1,2,A,7.0,,162.51574464281416,7.727272727272727,1255.8034813308366,69.76686007393536,0.05417191488093805
+./models/18_VIC/vic/drivers/python/vic_build.py,vic_build.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,
+./models/18_VIC/vic/drivers/python/vic/driver.py,<module>,FUNCTION,1,1,A,1.0,,15.509775004326936,1.5,23.264662506490403,1.292481250360578,0.005169925001442312
+./models/18_VIC/vic/drivers/python/vic/driver.py,vic_init,FUNCTION,10,1,A,2.0,2.0,15.509775004326936,2.5,38.77443751081734,2.1541354172676304,0.005169925001442312
+./models/18_VIC/vic/drivers/python/vic/driver.py,vic_run,FUNCTION,14,1,A,2.0,2.0,15.509775004326936,2.5,38.77443751081734,2.1541354172676304,0.005169925001442312
+./models/18_VIC/vic/drivers/python/vic/driver.py,vic_final,FUNCTION,18,1,A,2.0,2.0,15.509775004326936,2.5,38.77443751081734,2.1541354172676304,0.005169925001442312
+./models/18_VIC/vic/drivers/python/vic/driver.py,driver.py (module aggregate),MODULE_AGG,1,3,A,,,,,,,
+./models/18_VIC/vic/drivers/python/vic/pycompat.py,<module>,FUNCTION,1,4,A,33.0,,794.1395478760094,15.5,12309.162992078145,683.8423884487859,0.26471318262533644
+./models/18_VIC/vic/drivers/python/vic/pycompat.py,iteritems,FUNCTION,11,1,A,2.0,2.0,49.82892142331043,3.75,186.8584553374141,10.381025296523006,0.01660964047443681
+./models/18_VIC/vic/drivers/python/vic/pycompat.py,itervalues,FUNCTION,14,1,A,2.0,2.0,49.82892142331043,3.75,186.8584553374141,10.381025296523006,0.01660964047443681
+./models/18_VIC/vic/drivers/python/vic/pycompat.py,iteritems,FUNCTION,26,1,A,2.0,2.0,36.0,6.0,216.0,12.0,0.012
+./models/18_VIC/vic/drivers/python/vic/pycompat.py,itervalues,FUNCTION,29,1,A,2.0,2.0,36.0,6.0,216.0,12.0,0.012
+./models/18_VIC/vic/drivers/python/vic/pycompat.py,pycompat.py (module aggregate),MODULE_AGG,1,4,A,,,,,,,
+./models/18_VIC/vic/drivers/python/vic/vic.py,<module>,FUNCTION,1,1,A,6.0,,125.0204990594726,4.666666666666667,583.4289956108721,32.41272197838178,0.04167349968649087
+./models/18_VIC/vic/drivers/python/vic/vic.py,_load_lib,FUNCTION,10,1,A,7.0,8.0,252.1729375396636,7.5,1891.297031547477,105.07205730819317,0.08405764584655454
+./models/18_VIC/vic/drivers/python/vic/vic.py,vic.py (module aggregate),MODULE_AGG,1,1,A,,,,,,,
+./models/18_VIC/vic/drivers/python/vic/__init__.py,<module>,FUNCTION,1,1,A,2.0,,24.0,2.5,60.0,3.3333333333333335,0.008
+./models/18_VIC/vic/drivers/python/vic/__init__.py,__init__.py (module aggregate),MODULE_AGG,1,0,A,,,,,,,

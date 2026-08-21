@@ -1,0 +1,9 @@
+file,total_lines,code_lines,comment_lines,blank_lines_raw,comments_per_loc,function_count,avg_func_loc
+./models/12_hydropy/analysis_class.py,537,361,118,58,0.3269,15,24.13
+./models/12_hydropy/dataio_class.py,557,368,98,91,0.2663,13,27.85
+./models/12_hydropy/hydro.py,614,361,170,83,0.4709,0,0.0
+./models/12_hydropy/hydrology_processes.py,611,361,159,91,0.4404,15,24.53
+./models/12_hydropy/landcover_processes.py,122,42,58,22,1.381,2,18.5
+./models/12_hydropy/parameter_class.py,633,411,156,66,0.3796,15,26.27
+./models/12_hydropy/streamflow.py,159,71,57,31,0.8028,4,17.5
+./models/12_hydropy/utility_routines.py,225,114,72,39,0.6316,9,12.33

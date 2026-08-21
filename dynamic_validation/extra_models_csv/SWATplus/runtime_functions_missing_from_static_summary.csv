@@ -1,0 +1,10 @@
+model,metric,value
+16_swatplus,runtime_unique_symbols,339
+16_swatplus,missing_runtime_symbols,59
+16_swatplus,missing_runtime_symbols_pct,17.40
+16_swatplus,runtime_edge_rows,377
+16_swatplus,runtime_call_volume,26942954
+16_swatplus,missing_symbol_outgoing_call_volume,1721604
+16_swatplus,missing_symbol_outgoing_call_volume_pct,6.39
+16_swatplus,missing_symbol_touched_edges,114
+16_swatplus,missing_symbol_touched_edges_pct,30.24
