@@ -1,5 +1,5 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17962642.svg)](https://doi.org/10.5281/zenodo.17962642)
-# The topology of software risk in scientific models
+# The topology of risk in scientific software
 
 [Arnald Puy](https://www.arnaldpuy.com/), Federico Díaz, Olivia Richards, Ulrike Proske,
 Seth N. Linga, Samuel Flinders, Carmen Aguiló-Rivera, Warrick Ball, Matthew Barton and
@@ -190,7 +190,7 @@ If you use this workflow, please cite:
 
 A. Puy, F. Díaz, O. Richards, U. Proske, S. N. Linga, S. Flinders, C. Aguiló-Rivera,
 W. Ball, M. Barton, F. G. Tinetti (2026). Code and Datasets of The Topology of
-Software Risk in Scientific Models. Zenodo. doi:10.5281/zenodo.17962642.
+Risk in Scientific Software. Zenodo. doi:10.5281/zenodo.17962642.
 
 ## License
 

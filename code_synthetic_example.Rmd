@@ -1,5 +1,5 @@
 ---
-title: "The topology of software risk in scientific models"
+title: "The topology of risk in scientific software"
 subtitle: "1. The synthetic example"
 author: "Arnald Puy"
 header-includes:

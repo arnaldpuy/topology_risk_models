@@ -1,5 +1,5 @@
 ---
-title: "The topology of software risk in scientific models"
+title: "The topology of risk in scientific software"
 subtitle: "4. Scalability benchmark"
 author: "Arnald Puy"
 header-includes:
