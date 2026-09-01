@@ -100,6 +100,10 @@ nodes_dt_unnested <- rbindlist(
 
 paths_ua_dt[, path_id := factor(path_id, levels = rev(path_order))]
 
+# Label every other path to keep the y-axis legible ----------------------------
+
+y_breaks <- levels(paths_ua_dt$path_id)[seq(1, nlevels(paths_ua_dt$path_id), by = 2)]
+
 a <- paths_ua_dt %>%
   ggplot(., aes(P_median, path_id))  +
   geom_point(size = 0.7) +
@@ -107,7 +111,8 @@ a <- paths_ua_dt %>%
   labs(y = "Path ID", x = expression(P[k])) +
   theme_AP() +
   scale_x_continuous(breaks = breaks_pretty(n = 3)) +
-  theme(axis.text.y = element_text(size = 4),
+  scale_y_discrete(breaks = y_breaks) +
+  theme(axis.text.y = element_text(size = 5),
         legend.position = c(0.4, 0.87),
         plot.margin = margin(1, 0.1, 1, 1))
 
