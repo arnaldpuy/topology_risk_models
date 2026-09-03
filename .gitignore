@@ -1,0 +1,54 @@
+# Ignore everything, then whitelist
+/*
+
+# Analysis workflows
+!code_synthetic_example.Rmd
+!code_synthetic_example.R
+!code_synthetic_example.pdf
+!code_uncertainty_analysis.Rmd
+!code_uncertainty_analysis.R
+!code_uncertainty_analysis.pdf
+!code_hydrological_models.Rmd
+!code_hydrological_models.R
+!code_hydrological_models.pdf
+!code_scalability_test.Rmd
+!code_scalability_test.R
+!code_scalability_test.pdf
+!code_questionnaires.Rmd
+!code_questionnaires.R
+!code_questionnaires.pdf
+!code_dynamic_validation.Rmd
+!code_dynamic_validation.R
+!code_dynamic_validation.pdf
+!README.md
+
+# Datasets
+!datasets/
+!datasets/**/*.csv
+!datasets/**/*.xlsx
+
+# Functions
+!functions/
+!functions/*.R
+
+# Questionnaire data
+!questionnaire_data/
+!questionnaire_data/*.pdf
+!questionnaire_data/*.xlsx
+
+# Dynamic validation: only model folders and results are tracked
+!dynamic_validation/
+dynamic_validation/*.md
+dynamic_validation/analysis/
+dynamic_validation/*.zip
+
+# Superseded runtime exports, replaced by callgraph_csv/
+dynamic_validation/ORCHIDEE/
+dynamic_validation/PCR/
+
+# Rendered artefacts
+dynamic_validation/*.html
+dynamic_validation/*_files/
+dynamic_validation/*_cache/
+
+.Rproj.user
